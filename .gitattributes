@@ -1,2 +1,41 @@
-# Auto detect text files and perform LF normalization
-* text=auto
+# .gitattributes — CultureGo (Ionic + Angular + Capacitor)
+#
+# Este le dice a Git cómo tratar cada tipo de archivo del repositorio (a diferencia de .gitignore).
+#
+# 
+# 1. Evitar conflictos falsos por saltos de línea entre Windows y Mac.
+# 2. Marcar qué archivos son binarios, para que Git no intente compararlos
+#      línea por línea ni les cambie el salto de línea.
+# 3. Mejorar el gráfico de lenguajes que muestra GitHub del repositorio.
+
+* text=auto eol=lf
+
+*.ts       text eol=lf
+*.js       text eol=lf
+*.html     text eol=lf
+*.scss     text eol=lf
+*.css      text eol=lf
+*.json     text eol=lf
+*.md       text eol=lf
+*.yml      text eol=lf
+*.yaml     text eol=lf
+
+*.png    binary
+*.jpg    binary
+*.jpeg   binary
+*.gif    binary
+*.webp   binary
+*.ico    binary
+*.svg    binary
+*.woff   binary
+*.woff2  binary
+*.ttf    binary
+*.eot    binary
+*.apk    binary
+*.ipa    binary
+*.aab    binary
+
+node_modules/*   linguist-vendored
+www/*            linguist-vendored
+android/*        linguist-vendored
+ios/*            linguist-vendored

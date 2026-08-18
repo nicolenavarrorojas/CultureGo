@@ -1,0 +1,79 @@
+# Archivo para Git que especifica qué archivos y directorios deben ser ignorados por el control de versiones. 
+
+# -Por carpetas que se generan automáticamente y no deben ser versionadas, como node_modules, dist, www, android, ios, electron, 
+# .angular y .angular/cache.
+# -Archivos con información sensible (claves de Supabase, tokens)
+# -Archivos propios de cada pc (configuración, archivos del sistema operativo)
+
+
+# Dependencias
+# Se instalan con `npm install`
+node_modules/
+.pnp
+.pnp.js
+
+
+# Build de Angular / Ionic
+# Carpetas generadas al compilar la app (`ionic build` / `ng build`).
+www/
+dist/
+.angular/
+.angular/cache/
+
+
+# Capacitor - plataformas nativas (se regeneran con `npx cap sync`)
+
+android/
+ios/
+electron/
+capacitor.config.local.json
+
+
+# Variables de entorno / credenciales
+
+.env
+.env.local
+.env.*.local
+src/environments/environment.prod.ts
+src/environments/environment.local.ts
+
+
+# Logs
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+*.log
+
+
+# Testing / cobertura
+# Reportes generados al ejecutar(`ng test`).
+
+coverage/
+.nyc_output/
+
+# Editor / IDE
+
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+*.swo
+.DS_Store
+Thumbs.db
+
+
+# Sistema operativo
+# Archivos que Windows crea automáticamente en cualquier carpeta.
+
+.DS_Store
+desktop.ini
+
+
+# Otros  
+
+*.tsbuildinfo
+.sass-cache/
+connect.lock
+typings/
