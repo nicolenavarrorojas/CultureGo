@@ -1,0 +1,194 @@
+.inicio-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 12px;
+}
+
+.header-saludo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+
+  .saludo-texto {
+    .eyebrow {
+      margin: 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      color: var(--ion-color-medium);
+    }
+
+    h1 {
+      margin: 2px 0 4px;
+      font-family: 'Inter', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.2;
+    }
+
+    .subtitulo {
+      margin: 0;
+      font-size: 0.9rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .mascota-avatar {
+    width: 56px;
+    height: 56px;
+    flex-shrink: 0;
+  }
+}
+
+.buscador {
+  padding: 0;
+  --border-radius: 14px;
+  --box-shadow: none;
+  margin-bottom: 12px;
+}
+
+.chips-filtro {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+
+  ion-chip {
+    flex-shrink: 0;
+    --background: var(--ion-color-light);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+
+      ion-icon {
+        color: var(--ion-color-primary-contrast);
+      }
+    }
+  }
+}
+
+.seccion-recomendados {
+  margin-bottom: 24px;
+
+  .seccion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Inter', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+
+      ion-icon {
+        color: var(--ion-color-primary);
+      }
+    }
+
+    .ver-todos {
+      background: none;
+      border: none;
+      color: var(--ion-color-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px;
+    }
+  }
+}
+
+.lista-recomendados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tarjeta-lugar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  background: var(--ion-color-light);
+  text-align: left;
+
+  .tarjeta-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ion-color-medium-tint);
+    flex-shrink: 0;
+  }
+
+  .tarjeta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .tarjeta-nombre {
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tarjeta-comuna {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+
+    .tarjeta-badge {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--ion-color-success-tint);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+}
+
+.tarjeta-skeleton {
+  .skeleton-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+  }
+
+  .skeleton-linea {
+    height: 12px;
+    width: 70%;
+
+    &.corta {
+      width: 40%;
+    }
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.boton-ver-mapa {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  --border-radius: 14px;
+}

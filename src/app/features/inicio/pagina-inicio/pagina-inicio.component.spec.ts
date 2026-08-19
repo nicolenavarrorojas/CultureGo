@@ -1,6 +1,10 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+/// <reference types="jasmine" />
 
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
+
+import { Auth } from 'src/app/core/services/auth';
+import { Lugares } from 'src/app/core/services/lugares';
 import { PaginaInicioComponent } from './pagina-inicio.component';
 
 describe('PaginaInicioComponent', () => {
@@ -9,8 +13,21 @@ describe('PaginaInicioComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ PaginaInicioComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [PaginaInicioComponent],
+      providers: [
+        {
+          provide: Auth,
+          useValue: { obtenerUsuarioActual: async () => null },
+        },
+        {
+          provide: Lugares,
+          useValue: { listar: async () => [] },
+        },
+        {
+          provide: Router,
+          useValue: { navigate: () => Promise.resolve(true) },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PaginaInicioComponent);
