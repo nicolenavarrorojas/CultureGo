@@ -3,9 +3,9 @@ import { authGuard } from './core/guards/auth-guard';
 import { adminGuard } from './core/guards/admin-guard';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'tabs/mapa', pathMatch: 'full' },
+  { path: '', redirectTo: 'tabs/inicio', pathMatch: 'full' },
 
-  // Auth 
+  // Auth
   {
     path: 'auth/login',
     loadComponent: () => import('./features/auth/login/login.component').then((m) => m.LoginComponent),
@@ -15,47 +15,52 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/registro/registro.component').then((m) => m.RegistroComponent),
   },
 
-  // Tabs principales (mockup: Mapa / Buscar / Historial) 
+  // Tabs principales (Inicio / Mapa / Perfil) 
   {
     path: 'tabs',
     loadComponent: () => import('./shared/components/tabs/tabs.component').then((m) => m.TabsComponent),
     children: [
-      { path: '', redirectTo: 'mapa', pathMatch: 'full' },
+      { path: '', redirectTo: 'inicio', pathMatch: 'full' },
+      {
+        path: 'inicio',
+        loadComponent: () =>
+          import('./features/inicio/pagina-inicio/pagina-inicio.component').then((m) => m.PaginaInicioComponent),
+      },
       {
         path: 'mapa',
         loadComponent: () =>
           import('./features/mapa/pagina-mapa/pagina-mapa.component').then((m) => m.PaginaMapaComponent),
       },
       {
-        path: 'buscar',
+        path: 'perfil',
         loadComponent: () =>
-          import('./features/catalogo/lista-lugares/lista-lugares.component').then((m) => m.ListaLugaresComponent),
-      },
-      {
-        path: 'historial',
-        loadComponent: () =>
-          import('./features/gamificacion/medallas/medallas.component').then((m) => m.MedallasComponent),
+          import('./features/perfil/pagina-perfil/pagina-perfil.component').then((m) => m.PaginaPerfilComponent),
         canActivate: [authGuard],
       },
     ],
   },
 
-  // Detalle de lugar 
+  // Catálogo completo 
+  {
+    path: 'lugares',
+    loadComponent: () =>
+      import('./features/catalogo/lista-lugares/lista-lugares.component').then((m) => m.ListaLugaresComponent),
+  },
   {
     path: 'lugares/:id',
     loadComponent: () =>
       import('./features/catalogo/detalle-lugar/detalle-lugar.component').then((m) => m.DetalleLugarComponent),
   },
 
-  // Perfil 
+  //  Historial/medallas (accesible desde Perfil)
   {
-    path: 'perfil',
+    path: 'perfil/historial',
     loadComponent: () =>
-      import('./features/perfil/pagina-perfil/pagina-perfil.component').then((m) => m.PaginaPerfilComponent),
+      import('./features/gamificacion/medallas/medallas.component').then((m) => m.MedallasComponent),
     canActivate: [authGuard],
   },
 
-  // Admin
+  // Admin 
   {
     path: 'admin/login-admin',
     loadComponent: () =>
@@ -68,5 +73,5 @@ export const routes: Routes = [
     canActivate: [adminGuard],
   },
 
-  { path: '**', redirectTo: 'tabs/mapa' },
+  { path: '**', redirectTo: 'tabs/inicio' },
 ];
