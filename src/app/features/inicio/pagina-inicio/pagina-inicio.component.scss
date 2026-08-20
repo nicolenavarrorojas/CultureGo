@@ -1,3 +1,4 @@
+
 .inicio-content {
   --padding-start: 20px;
   --padding-end: 20px;
@@ -15,12 +16,13 @@
       margin: 0;
       font-size: 0.8rem;
       letter-spacing: 0.04em;
+      text-transform: uppercase;
       color: var(--ion-color-medium);
     }
 
     h1 {
       margin: 2px 0 4px;
-      font-family: 'Inter', serif;
+      font-family: 'Fraunces', serif;
       font-size: 1.6rem;
       font-weight: 600;
       line-height: 1.2;
@@ -83,7 +85,7 @@
       display: flex;
       align-items: center;
       gap: 6px;
-      font-family: 'Inter', serif;
+      font-family: 'Fraunces', serif;
       font-size: 1.1rem;
       font-weight: 600;
       margin: 0;
@@ -118,8 +120,9 @@
   padding: 10px;
   border: none;
   border-radius: 16px;
-  background: var(--ion-color-light);
+  background: #e3deed; 
   text-align: left;
+  color: var(--ion-color-dark); 
 
   .tarjeta-imagen {
     width: 64px;
@@ -127,7 +130,7 @@
     border-radius: 12px;
     background-size: cover;
     background-position: center;
-    background-color: var(--ion-color-medium-tint);
+    background-color: var(--ion-color-primary-tint);
     flex-shrink: 0;
   }
 
@@ -138,6 +141,7 @@
     min-width: 0;
 
     .tarjeta-nombre {
+      color: var(--ion-color-dark);
       font-weight: 600;
       font-size: 0.95rem;
       white-space: nowrap;

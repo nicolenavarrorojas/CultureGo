@@ -48,7 +48,7 @@ export class PaginaInicioComponent implements OnInit {
   cargando = true;
 
   // LIMITE DE CUANTOS LUGARES MOSTRAR
-  private readonly LIMITE_RECOMENDADOS = 5;
+  private readonly LIMITE_RECOMENDADOS = 4;
 
   constructor(
     private auth: Auth,
