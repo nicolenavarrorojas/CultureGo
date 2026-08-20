@@ -1,0 +1,180 @@
+// Reutiliza la paleta "Jacarandá + Adobe patrimonial" de src/theme/variables.scss
+// y el mismo estilo de tarjeta validado en pagina-inicio (fondo lavanda pastel).
+
+.lugares-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 12px;
+}
+
+.buscador {
+  padding: 0;
+  --border-radius: 14px;
+  --box-shadow: none;
+  margin-bottom: 12px;
+}
+
+.chips-categoria {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 10px;
+
+  ion-chip {
+    flex-shrink: 0;
+    --background: var(--ion-color-light);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}
+
+.fila-filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+
+  .select-comuna {
+    flex: 1;
+    min-width: 0;
+    --padding-start: 12px;
+    --padding-end: 8px;
+    background: var(--ion-color-light);
+    border-radius: 12px;
+    font-size: 0.85rem;
+  }
+
+  .chip-gratis {
+    flex-shrink: 0;
+    --background: var(--ion-color-light);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-success);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+
+  .limpiar-filtros {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    color: var(--ion-color-medium);
+    font-size: 0.8rem;
+
+    ion-icon {
+      font-size: 1rem;
+    }
+  }
+}
+
+.contador-resultados {
+  margin: 0 0 12px;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}
+
+.lista-lugares {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-bottom: 24px;
+}
+
+.tarjeta-lugar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  background: #e3deed;
+  text-align: left;
+  color: var(--ion-color-dark);
+
+  .tarjeta-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ion-color-primary-tint);
+    flex-shrink: 0;
+  }
+
+  .tarjeta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .tarjeta-nombre {
+      color: var(--ion-color-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tarjeta-comuna {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+
+    .tarjeta-badge {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--ion-color-success-tint);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+}
+
+.tarjeta-skeleton {
+  .skeleton-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+  }
+
+  .skeleton-linea {
+    height: 12px;
+    width: 70%;
+
+    &.corta {
+      width: 40%;
+    }
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 40px 12px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+
+  .limpiar-filtros-vacio {
+    margin-top: 12px;
+    background: none;
+    border: 1px solid var(--ion-color-primary);
+    color: var(--ion-color-primary);
+    border-radius: 999px;
+    padding: 8px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+  }
+}

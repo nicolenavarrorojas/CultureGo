@@ -3,7 +3,7 @@
   <!-- Header -->
   <div class="header-saludo">
     <div class="saludo-texto">
-      <p class="eyebrow">Hola{{ nombreUsuario ? ',' : '' }}</p>
+      <p class="subtitulo">Hola{{ nombreUsuario ? ',' : '' }}</p>
       <h1>{{ nombreUsuario || 'Bienvenido' }}</h1>
       <p class="subtitulo">¿Qué quieres descubrir hoy en Santiago?</p>
     </div>
@@ -16,7 +16,7 @@
   <!-- Buscador -->
   <ion-searchbar
     class="buscador"
-    placeholder="Busca museos, parques, monumentos…"
+    placeholder="Busca museos, parques, etc."
     [(ngModel)]="terminoBusqueda"
     (ionChange)="onBuscar()"
     (keyup.enter)="onBuscar()"

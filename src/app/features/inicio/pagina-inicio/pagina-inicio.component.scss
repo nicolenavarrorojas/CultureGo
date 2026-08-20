@@ -12,11 +12,10 @@
   margin-bottom: 16px;
 
   .saludo-texto {
-    .eyebrow {
+    .subtitulo {
       margin: 0;
       font-size: 0.8rem;
       letter-spacing: 0.04em;
-      text-transform: uppercase;
       color: var(--ion-color-medium);
     }
 
@@ -39,6 +38,15 @@
     width: 56px;
     height: 56px;
     flex-shrink: 0;
+    overflow: visible;
+  }
+
+  .mascota-avatar img {
+    width: 75px;
+    height: 75px;
+    object-fit: contain;
+    margin-left: -9px;
+    margin-top: -9px;
   }
 }
 

@@ -1,3 +1,103 @@
-<p>
-  lista-lugares works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/inicio" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Catálogo</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="lugares-content">
+
+  <!-- Buscador -->
+  <ion-searchbar
+    class="buscador"
+    placeholder="Busca museos, parques, monumentos…"
+    [(ngModel)]="terminoBusqueda"
+    (ionInput)="onBusquedaCambiada()"
+    inputmode="search"
+  ></ion-searchbar>
+
+  <!-- categoría -->
+  <div class="chips-categoria" role="group" aria-label="Filtrar por categoría">
+    <ion-chip
+      *ngFor="let categoria of categorias"
+      [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
+      (click)="onCategoriaSeleccionada(categoria.id_categoria)"
+    >
+      <ion-label>{{ categoria.nombre }}</ion-label>
+    </ion-chip>
+  </div>
+
+  <!-- filtros: comuna y gratuidad -->
+  <div class="fila-filtros">
+    <ion-select
+      class="select-comuna"
+      placeholder="Todas las comunas"
+      interface="action-sheet"
+      cancelText="Cerrar"
+      [(ngModel)]="idComunaSeleccionada"
+      (ionChange)="onComunaCambiada($event.detail.value)"
+    >
+      <ion-select-option [value]="null">Todas las comunas</ion-select-option>
+      <ion-select-option *ngFor="let comuna of comunas" [value]="comuna.id_comuna">
+        {{ comuna.nombre }}
+      </ion-select-option>
+    </ion-select>
+
+    <ion-chip
+      class="chip-gratis"
+      [class.activo]="soloGratuitos"
+      (click)="onToggleGratuidad()"
+    >
+      <ion-label>Gratis</ion-label>
+    </ion-chip>
+
+    <button class="limpiar-filtros" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
+      <ion-icon name="close-circle-outline"></ion-icon>
+      Limpiar
+    </button>
+  </div>
+
+  <!-- Numero de resultados -->
+  <p class="contador-resultados" *ngIf="!cargando">
+    {{ lugares.length }} {{ lugares.length === 1 ? 'lugar encontrado' : 'lugares encontrados' }}
+  </p>
+
+  <!-- Cargando -->
+  <div class="lista-lugares" *ngIf="cargando">
+    <div class="tarjeta-lugar tarjeta-skeleton" *ngFor="let i of [1,2,3,4,5]">
+      <ion-skeleton-text [animated]="true" class="skeleton-imagen"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea corta"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- Lista -->
+  <div class="lista-lugares" *ngIf="!cargando && lugares.length">
+    <button
+      class="tarjeta-lugar"
+      *ngFor="let lugar of lugares"
+      (click)="irADetalle(lugar)"
+    >
+      <div
+        class="tarjeta-imagen"
+        [style.backgroundImage]="lugar.url_imagen_principal ? 'url(' + lugar.url_imagen_principal + ')' : null"
+      ></div>
+      <div class="tarjeta-info">
+        <span class="tarjeta-nombre">{{ lugar.nombre }}</span>
+        <span class="tarjeta-comuna">{{ lugar.comuna?.nombre }}</span>
+        <span class="tarjeta-badge" *ngIf="lugar.es_gratuito">Gratis</span>
+      </div>
+    </button>
+  </div>
+
+  <!-- Estado vacío -->
+  <div class="estado-vacio" *ngIf="!cargando && !lugares.length">
+    <p>No encontramos lugares con estos filtros.</p>
+    <button class="limpiar-filtros-vacio" *ngIf="hayFiltrosActivos" (click)="limpiarFiltros()">
+      Limpiar filtros
+    </button>
+  </div>
+
+</ion-content>
