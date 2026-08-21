@@ -1,3 +1,95 @@
-<p>
-  detalle-lugar works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/lugares" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="detalle-content">
+
+  <!-- Estado cargando -->
+  <div class="estado-cargando" *ngIf="cargando">
+    <ion-skeleton-text [animated]="true" class="skeleton-imagen"></ion-skeleton-text>
+    <div class="skeleton-cuerpo">
+      <ion-skeleton-text [animated]="true" class="skeleton-linea ancha"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea media"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea completa"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea completa"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- Estado error / no encontrado -->
+  <div class="estado-error" *ngIf="!cargando && errorCarga">
+    <p>No pudimos cargar este lugar.</p>
+    <button class="boton-volver" (click)="volver()">Volver</button>
+  </div>
+
+  <!-- Contenido -->
+  <div class="detalle-lugar" *ngIf="!cargando && !errorCarga && lugar">
+
+    <!-- Imagen principal -->
+    <div
+      class="imagen-principal"
+      [style.backgroundImage]="lugar.url_imagen_principal ? 'url(' + lugar.url_imagen_principal + ')' : null"
+    ></div>
+
+    <!-- Nombre + categoría -->
+    <div class="bloque-titulo">
+      <h1>{{ lugar.nombre }}</h1>
+      <span class="categoria">{{ lugar.categoria?.nombre }}</span>
+    </div>
+
+    <!-- Información del lugar -->
+    <div class="bloque-info">
+      <h2>Información del lugar</h2>
+
+      <div class="fila-info" *ngIf="lugar.direccion">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ lugar.direccion }}{{ lugar.comuna?.nombre ? ', ' + lugar.comuna?.nombre : '' }}</span>
+      </div>
+
+      <div class="fila-info">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <span>{{ lugar.es_gratuito ? 'Gratis' : 'Pagado' }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.horario">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ lugar.horario }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.telefono">
+        <ion-icon name="call-outline"></ion-icon>
+        <span>{{ lugar.telefono }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.email_contacto">
+        <ion-icon name="mail-outline"></ion-icon>
+        <span>{{ lugar.email_contacto }}</span>
+      </div>
+
+      <p class="descripcion" *ngIf="lugar.descripcion">{{ lugar.descripcion }}</p>
+    </div>
+
+    <!-- Registrar visita -->
+    <button
+      class="boton-registrar-visita"
+      [disabled]="registrandoVisita"
+      (click)="registrarVisita()"
+    >
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      {{ registrandoVisita ? 'Verificando ubicación...' : 'Registrar visita' }}
+    </button>
+  </div>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="2500"
+    [color]="toastColor"
+    position="top"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>
