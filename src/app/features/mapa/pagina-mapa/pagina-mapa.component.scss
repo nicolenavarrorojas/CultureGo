@@ -1,0 +1,272 @@
+.mapa-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  position: relative;
+}
+
+.mapa-leaflet {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+}
+
+.panel-filtros {
+  position: absolute;
+  top: max(12px, env(safe-area-inset-top));
+  left: 16px;
+  right: 16px;
+  z-index: 10;
+  display: flex;
+  flex-direction: column;
+  gap: 8px; 
+}
+
+.fila-filtros {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  .select-comuna {
+    flex: 1;
+    min-width: 0;
+    background: #fff;
+    border-radius: 12px;
+    padding: 4px 12px;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    font-size: 0.85rem;
+  }
+
+  .chip-gratis {
+    flex-shrink: 0;
+    --background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-success);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+}
+
+.fila-categorias {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 2px;
+
+  ion-chip {
+    flex-shrink: 0;
+    --background: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+    }
+  }
+}
+
+.boton-mi-ubicacion {
+  position: absolute;
+  right: 16px;
+  bottom: calc(180px + env(safe-area-inset-bottom));
+  z-index: 1001; 
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  background: #fff;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.18);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.3rem;
+  color: var(--ion-color-primary);
+}
+
+.overlay-cargando {
+  position: absolute;
+  inset: 0;
+  z-index: 15;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(247, 244, 239, 0.5); 
+  pointer-events: none;
+
+  ion-spinner {
+    color: var(--ion-color-primary);
+    width: 40px;
+    height: 40px;
+  }
+}
+
+.overlay-sin-resultados {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 1002;
+  text-align: center;
+  background: #fff;
+  border-radius: 16px;
+  padding: 16px;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+
+  p {
+    margin: 0 0 10px;
+    font-size: 0.9rem;
+    color: var(--ion-color-dark);
+  }
+
+  .boton-ver-catalogo {
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 20px;
+    font-size: 0.85rem;
+    font-weight: 700;
+  }
+}
+
+.tarjeta-lugar-mapa {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 1002; 
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 14px;
+  border-radius: 18px;
+  background: #fff;
+  box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
+
+  .cerrar-tarjeta {
+    position: absolute;
+    top: 6px;
+    right: 6px;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    border: none;
+    background: var(--ion-color-light);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+
+  .tarjeta-imagen {
+    width: 60px;
+    height: 60px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: #e3deed; 
+    flex-shrink: 0;
+  }
+
+  .tarjeta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+
+    .tarjeta-nombre {
+      font-weight: 600;
+      font-size: 0.95rem;
+      color: var(--ion-color-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tarjeta-categoria {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+
+    .tarjeta-badge {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--ion-color-success-tint);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+
+  .boton-ver-detalles {
+    flex-shrink: 0;
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    border: none;
+    border-radius: 12px;
+    padding: 10px 14px;
+    font-size: 0.8rem;
+    font-weight: 700;
+  }
+}
+
+::ng-deep .pin-lugar {
+  .pin-punto {
+    display: block;
+    width: 22px;
+    height: 22px;
+    border-radius: 50% 50% 50% 0;
+    transform: rotate(-45deg);
+    border: 2px solid #fff;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+  }
+}
+
+// Marcador de ubicación: punto azul sólido con un halo que pulsa,
+::ng-deep .pin-mi-ubicacion {
+  position: relative;
+
+  .punto {
+    position: absolute;
+    top: 4px;
+    left: 4px;
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    background: #4285f4;
+    border: 2px solid #fff;
+    box-shadow: 0 1px 4px rgba(0, 0, 0, 0.4);
+  }
+
+  .halo {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 18px;
+    height: 18px;
+    border-radius: 50%;
+    background: rgba(66, 133, 244, 0.3);
+    animation: pulso-ubicacion 2s ease-out infinite;
+  }
+}
+
+@keyframes pulso-ubicacion {
+  0% {
+    transform: scale(0.6);
+    opacity: 0.8;
+  }
+  100% {
+    transform: scale(2.2);
+    opacity: 0;
+  }
+}

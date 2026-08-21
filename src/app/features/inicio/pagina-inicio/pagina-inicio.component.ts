@@ -86,7 +86,9 @@ export class PaginaInicioComponent implements OnInit {
 
     if (filtro === 'cerca') {
       // Desde Inicio solo se redirige al mapa por técnica de "cerca de mí".
-      this.router.navigate(['/tabs/mapa'], { queryParams: { cerca: true } });
+      // 'true' como string explícito (no booleano): más seguro para cómo
+      // Angular Router serializa queryParams en la URL.
+      this.router.navigate(['/tabs/mapa'], { queryParams: { cerca: 'true' } });
       return;
     }
 

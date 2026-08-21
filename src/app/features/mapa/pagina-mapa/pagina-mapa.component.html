@@ -1,3 +1,89 @@
-<p>
-  pagina-mapa works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Mapa</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="mapa-content" [scrollY]="false">
+
+  <!-- Filtros -->
+  <div class="panel-filtros">
+    <div class="fila-filtros">
+      <ion-select
+        class="select-comuna"
+        placeholder="Todas las comunas"
+        interface="action-sheet"
+        cancelText="Cerrar"
+        [(ngModel)]="idComunaSeleccionada"
+        (ionChange)="onComunaCambiada($event.detail.value)"
+      >
+        <ion-select-option [value]="null">Todas las comunas</ion-select-option>
+        <ion-select-option *ngFor="let comuna of comunas" [value]="comuna.id_comuna">
+          {{ comuna.nombre }}
+        </ion-select-option>
+      </ion-select>
+
+      <ion-chip
+        class="chip-gratis"
+        [class.activo]="soloGratuitos"
+        (click)="onToggleGratuidad()"
+      >
+        <ion-label>Gratis</ion-label>
+      </ion-chip>
+    </div>
+
+    <div class="fila-categorias">
+      <ion-chip
+        *ngFor="let categoria of categorias"
+        [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
+        (click)="onCategoriaSeleccionada(categoria.id_categoria)"
+      >
+        <ion-label>{{ categoria.nombre }}</ion-label>
+      </ion-chip>
+    </div>
+  </div>
+
+  <!-- mapa de Leaflet -->
+  <div #mapaContenedor class="mapa-leaflet"></div>
+
+  <!-- Botón : centrar ubicación -->
+  <button class="boton-mi-ubicacion" (click)="irAMiUbicacion()" aria-label="Ir a mi ubicación">
+    <ion-icon name="locate-outline"></ion-icon>
+  </button>
+
+  <!-- Carga -->
+  <div class="overlay-cargando" *ngIf="cargando">
+    <ion-spinner name="crescent"></ion-spinner>
+  </div>
+
+  <!-- "Cerca de mí" no se encontró nada en el radio de búsqueda -->
+  <div class="overlay-sin-resultados" *ngIf="sinResultadosCerca && !cargando">
+    <p>No encontramos lugares cerca de ti todavía.</p>
+    <button class="boton-ver-catalogo" (click)="verCatalogoCompleto()">
+      Ver catálogo completo
+    </button>
+  </div>
+
+  <!-- Tarjeta detalle del lugar seleccionado -->
+  <div class="tarjeta-lugar-mapa" *ngIf="lugarSeleccionado">
+    <button class="cerrar-tarjeta" (click)="cerrarTarjeta()" aria-label="Cerrar">
+      <ion-icon name="close-outline"></ion-icon>
+    </button>
+
+    <div
+      class="tarjeta-imagen"
+      [style.backgroundImage]="lugarSeleccionado.url_imagen_principal ? 'url(' + lugarSeleccionado.url_imagen_principal + ')' : null"
+    ></div>
+
+    <div class="tarjeta-info">
+      <span class="tarjeta-nombre">{{ lugarSeleccionado.nombre }}</span>
+      <span class="tarjeta-categoria">{{ lugarSeleccionado.categoria?.nombre }}</span>
+      <span class="tarjeta-badge" *ngIf="lugarSeleccionado.es_gratuito">Gratis</span>
+    </div>
+
+    <button class="boton-ver-detalles" (click)="irADetalle(lugarSeleccionado)">
+      Ver detalles
+    </button>
+  </div>
+
+</ion-content>
