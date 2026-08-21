@@ -16,7 +16,7 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { locateOutline, closeOutline } from 'ionicons/icons';
+import { locateOutline, closeOutline, handLeftOutline } from 'ionicons/icons';
 
 import { Lugares, FiltrosLugar } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
@@ -77,13 +77,21 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    addIcons({ locateOutline, closeOutline });
+    addIcons({ locateOutline, closeOutline, handLeftOutline });
   }
 
+  mostrarHintDeslizar = true;
+  
   async ngOnInit() {
     await Promise.all([this.cargarCategorias(), this.cargarComunas()]);
+    setTimeout(() => {
+    this.mostrarHintDeslizar = false;
+    }, 2500);
   }
-
+  
+  onScrollCategorias() {
+  this.mostrarHintDeslizar = false;
+  }
 
   async ionViewWillEnter() {
     const buscarCerca = this.route.snapshot.queryParamMap.get('cerca') === 'true';
@@ -314,4 +322,6 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.sinResultadosCerca = false;
     await this.cargarLugares();
   }
+
+  
 }
