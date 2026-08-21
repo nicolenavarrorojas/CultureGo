@@ -5,7 +5,7 @@
 </ion-header>
 
 <ion-content [fullscreen]="true" class="mapa-content" [scrollY]="false">
-
+  <div class="degradado-superior"></div>
   <!-- Filtros -->
   <div class="panel-filtros">
     <div class="fila-filtros">
@@ -32,15 +32,23 @@
       </ion-chip>
     </div>
 
-    <div class="fila-categorias">
-      <ion-chip
-        *ngFor="let categoria of categorias"
-        [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
-        (click)="onCategoriaSeleccionada(categoria.id_categoria)"
-      >
-        <ion-label>{{ categoria.nombre }}</ion-label>
-      </ion-chip>
+    <div class="fila-categorias-wrapper">
+      <div class="fila-categorias" (scroll)="onScrollCategorias()">
+        <ion-chip
+          *ngFor="let categoria of categorias; let i = index"
+          [ngClass]="'chip-color-' + (i % 4)"
+          [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
+          (click)="onCategoriaSeleccionada(categoria.id_categoria)"
+        >
+          <ion-label>{{ categoria.nombre }}</ion-label>
+        </ion-chip>
+      </div>
+
+      <div class="hint-deslizar" *ngIf="mostrarHintDeslizar">
+        <ion-icon name="hand-left-outline"></ion-icon>
+      </div>
     </div>
+
   </div>
 
   <!-- mapa de Leaflet -->
@@ -70,15 +78,17 @@
       <ion-icon name="close-outline"></ion-icon>
     </button>
 
-    <div
-      class="tarjeta-imagen"
-      [style.backgroundImage]="lugarSeleccionado.url_imagen_principal ? 'url(' + lugarSeleccionado.url_imagen_principal + ')' : null"
-    ></div>
+    <div class="tarjeta-fila-superior">
+      <div
+        class="tarjeta-imagen"
+        [style.backgroundImage]="lugarSeleccionado.url_imagen_principal ? 'url(' + lugarSeleccionado.url_imagen_principal + ')' : null"
+      ></div>
 
-    <div class="tarjeta-info">
-      <span class="tarjeta-nombre">{{ lugarSeleccionado.nombre }}</span>
-      <span class="tarjeta-categoria">{{ lugarSeleccionado.categoria?.nombre }}</span>
-      <span class="tarjeta-badge" *ngIf="lugarSeleccionado.es_gratuito">Gratis</span>
+      <div class="tarjeta-info">
+        <span class="tarjeta-nombre">{{ lugarSeleccionado.nombre }}</span>
+        <span class="tarjeta-categoria">{{ lugarSeleccionado.categoria?.nombre }}</span>
+        <span class="tarjeta-badge" *ngIf="lugarSeleccionado.es_gratuito">Gratis</span>
+      </div>
     </div>
 
     <button class="boton-ver-detalles" (click)="irADetalle(lugarSeleccionado)">
