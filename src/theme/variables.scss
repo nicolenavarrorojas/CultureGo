@@ -1,25 +1,8 @@
 /* For information on how to create your own theme, please refer to:
    https://ionicframework.com/docs/theming/ */
 
-/*
-  Paleta CultureGo — "Jacarandá + Adobe patrimonial"
-
-  - primary   (Jacarandá #6B4FA0): color de los jacarandás en flor en Santiago
-              (oct-nov), la imagen más reconocible de la ciudad.
-  - secondary (Adobe/Ladrillo #C1622D): tejas y muros de los barrios
-              patrimoniales (Yungay, Lastarria, Bellas Artes).
-  - tertiary  (Verde cerro #5A8A6E): cerros y parques (Santa Lucía, San
-              Cristóbal); se usa para categorías, no para "éxito".
-  - success   (#3E9142): confirmaciones y el badge "Gratis" — distinto del
-              verde cerro para no confundir categoría con gratuidad.
-  - light     (Piedra cálida #F7F4EF): fondo neutro, sin caer en el cream
-              genérico.
-  - dark      (Morado carbón #2B2436): texto y modo oscuro, mantiene la
-              identidad incluso donde iría un negro plano.
-*/
-
 :root {
-  /** primary — Jacarandá **/
+  /** primary **/
   --ion-color-primary: #6B4FA0;
   --ion-color-primary-rgb: 107, 79, 160;
   --ion-color-primary-contrast: #ffffff;
@@ -27,7 +10,7 @@
   --ion-color-primary-shade: #5e468d;
   --ion-color-primary-tint: #7b5fb0;
 
-  /** secondary — Adobe/Ladrillo **/
+  /** secondary **/
   --ion-color-secondary: #C1622D;
   --ion-color-secondary-rgb: 193, 98, 45;
   --ion-color-secondary-contrast: #ffffff;
@@ -35,7 +18,7 @@
   --ion-color-secondary-shade: #aa5628;
   --ion-color-secondary-tint: #d2723d;
 
-  /** tertiary — Verde cerro **/
+  /** tertiary **/
   --ion-color-tertiary: #5A8A6E;
   --ion-color-tertiary-rgb: 90, 138, 110;
   --ion-color-tertiary-contrast: #ffffff;
@@ -67,7 +50,7 @@
   --ion-color-danger-shade: #a93226;
   --ion-color-danger-tint: #d34839;
 
-  /** dark — Morado carbón **/
+  /** dark **/
   --ion-color-dark: #2B2436;
   --ion-color-dark-rgb: 43, 36, 54;
   --ion-color-dark-contrast: #ffffff;
@@ -83,7 +66,7 @@
   --ion-color-medium-shade: #797284;
   --ion-color-medium-tint: #9892a1;
 
-  /** light — Piedra cálida **/
+  /** light **/
   --ion-color-light: #F7F4EF;
   --ion-color-light-rgb: 247, 244, 239;
   --ion-color-light-contrast: #2b2436;
@@ -91,10 +74,6 @@
   --ion-color-light-shade: #e4d9c8;
   --ion-color-light-tint: #f8f5f1;
 
-  /** tipografía — Work Sans como fuente base de toda la app **/
+  /** Fuente **/
   --ion-font-family: 'Work Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
 }
-
-// Fraunces se usa puntualmente para títulos (ver pagina-inicio.component.scss
-// y otros componentes), no como --ion-font-family global, para no perder
-// legibilidad en texto largo.

@@ -4,7 +4,7 @@ import { Comuna } from './comuna.model';
 export interface Lugar {
   id_lugar: string;
   nombre: string;
-  descripcion_resumida: string;
+  descripcion: string | null;
   id_categoria: string;
   id_comuna: string;
   es_gratuito: boolean;
@@ -13,10 +13,11 @@ export interface Lugar {
   url_imagen_principal?: string | null;
   direccion?: string | null;
   horario?: string | null;
-  creado_por?: string | null; // id_usuario del admin que lo creó
+  creado_por?: string | null; 
   fecha_creacion: string;
+  telefono?: string | null;
+  email_contacto?: string | null;
 
-  // Relaciones opcionales
   categoria?: Categoria;
   comuna?: Comuna;
 }
