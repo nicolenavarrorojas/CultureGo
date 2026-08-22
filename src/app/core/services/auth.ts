@@ -4,8 +4,6 @@ import { Usuario } from '../models';
 
 /**
  * Autenticación vía Supabase Auth.
- * El registro/login de USUARIO (tabla propia) se sincroniza con
- * auth.users mediante un trigger en Supabase.
  */
 @Injectable({
   providedIn: 'root',
@@ -46,5 +44,17 @@ export class Auth {
 
     if (error) return null;
     return perfil as Usuario;
+  }
+
+  async recuperarPassword(email: string) {
+    const { error } = await this.supabase.auth.resetPasswordForEmail(email, {
+      redirectTo: `${window.location.origin}/auth/restablecer`,
+    });
+    if (error) throw error;
+  }
+
+  async actualizarPassword(nuevaPassword: string) {
+    const { error } = await this.supabase.auth.updateUser({ password: nuevaPassword });
+    if (error) throw error;
   }
 }
