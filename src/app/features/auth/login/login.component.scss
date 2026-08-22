@@ -1,0 +1,106 @@
+.login-content {
+  --padding-start: 24px;
+  --padding-end: 24px;
+  --padding-top: 60px;
+}
+
+.encabezado {
+  margin-bottom: 32px;
+
+  h1 {
+    margin: 0 0 6px;
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campo {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  background: var(--ion-color-light);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  ion-icon {
+    color: var(--ion-color-medium);
+    font-size: 1.1rem;
+    flex-shrink: 0;
+  }
+
+  input {
+    border: none;
+    background: transparent;
+    outline: none;
+    width: 100%;
+    font-size: 0.95rem;
+    color: var(--ion-color-dark);
+
+    &::placeholder {
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .boton-ojo {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 4px;
+    display: flex;
+    align-items: center;
+    color: var(--ion-color-medium);
+    font-size: 1.1rem;
+  }
+}
+
+.boton-principal {
+  margin-top: 8px;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+.enlaces {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  a {
+    color: var(--ion-color-primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+    text-decoration: none;
+  }
+
+  .boton-texto {
+    background: none;
+    border: none;
+    color: var(--ion-color-medium);
+    font-size: 0.85rem;
+    text-decoration: underline;
+  }
+}

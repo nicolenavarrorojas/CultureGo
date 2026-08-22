@@ -1,3 +1,67 @@
-<p>
-  login works!
-</p>
+<ion-content [fullscreen]="true" class="login-content">
+
+  <div class="encabezado">
+    <h1>Bienvenido de vuelta</h1>
+    <p>Inicia sesión para guardar tus visitas y medallas.</p>
+  </div>
+
+  <form class="formulario" (ngSubmit)="iniciarSesion()">
+    <label class="campo">
+      <ion-icon name="mail-outline"></ion-icon>
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        required
+      />
+    </label>
+
+    <label class="campo">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <input
+        [type]="mostrarPassword ? 'text' : 'password'"
+        placeholder="Contraseña"
+        [(ngModel)]="password"
+        name="password"
+        autocomplete="current-password"
+        required
+      />
+      <button
+        type="button"
+        class="boton-ojo"
+        (click)="toggleMostrarPassword()"
+        [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      >
+        <ion-icon [name]="mostrarPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+      </button>
+    </label>
+
+    <button
+      type="submit"
+      class="boton-principal"
+      [disabled]="!formularioValido || cargando"
+    >
+      {{ cargando ? 'Ingresando...' : 'Iniciar sesión' }}
+    </button>
+  </form>
+
+  <div class="enlaces">
+    <a routerLink="/auth/registro">¿No tienes cuenta? Regístrate</a>
+    <button class="boton-texto" (click)="explorarSinCuenta()">
+      Seguir explorando sin cuenta
+    </button>
+  </div>
+
+  <ion-toast
+    [isOpen]="mostrarError"
+    [message]="errorMensaje"
+    [duration]="3000"
+    color="danger"
+    position="top"
+    (didDismiss)="mostrarError = false"
+  ></ion-toast>
+
+</ion-content>

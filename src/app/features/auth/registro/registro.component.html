@@ -1,3 +1,98 @@
-<p>
-  registro works!
-</p>
+<ion-content [fullscreen]="true" class="registro-content">
+
+  <div class="encabezado">
+    <h1>Crea tu cuenta</h1>
+    <p>Registra tus visitas y gana medallas explorando Santiago.</p>
+  </div>
+
+  <form class="formulario" (ngSubmit)="registrarse()">
+    <label class="campo">
+      <ion-icon name="person-outline"></ion-icon>
+      <input
+        type="text"
+        placeholder="Nombre"
+        [(ngModel)]="nombre"
+        name="nombre"
+        autocomplete="name"
+        required
+      />
+    </label>
+
+    <label class="campo">
+      <ion-icon name="mail-outline"></ion-icon>
+      <input
+        type="email"
+        placeholder="Correo electrónico"
+        [(ngModel)]="email"
+        name="email"
+        autocomplete="email"
+        inputmode="email"
+        required
+      />
+    </label>
+
+    <label class="campo">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <input
+        [type]="mostrarPassword ? 'text' : 'password'"
+        placeholder="Contraseña"
+        [(ngModel)]="password"
+        name="password"
+        autocomplete="new-password"
+        required
+      />
+      <button
+        type="button"
+        class="boton-ojo"
+        (click)="toggleMostrarPassword()"
+        [attr.aria-label]="mostrarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      >
+        <ion-icon [name]="mostrarPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+      </button>
+    </label>
+
+    <label class="campo">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <input
+        [type]="mostrarConfirmarPassword ? 'text' : 'password'"
+        placeholder="Confirmar contraseña"
+        [(ngModel)]="confirmarPassword"
+        name="confirmarPassword"
+        autocomplete="new-password"
+        required
+      />
+      <button
+        type="button"
+        class="boton-ojo"
+        (click)="toggleMostrarConfirmarPassword()"
+        [attr.aria-label]="mostrarConfirmarPassword ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+      >
+        <ion-icon [name]="mostrarConfirmarPassword ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+      </button>
+    </label>
+
+    <p class="mensaje-validacion" *ngIf="erroresVisibles">{{ erroresVisibles }}</p>
+
+    <button
+      type="submit"
+      class="boton-principal"
+      [disabled]="!formularioValido || cargando"
+    >
+      {{ cargando ? 'Creando cuenta...' : 'Crear cuenta' }}
+    </button>
+  </form>
+
+  <div class="enlaces">
+    <a routerLink="/auth/login">¿Ya tienes cuenta? Inicia sesión</a>
+  </div>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="3000"
+    [color]="toastColor"
+    position="top"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>
