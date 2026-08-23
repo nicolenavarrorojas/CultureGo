@@ -1,14 +1,121 @@
 import { Component, OnInit } from '@angular/core';
+import { CommonModule } from '@angular/common';
+import { Router } from '@angular/router';
+import {
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonContent,
+  IonIcon,
+  IonSkeletonText,
+  IonToast,
+} from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  settingsOutline,
+  helpCircleOutline,
+  logOutOutline,
+  chevronForwardOutline,
+} from 'ionicons/icons';
+
+import { Auth } from 'src/app/core/services/auth';
+import { Gamificacion } from 'src/app/core/services/gamificacion';
+import { Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
+
+type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
+
+const LIMITE_MEDALLAS_RECIENTES = 4;
 
 @Component({
   selector: 'app-pagina-perfil',
+  standalone: true,
+  imports: [
+    CommonModule,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonContent,
+    IonIcon,
+    IonSkeletonText,
+    IonToast,
+  ],
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
 })
-export class PaginaPerfilComponent  implements OnInit {
+export class PaginaPerfilComponent implements OnInit {
+  usuario: Usuario | null = null;
+  cargando = true;
 
-  constructor() { }
+  totalLugaresVisitados: number | null = null;
+  totalCategoriasVisitadas: number | null = null;
+  totalMedallas = 0;
+  medallasRecientes: Medalla[] = [];
 
-  ngOnInit() {}
+  toastMensaje = '';
+  mostrarToast = false;
 
+  constructor(
+    private authService: Auth,
+    private gamificacionService: Gamificacion,
+    private router: Router
+  ) {
+    addIcons({ settingsOutline, helpCircleOutline, logOutOutline, chevronForwardOutline });
+  }
+
+  async ngOnInit() {
+    this.cargando = true;
+    try {
+      this.usuario = await this.authService.obtenerUsuarioActual();
+      if (!this.usuario) return;
+
+      const [totalLugares, totalCategorias, medallasObtenidas] = await Promise.all([
+        this.gamificacionService.contarLugaresVisitados(this.usuario.id_usuario),
+        this.gamificacionService.contarCategoriasVisitadas(this.usuario.id_usuario),
+        this.gamificacionService.listarMedallasDeUsuario(this.usuario.id_usuario) as Promise<
+          MedallaObtenida[]
+        >,
+      ]);
+
+      this.totalLugaresVisitados = totalLugares;
+      this.totalCategoriasVisitadas = totalCategorias;
+
+      this.totalMedallas = medallasObtenidas.length;
+
+      const ordenadas = [...medallasObtenidas].sort(
+        (a, b) => new Date(b.fecha_obtencion).getTime() - new Date(a.fecha_obtencion).getTime()
+      );
+      this.medallasRecientes = ordenadas.slice(0, LIMITE_MEDALLAS_RECIENTES).map((um) => um.medalla);
+    } finally {
+      this.cargando = false;
+    }
+  }
+
+  irAHistorial() {
+    this.router.navigateByUrl('/perfil/historial');
+  }
+
+  personalizarAvatar() {
+    // Personalización de avatar PROXIMAMENTE
+    this.mostrarAviso('Próximamente');
+  }
+
+  irAConfiguracion() {
+    // No hay pantalla de configuración definida 
+    this.mostrarAviso('Próximamente');
+  }
+
+  irAAyuda() {
+    // Soporte/recomendaciones 
+    this.mostrarAviso('Próximamente');
+  }
+
+  async cerrarSesion() {
+    await this.authService.cerrarSesion();
+    this.router.navigateByUrl('/tabs/inicio');
+  }
+
+  private mostrarAviso(mensaje: string) {
+    this.toastMensaje = mensaje;
+    this.mostrarToast = true;
+  }
 }

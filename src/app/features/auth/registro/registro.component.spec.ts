@@ -1,6 +1,9 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+/// <reference types="jasmine" />
 
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
+
+import { Auth } from 'src/app/core/services/auth';
 import { RegistroComponent } from './registro.component';
 
 describe('RegistroComponent', () => {
@@ -9,8 +12,17 @@ describe('RegistroComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ RegistroComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [RegistroComponent],
+      providers: [
+        {
+          provide: Auth,
+          useValue: { registrarse: async () => ({ session: null }) },
+        },
+        {
+          provide: Router,
+          useValue: { navigateByUrl: () => Promise.resolve(true) },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RegistroComponent);

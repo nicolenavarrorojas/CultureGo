@@ -8,8 +8,8 @@ export interface Lugar {
   id_categoria: string;
   id_comuna: string;
   es_gratuito: boolean;
-  latitud: number;
-  longitud: number;
+  latitud: number | null;
+  longitud: number | null;
   url_imagen_principal?: string | null;
   direccion?: string | null;
   horario?: string | null;

@@ -14,8 +14,22 @@ export const routes: Routes = [
     path: 'auth/registro',
     loadComponent: () => import('./features/auth/registro/registro.component').then((m) => m.RegistroComponent),
   },
+  {
+    path: 'auth/recuperar',
+    loadComponent: () =>
+      import('./features/auth/recuperar-password/recuperar-password.component').then(
+        (m) => m.RecuperarPasswordComponent
+      ),
+  },
+  {
+    path: 'auth/restablecer',
+    loadComponent: () =>
+      import('./features/auth/restablecer-password/restablecer-password.component').then(
+        (m) => m.RestablecerPasswordComponent
+      ),
+  },
 
-  // Tabs principales (Inicio / Mapa / Perfil) 
+  // Tabs principales (Inicio / Mapa / Perfil)
   {
     path: 'tabs',
     loadComponent: () => import('./shared/components/tabs/tabs.component').then((m) => m.TabsComponent),
@@ -40,7 +54,7 @@ export const routes: Routes = [
     ],
   },
 
-  // Catálogo completo 
+  // Catálogo completo
   {
     path: 'lugares',
     loadComponent: () =>
@@ -60,7 +74,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-  // Admin 
+  // Admin
   {
     path: 'admin/login-admin',
     loadComponent: () =>
