@@ -1,3 +1,99 @@
-<p>
-  pagina-perfil works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Mi perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="perfil-content">
+
+  <!-- cargando -->
+  <div class="estado-cargando" *ngIf="cargando">
+    <ion-skeleton-text [animated]="true" class="skeleton-avatar"></ion-skeleton-text>
+    <ion-skeleton-text [animated]="true" class="skeleton-linea"></ion-skeleton-text>
+  </div>
+
+  <ng-container *ngIf="!cargando && usuario as usuarioActual">
+
+    <!-- Avatar - personalizar -->
+    <div class="bloque-avatar">
+      <div class="avatar-circulo">
+        {{ usuarioActual.nombre.charAt(0).toUpperCase() || '?' }}
+      </div>
+      <button class="boton-personalizar" (click)="personalizarAvatar()">
+        Personalizar
+      </button>
+    </div>
+
+    <h1 class="nombre-usuario">{{ usuarioActual.nombre || 'Usuario' }}</h1>
+
+    <!-- Stats -->
+    <div class="fila-stats">
+      <div class="stat-box">
+        <span class="stat-numero">{{ totalLugaresVisitados ?? '—' }}</span>
+        <span class="stat-label">Lugares</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-numero">{{ totalMedallas }}</span>
+        <span class="stat-label">Medallas</span>
+      </div>
+      <div class="stat-box">
+        <span class="stat-numero">{{ totalCategoriasVisitadas ?? '—' }}</span>
+        <span class="stat-label">Categorías</span>
+      </div>
+    </div>
+
+    <!-- Medallas recientes -->
+    <div class="bloque-medallas">
+      <div class="bloque-medallas-header">
+        <h2>Medallas recientes</h2>
+        <button class="ver-todas" (click)="irAHistorial()">
+          Ver todas
+          <ion-icon name="chevron-forward-outline"></ion-icon>
+        </button>
+      </div>
+
+      <div class="lista-medallas" *ngIf="medallasRecientes.length">
+        <div class="medalla-item" *ngFor="let medalla of medallasRecientes">
+          <div
+            class="medalla-icono"
+            [style.backgroundImage]="medalla.url_icono ? 'url(' + medalla.url_icono + ')' : null"
+          ></div>
+          <span>{{ medalla.nombre }}</span>
+        </div>
+      </div>
+
+      <p class="sin-medallas" *ngIf="!medallasRecientes.length">
+        Todavía no tienes medallas. ¡Registra tu primera visita!
+      </p>
+    </div>
+
+    <!-- Opciones -->
+    <div class="lista-opciones">
+      <button class="opcion" (click)="irAConfiguracion()">
+        <ion-icon name="settings-outline"></ion-icon>
+        <span>Configuración</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
+      <button class="opcion" (click)="irAAyuda()">
+        <ion-icon name="help-circle-outline"></ion-icon>
+        <span>Ayuda</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
+      <button class="opcion opcion-salir" (click)="cerrarSesion()">
+        <ion-icon name="log-out-outline"></ion-icon>
+        <span>Cerrar sesión</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
+    </div>
+
+  </ng-container>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="1800"
+    position="bottom"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>

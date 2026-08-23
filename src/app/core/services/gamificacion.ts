@@ -38,4 +38,32 @@ export class Gamificacion {
     if (error) throw error;
     return data as Medalla[];
   }
+
+  /** Cantidad de lugares DISTINTOS que el usuario ha visitado. */
+  async contarLugaresVisitados(idUsuario: string): Promise<number> {
+    const { data, error } = await this.supabase
+      .from('visita')
+      .select('id_lugar')
+      .eq('id_usuario', idUsuario);
+    if (error) throw error;
+ 
+    const idsUnicos = new Set((data ?? []).map((v) => v.id_lugar));
+    return idsUnicos.size;
+  }
+
+  /** Cantidad de categorías DISTINTAS que el usuario ha visitado. */
+  async contarCategoriasVisitadas(idUsuario: string): Promise<number> {
+    const { data, error } = await this.supabase
+      .from('visita')
+      .select('lugar(id_categoria)')
+      .eq('id_usuario', idUsuario);
+    if (error) throw error;
+ 
+    const idsUnicos = new Set(
+      (data ?? [])
+        .map((v: any) => v.lugar?.id_categoria)
+        .filter((id: string | undefined) => !!id)
+    );
+    return idsUnicos.size;
+  }
 }
