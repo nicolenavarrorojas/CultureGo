@@ -20,6 +20,7 @@ import {
   IonSkeletonText,
   IonToast,
   IonModal,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -122,7 +123,8 @@ export class GestionLugaresComponent implements OnInit {
     private categoriasService: Categorias,
     private comunasService: Comunas,
     private authService: Auth,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {
     addIcons({
       arrowBackOutline,
@@ -165,7 +167,6 @@ export class GestionLugaresComponent implements OnInit {
   }
 
   // CRUD de lugares
-
 
   abrirFormularioNuevo() {
     this.lugarEditandoId = null;
@@ -242,10 +243,26 @@ export class GestionLugaresComponent implements OnInit {
   }
 
   async eliminarLugar(lugar: Lugar) {
+    const alerta = await this.alertController.create({
+      header: 'Eliminar lugar',
+      message: `¿Eliminar "${lugar.nombre}"? Esta acción no se puede deshacer.`,
+      buttons: [
+        {
+          text: 'Cancelar',
+          role: 'cancel',
+        },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'boton-alerta-eliminar', 
+          handler: () => this.confirmarEliminacion(lugar),
+        },
+      ],
+    });
+    await alerta.present();
+  }
 
-    const confirmado = window.confirm(`¿Eliminar "${lugar.nombre}"? Esta acción no se puede deshacer.`);
-    if (!confirmado) return;
-
+  private async confirmarEliminacion(lugar: Lugar) {
     try {
       await this.adminService.eliminarLugar(lugar.id_lugar);
       this.lugares = this.lugares.filter((l) => l.id_lugar !== lugar.id_lugar);
