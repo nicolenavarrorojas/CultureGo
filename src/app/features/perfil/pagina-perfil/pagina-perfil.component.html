@@ -14,7 +14,7 @@
 
   <ng-container *ngIf="!cargando && usuario as usuarioActual">
 
-    <!-- Avatar - personalizar -->
+    <!-- Avatar + personalizar -->
     <div class="bloque-avatar">
       <div class="avatar-circulo">
         {{ usuarioActual.nombre.charAt(0).toUpperCase() || '?' }}
@@ -47,7 +47,7 @@
       <div class="bloque-medallas-header">
         <h2>Medallas recientes</h2>
         <button class="ver-todas" (click)="irAHistorial()">
-          Ver historial
+          Ver todas
           <ion-icon name="chevron-forward-outline"></ion-icon>
         </button>
       </div>
@@ -69,6 +69,11 @@
 
     <!-- Opciones -->
     <div class="lista-opciones">
+      <button class="opcion" *ngIf="usuarioActual.es_admin" (click)="irAPanelAdmin()">
+        <ion-icon name="shield-checkmark-outline"></ion-icon>
+        <span>Panel de administración</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
       <button class="opcion" (click)="irAConfiguracion()">
         <ion-icon name="settings-outline"></ion-icon>
         <span>Configuración</span>
