@@ -26,6 +26,8 @@ describe('GestionLugaresComponent', () => {
             eliminarLugar: async () => undefined,
             listarReportes: async () => [],
             resolverReporte: async () => undefined,
+            subirImagenLugar: async () => 'https://ejemplo.com/imagen.jpg',
+            eliminarImagenLugar: async () => undefined,
           },
         },
         {

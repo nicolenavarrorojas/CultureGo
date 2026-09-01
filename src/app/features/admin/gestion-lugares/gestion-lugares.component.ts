@@ -103,6 +103,7 @@ export class GestionLugaresComponent implements OnInit {
   segmentoActivo: Segmento = 'lugares';
   cargando = true;
   guardando = false;
+  subiendoImagen = false;
 
   lugares: Lugar[] = [];
   reportes: Reporte[] = [];
@@ -111,7 +112,7 @@ export class GestionLugaresComponent implements OnInit {
   comunas: { id_comuna: string; nombre: string }[] = [];
 
   mostrarFormulario = false;
-  lugarEditandoId: string | null = null; 
+  lugarEditandoId: string | null = null;
   formulario: FormularioLugar = { ...FORMULARIO_VACIO };
 
   toastMensaje = '';
@@ -205,6 +206,60 @@ export class GestionLugaresComponent implements OnInit {
     );
   }
 
+  async onArchivoSeleccionado(evento: Event) {
+    const input = evento.target as HTMLInputElement;
+    const archivo = input.files?.[0];
+    if (!archivo) return;
+
+    if (!archivo.type.startsWith('image/')) {
+      this.mostrarAviso('Solo se permiten archivos de imagen.');
+      input.value = '';
+      return;
+    }
+    const TAMANO_MAXIMO_MB = 5;
+    if (archivo.size > TAMANO_MAXIMO_MB * 1024 * 1024) {
+      this.mostrarAviso(`La imagen no puede pesar más de ${TAMANO_MAXIMO_MB}MB.`);
+      input.value = '';
+      return;
+    }
+
+    const urlAnterior = this.formulario.url_imagen_principal;
+
+    this.subiendoImagen = true;
+    try {
+      const url = await this.adminService.subirImagenLugar(archivo);
+      this.formulario.url_imagen_principal = url;
+
+
+      await this.eliminarImagenSiEsPropia(urlAnterior);
+    } catch {
+      this.mostrarAviso('No se pudo subir la imagen. Intenta de nuevo.');
+    } finally {
+      this.subiendoImagen = false;
+      input.value = '';
+    }
+  }
+
+
+  private extraerRutaStorage(url: string): string | null {
+    const marcador = '/storage/v1/object/public/lugares/';
+    const indice = url.indexOf(marcador);
+    if (indice === -1) return null;
+    return url.substring(indice + marcador.length);
+  }
+
+  private async eliminarImagenSiEsPropia(url: string) {
+    if (!url) return;
+    const ruta = this.extraerRutaStorage(url);
+    if (!ruta) return; 
+
+    try {
+      await this.adminService.eliminarImagenLugar(ruta);
+    } catch {
+
+    }
+  }
+
   async guardarLugar() {
     if (!this.formularioValido || this.guardando) return;
 
@@ -254,7 +309,7 @@ export class GestionLugaresComponent implements OnInit {
         {
           text: 'Eliminar',
           role: 'destructive',
-          cssClass: 'boton-alerta-eliminar', 
+          cssClass: 'boton-alerta-eliminar',
           handler: () => this.confirmarEliminacion(lugar),
         },
       ],
@@ -265,6 +320,9 @@ export class GestionLugaresComponent implements OnInit {
   private async confirmarEliminacion(lugar: Lugar) {
     try {
       await this.adminService.eliminarLugar(lugar.id_lugar);
+      if (lugar.url_imagen_principal) {
+        await this.eliminarImagenSiEsPropia(lugar.url_imagen_principal);
+      }
       this.lugares = this.lugares.filter((l) => l.id_lugar !== lugar.id_lugar);
       this.mostrarAviso('Lugar eliminado.');
     } catch {
@@ -283,7 +341,6 @@ export class GestionLugaresComponent implements OnInit {
       this.mostrarAviso('No se pudo actualizar el reporte.');
     }
   }
-
 
   async cerrarSesion() {
     await this.authService.cerrarSesion();

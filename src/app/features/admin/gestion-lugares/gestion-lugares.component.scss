@@ -197,7 +197,7 @@
 
   .campo-form {
     flex: 1;
-    min-width: 0; 
+    min-width: 0;
   }
 }
 
@@ -247,6 +247,46 @@
   }
 }
 
+.subida-imagen {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+
+  .preview-imagen {
+    width: 72px;
+    height: 72px;
+    border-radius: 12px;
+    background-color: #e3deed;
+    background-size: cover;
+    background-position: center;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    span {
+      font-size: 0.65rem;
+      color: var(--ion-color-medium);
+      text-align: center;
+      padding: 4px;
+    }
+  }
+
+  .boton-subir-imagen {
+    background: var(--ion-color-light);
+    border: 1px solid var(--ion-color-light-shade);
+    border-radius: 10px;
+    padding: 10px 16px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ion-color-primary);
+
+    &[disabled] {
+      opacity: 0.6;
+    }
+  }
+}
+
 .boton-guardar {
   display: flex;
   align-items: center;
@@ -260,7 +300,7 @@
   padding: 15px;
   font-size: 0.95rem;
   font-weight: 700;
-  box-shadow: 0 4px 14px rgba(107, 79, 160, 0.35); 
+  box-shadow: 0 4px 14px rgba(107, 79, 160, 0.35);
 
   ion-icon {
     font-size: 1.15rem;

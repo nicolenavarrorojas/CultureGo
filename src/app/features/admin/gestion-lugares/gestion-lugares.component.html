@@ -163,10 +163,32 @@
             </label>
           </div>
 
-          <label class="campo-form">
-            <span>URL de imagen principal</span>
-            <input type="text" [(ngModel)]="formulario.url_imagen_principal" name="url_imagen_principal" />
-          </label>
+          <div class="campo-form">
+            <span>Imagen principal</span>
+            <div class="subida-imagen">
+              <div
+                class="preview-imagen"
+                [style.backgroundImage]="formulario.url_imagen_principal ? 'url(' + formulario.url_imagen_principal + ')' : null"
+              >
+                <span *ngIf="!formulario.url_imagen_principal">Sin imagen</span>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onArchivoSeleccionado($event)"
+                #inputArchivo
+                hidden
+              />
+              <button
+                type="button"
+                class="boton-subir-imagen"
+                [disabled]="subiendoImagen"
+                (click)="inputArchivo.click()"
+              >
+                {{ subiendoImagen ? 'Subiendo...' : (formulario.url_imagen_principal ? 'Cambiar imagen' : 'Subir imagen') }}
+              </button>
+            </div>
+          </div>
 
           <div class="fila-doble">
             <label class="campo-form">
