@@ -1,6 +1,13 @@
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+/// <reference types="jasmine" />
 
+import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Router } from '@angular/router';
+
+import { Admin } from 'src/app/core/services/admin';
+import { Lugares } from 'src/app/core/services/lugares';
+import { Categorias } from 'src/app/core/services/categorias';
+import { Comunas } from 'src/app/core/services/comunas';
+import { Auth } from 'src/app/core/services/auth';
 import { GestionLugaresComponent } from './gestion-lugares.component';
 
 describe('GestionLugaresComponent', () => {
@@ -9,8 +16,39 @@ describe('GestionLugaresComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ GestionLugaresComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [GestionLugaresComponent],
+      providers: [
+        {
+          provide: Admin,
+          useValue: {
+            crearLugar: async () => ({}),
+            editarLugar: async () => ({}),
+            eliminarLugar: async () => undefined,
+            listarReportes: async () => [],
+            resolverReporte: async () => undefined,
+          },
+        },
+        {
+          provide: Lugares,
+          useValue: { listar: async () => [] },
+        },
+        {
+          provide: Categorias,
+          useValue: { listar: async () => [] },
+        },
+        {
+          provide: Comunas,
+          useValue: { listar: async () => [] },
+        },
+        {
+          provide: Auth,
+          useValue: { cerrarSesion: async () => undefined },
+        },
+        {
+          provide: Router,
+          useValue: { navigateByUrl: () => Promise.resolve(true) },
+        },
+      ],
     }).compileComponents();
 
     fixture = TestBed.createComponent(GestionLugaresComponent);

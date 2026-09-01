@@ -1,9 +1,11 @@
-// Paleta "Jacarandá + Adobe patrimonial" de src/theme/variables.scss
-
 .login-content {
   --padding-start: 24px;
   --padding-end: 24px;
   --padding-top: 60px;
+
+  * {
+    font-family: 'Work Sans', sans-serif !important;
+  }
 }
 
 .encabezado {

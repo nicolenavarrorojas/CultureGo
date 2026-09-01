@@ -16,6 +16,7 @@ import {
   helpCircleOutline,
   logOutOutline,
   chevronForwardOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
@@ -59,12 +60,19 @@ export class PaginaPerfilComponent implements OnInit {
     private gamificacionService: Gamificacion,
     private router: Router
   ) {
-    addIcons({ settingsOutline, helpCircleOutline, logOutOutline, chevronForwardOutline });
+    addIcons({
+      settingsOutline,
+      helpCircleOutline,
+      logOutOutline,
+      chevronForwardOutline,
+      shieldCheckmarkOutline,
+    });
   }
 
   async ngOnInit() {
     this.cargando = true;
     try {
+
       this.usuario = await this.authService.obtenerUsuarioActual();
       if (!this.usuario) return;
 
@@ -95,13 +103,16 @@ export class PaginaPerfilComponent implements OnInit {
   }
 
   personalizarAvatar() {
-    // Personalización de avatar PROXIMAMENTE
+    // Personalización de avatar
     this.mostrarAviso('Próximamente');
   }
 
   irAConfiguracion() {
-    // No hay pantalla de configuración definida 
     this.mostrarAviso('Próximamente');
+  }
+
+  irAPanelAdmin() {
+    this.router.navigateByUrl('/admin/gestion-lugares');
   }
 
   irAAyuda() {

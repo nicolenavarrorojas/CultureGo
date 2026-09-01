@@ -2,33 +2,34 @@
   --padding-start: 0;
   --padding-end: 0;
   --padding-top: 0;
+  * {
+    font-family: 'Work Sans', sans-serif !important;
+  }
 }
 
 .header-hero {
   background: var(--ion-color-primary);
-  padding: 20px 20px 0;
-  border-bottom-left-radius: 50% 30px;
-  border-bottom-right-radius: 50% 30px;
-  padding-bottom: 15px;
+  padding: 20px 20px 16px; 
+  border-bottom-left-radius: 50% 24px;
+  border-bottom-right-radius: 50% 24px;
   position: relative;
 }
 
 .header-saludo {
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: space-between;
-  margin-bottom: 18px;
 
   .saludo-texto {
     .subtitulo {
       margin: 0;
-      font-size: 1rem;
+      font-size: 0.8rem;
       letter-spacing: 0.04em;
       color: rgba(255, 255, 255, 0.75);
     }
 
     h1 {
-      margin: 2px 0 4px;
+      margin: 2px 0 0;
       font-family: 'Fraunces', serif;
       font-size: 1.6rem;
       font-weight: 600;
@@ -36,25 +37,58 @@
       color: #ffffff;
     }
   }
+}
 
-  .mascota-avatar {
-    width: 80px;
-    height: 80px;
-    flex-shrink: 0;
-    overflow: hidden;
-    background: #ffffff;
-    border-radius: 50%;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+.avatar-wrapper {
+  position: relative;
+  flex-shrink: 0;
+  width: 68px;
+}
+
+.arco-culturego {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+  transform: translateX(-50%) scale(0.85); 
+  width: 105px;
+  height: 58px;
+  z-index: 2;
+  pointer-events: none;
+
+  .texto-arco {
+    font-family: 'Fraunces', serif;
+    font-weight: 700;
+    font-size: 13px;
+    fill: #ffffff;
+    letter-spacing: 1.5px;
   }
+}
 
-  .mascota-avatar img {
+.mascota-avatar {
+  width: 68px;
+  height: 68px;
+  overflow: hidden;
+  background: #ffffff;
+  border-radius: 50%;
+  border: 3px solid #ffffff;
+  box-shadow: 0 2px 8px rgba(43, 36, 54, 0.2);
+  position: relative;
+  z-index: 1;
+}
+
+.mascota-avatar img {
   width: 100%;
   height: 100%;
-  object-fit: contain; 
-  margin: 0; 
-  }
+  object-fit: cover;
+  object-position: center top;
+}
+
+.pregunta-descubrir {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ion-color-dark);
+  margin: 14px 20px 12px;
 }
 
 .buscador {
@@ -62,9 +96,7 @@
   --background: #ffffff;
   --border-radius: 14px;
   --box-shadow: 0 3px 6px rgba(43, 36, 54, 0.15);
-  position: relative;
-  z-index: 2;
-  margin-top: 4px; 
+  margin-bottom: 15px;
 }
 
 .contenido-inicio {

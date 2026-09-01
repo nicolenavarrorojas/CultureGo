@@ -73,13 +73,7 @@ export const routes: Routes = [
       import('./features/gamificacion/medallas/medallas.component').then((m) => m.MedallasComponent),
     canActivate: [authGuard],
   },
-
   // Admin
-  {
-    path: 'admin/login-admin',
-    loadComponent: () =>
-      import('./features/admin/login-admin/login-admin.component').then((m) => m.LoginAdminComponent),
-  },
   {
     path: 'admin/gestion-lugares',
     loadComponent: () =>
