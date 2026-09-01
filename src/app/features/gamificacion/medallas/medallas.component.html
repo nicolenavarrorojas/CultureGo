@@ -1,3 +1,115 @@
-<p>
-  medallas works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mi historial</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event.detail.value)">
+      <ion-segment-button value="lugares">
+        <ion-label>Lugares</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="medallas">
+        <ion-label>Medallas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="categorias">
+        <ion-label>Categorías</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="historial-content">
+
+  <!-- Estado cargando -->
+  <div class="lista-skeleton" *ngIf="cargando">
+    <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3,4]"></ion-skeleton-text>
+  </div>
+
+  <ng-container *ngIf="!cargando">
+
+    <!-- LUGARES -->
+    <div class="seccion" *ngIf="segmentoActivo === 'lugares'">
+      <div class="lista-lugares" *ngIf="lugaresVisitados.length">
+        <button
+          class="fila-lugar"
+          *ngFor="let visita of lugaresVisitados"
+          (click)="irADetalle(visita.lugar)"
+        >
+          <div
+            class="fila-imagen"
+            [style.backgroundImage]="visita.lugar.url_imagen_principal ? 'url(' + visita.lugar.url_imagen_principal + ')' : null"
+          ></div>
+          <div class="fila-info">
+            <span class="fila-nombre">{{ visita.lugar.nombre }}</span>
+            <span class="fila-detalle">{{ visita.lugar.categoria?.nombre }} · {{ visita.fecha_visita | date: 'd MMM yyyy' }}</span>
+          </div>
+        </button>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!lugaresVisitados.length">
+        Todavía no has registrado ninguna visita.
+      </p>
+    </div>
+
+    <!-- MEDALLAS -->
+    <div class="seccion" *ngIf="segmentoActivo === 'medallas'">
+      <div class="lista-medallas-historial" *ngIf="progresoMedallas.length">
+        <div
+          class="fila-medalla"
+          *ngFor="let progreso of progresoMedallas"
+          [class.bloqueada]="!progreso.obtenida"
+        >
+          <div
+            class="fila-medalla-icono"
+            [style.backgroundImage]="progreso.medalla.url_icono ? 'url(' + progreso.medalla.url_icono + ')' : null"
+          ></div>
+          <div class="fila-medalla-info">
+            <span class="fila-medalla-nombre">{{ progreso.medalla.nombre }}</span>
+            <span class="fila-medalla-desc">{{ progreso.medalla.descripcion }}</span>
+
+            <ng-container *ngIf="progreso.obtenida; else pendiente">
+              <span class="fila-medalla-fecha">
+                Obtenida el {{ progreso.fechaObtencion | date: 'd MMM yyyy' }}
+              </span>
+            </ng-container>
+            <ng-template #pendiente>
+              <div class="barra-progreso">
+                <div
+                  class="barra-progreso-relleno"
+                  [style.width.%]="(progreso.actual / progreso.requerido) * 100"
+                ></div>
+              </div>
+              <span class="fila-medalla-progreso-texto">
+                {{ progreso.actual }} / {{ progreso.requerido }}
+              </span>
+            </ng-template>
+          </div>
+        </div>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!progresoMedallas.length">
+        Todavía no hay medallas configuradas.
+      </p>
+    </div>
+
+    <!-- CATEGORÍAS -->
+    <div class="seccion" *ngIf="segmentoActivo === 'categorias'">
+      <div class="lista-categorias" *ngIf="categoriasConteo.length">
+        <div class="fila-categoria" *ngFor="let categoria of categoriasConteo">
+          <span class="fila-categoria-nombre">{{ categoria.nombre }}</span>
+          <span class="fila-categoria-cantidad">
+            {{ categoria.cantidad }} {{ categoria.cantidad === 1 ? 'visita' : 'visitas' }}
+          </span>
+        </div>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!categoriasConteo.length">
+        Todavía no has visitado lugares de ninguna categoría.
+      </p>
+    </div>
+
+  </ng-container>
+
+</ion-content>
