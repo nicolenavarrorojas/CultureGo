@@ -15,8 +15,6 @@ import { addIcons } from 'ionicons';
 import {
   locationOutline,
   timeOutline,
-  callOutline,
-  mailOutline,
   pricetagOutline,
   checkmarkCircleOutline,
 } from 'ionicons/icons';
@@ -72,8 +70,6 @@ export class DetalleLugarComponent implements OnInit {
     addIcons({
       locationOutline,
       timeOutline,
-      callOutline,
-      mailOutline,
       pricetagOutline,
       checkmarkCircleOutline,
     });
@@ -123,12 +119,36 @@ export class DetalleLugarComponent implements OnInit {
         this.lugar.id_lugar
       );
       this.mostrarAviso('¡Visita registrada!', 'success');
+    } catch (error) {
+      this.mostrarAviso(this.traducirErrorVisita(error), 'warning');
     } finally {
       this.registrandoVisita = false;
     }
   }
 
-// Si no se tienen las coordenadas del lugar, se bloquea el registro de visita.
+  /**
+   * El trigger fn_validar_cooldown_visita (en Supabase) rechaza la visita
+   * si el usuario ya registró este mismo lugar hace menos de X horas, y
+   * viene marcado como "COOLDOWN_VISITA:" para poder
+   * distinguirlo de cualquier otro error de base de datos.
+   */
+  private traducirErrorVisita(error: unknown): string {
+    const mensaje =
+      typeof error === 'object' && error !== null && 'message' in error
+        ? String((error as { message: unknown }).message)
+        : '';
+
+    if (mensaje.includes('COOLDOWN_VISITA')) {
+      return mensaje.split('COOLDOWN_VISITA:')[1]?.trim() || 'Ya registraste esta visita hace poco. Vuelve más tarde.';
+    }
+
+    return 'No se pudo registrar la visita. Intenta de nuevo.';
+  }
+
+  /**
+   * Valida que el usuario esté físicamente cerca del lugar antes de dejarlo
+   * registrar la visita
+  **/
   private async validarProximidad(): Promise<{ ok: boolean; mensaje: string }> {
     if (!this.lugar) {
       return { ok: false, mensaje: 'No se pudo validar el lugar.' };
