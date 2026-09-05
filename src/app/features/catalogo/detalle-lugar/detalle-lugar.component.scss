@@ -5,9 +5,7 @@
   --padding-bottom: 24px;
 }
 
-// ---------------------------------------------------------------------
 // Estado cargando
-// ---------------------------------------------------------------------
 .estado-cargando {
   .skeleton-imagen {
     width: 100%;
@@ -40,9 +38,7 @@
   }
 }
 
-// ---------------------------------------------------------------------
 // Estado error
-// ---------------------------------------------------------------------
 .estado-error {
   text-align: center;
   padding: 60px 20px;
@@ -144,5 +140,23 @@
 
   ion-icon {
     font-size: 1.2rem;
+  }
+}
+
+.boton-reportar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - 40px);
+  margin: 10px 20px 0;
+  background: none;
+  border: none;
+  color: var(--ion-color-medium);
+  font-size: 0.82rem;
+  padding: 10px;
+
+  ion-icon {
+    font-size: 1rem;
   }
 }

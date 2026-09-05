@@ -17,12 +17,14 @@ import {
   timeOutline,
   pricetagOutline,
   checkmarkCircleOutline,
+  flagOutline,
 } from 'ionicons/icons';
 
 import { Lugares } from 'src/app/core/services/lugares';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Auth } from 'src/app/core/services/auth';
 import { Lugar } from 'src/app/core/models';
+import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 
 // Radio del cual se acepta el registro de visita.
 // lugares grandes (parques, cerros) usan un radio más grande porque las coordenadas registradas son un punto 
@@ -46,6 +48,7 @@ const RADIO_VALIDACION_POR_CATEGORIA: Record<string, number> = {
     IonIcon,
     IonSkeletonText,
     IonToast,
+    ReportarProblemaComponent,
   ],
   templateUrl: './detalle-lugar.component.html',
   styleUrls: ['./detalle-lugar.component.scss'],
@@ -56,6 +59,7 @@ export class DetalleLugarComponent implements OnInit {
   errorCarga = false;
 
   registrandoVisita = false;
+  mostrarReporte = false;
   toastMensaje = '';
   toastColor: 'success' | 'warning' = 'success';
   mostrarToast = false;
@@ -72,6 +76,7 @@ export class DetalleLugarComponent implements OnInit {
       timeOutline,
       pricetagOutline,
       checkmarkCircleOutline,
+      flagOutline,
     });
   }
 
