@@ -51,4 +51,25 @@ export class Admin {
       .eq('id_reporte', idReporte);
     if (error) throw error;
   }
+
+  async subirImagenLugar(archivo: File): Promise<string> {
+    const extension = archivo.name.split('.').pop() ?? 'jpg';
+    const nombreArchivo = `${crypto.randomUUID()}.${extension}`;
+ 
+    const { error } = await this.supabase.storage
+      .from('lugares')
+      .upload(nombreArchivo, archivo, { cacheControl: '3600', upsert: false });
+    if (error) throw error;
+ 
+    const { data } = this.supabase.storage.from('lugares').getPublicUrl(nombreArchivo);
+    return data.publicUrl;
+  }
+ 
+  /**
+   * Borra un archivo del bucket "lugares" a partir de su ruta interna
+   */
+  async eliminarImagenLugar(rutaArchivo: string): Promise<void> {
+    const { error } = await this.supabase.storage.from('lugares').remove([rutaArchivo]);
+    if (error) throw error;
+  }
 }

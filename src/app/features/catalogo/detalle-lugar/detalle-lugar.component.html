@@ -81,7 +81,19 @@
       <ion-icon name="checkmark-circle-outline"></ion-icon>
       {{ registrandoVisita ? 'Verificando ubicación...' : 'Registrar visita' }}
     </button>
+
+    <!-- Reportar un problema con este lugar -->
+    <button class="boton-reportar" (click)="mostrarReporte = true">
+      <ion-icon name="flag-outline"></ion-icon>
+      Reportar un problema con este lugar
+    </button>
   </div>
+
+  <app-reportar-problema
+    [abierto]="mostrarReporte"
+    [lugar]="lugar"
+    (cerrado)="mostrarReporte = false"
+  ></app-reportar-problema>
 
   <ion-toast
     [isOpen]="mostrarToast"

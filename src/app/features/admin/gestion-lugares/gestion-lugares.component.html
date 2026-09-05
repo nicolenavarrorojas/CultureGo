@@ -1,3 +1,229 @@
-<p>
-  gestion-lugares works!
-</p>
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-title>Panel de administración</ion-title>
+    <ion-buttons slot="end">
+      <ion-button (click)="volverAPerfil()">
+        <ion-icon name="arrow-back-outline" slot="icon-only"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event.detail.value)">
+      <ion-segment-button value="lugares">
+        <ion-label>Lugares</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="reportes">
+        <ion-label>Reportes</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="gestion-content">
+
+  <!-- LUGARES -->
+  <div class="seccion" *ngIf="segmentoActivo === 'lugares'">
+    <button class="boton-nuevo" (click)="abrirFormularioNuevo()">
+      <ion-icon name="add-outline"></ion-icon>
+      Nuevo lugar
+    </button>
+
+    <div class="lista-skeleton" *ngIf="cargando">
+      <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3]"></ion-skeleton-text>
+    </div>
+
+    <div class="lista-lugares-admin" *ngIf="!cargando">
+      <div class="fila-lugar-admin" *ngFor="let lugar of lugares">
+        <div class="fila-lugar-info">
+          <span class="fila-lugar-nombre">{{ lugar.nombre }}</span>
+          <span class="fila-lugar-detalle">
+            {{ lugar.categoria?.nombre }} · {{ lugar.comuna?.nombre }}
+            <span *ngIf="lugar.es_gratuito" class="badge-gratis">Gratis</span>
+          </span>
+        </div>
+        <div class="fila-lugar-acciones">
+          <button (click)="abrirFormularioEditar(lugar)" aria-label="Editar">
+            <ion-icon name="create-outline"></ion-icon>
+          </button>
+          <button (click)="eliminarLugar(lugar)" class="boton-eliminar" aria-label="Eliminar">
+            <ion-icon name="trash-outline"></ion-icon>
+          </button>
+        </div>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!lugares.length">No hay lugares cargados todavía.</p>
+    </div>
+  </div>
+
+  <!-- REPORTES -->
+  <div class="seccion" *ngIf="segmentoActivo === 'reportes'">
+    <div class="lista-skeleton" *ngIf="cargando">
+      <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3]"></ion-skeleton-text>
+    </div>
+
+    <div class="lista-reportes" *ngIf="!cargando">
+      <div class="fila-reporte" *ngFor="let reporte of reportes">
+        <div class="fila-reporte-info">
+          <span class="fila-reporte-tipo">{{ reporte.tipo }}</span>
+          <span class="fila-reporte-desc">{{ reporte.descripcion }}</span>
+          <span class="fila-reporte-fecha">{{ reporte.fecha_creacion | date: 'd MMM yyyy, HH:mm' }}</span>
+        </div>
+        <button class="boton-resolver" (click)="resolverReporte(reporte)">
+          <ion-icon name="checkmark-circle-outline"></ion-icon>
+          Resolver
+        </button>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!reportes.length">No hay reportes pendientes.</p>
+    </div>
+  </div>
+
+  <!-- Modal de crear/editar lugar -->
+  <ion-modal
+    [isOpen]="mostrarFormulario"
+    (didDismiss)="cerrarFormulario()"
+  >
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>{{ lugarEditandoId ? 'Editar lugar' : 'Nuevo lugar' }}</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="cerrarFormulario()">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="formulario-contenido">
+        <div class="formulario-cuerpo">
+          <label class="campo-form">
+            <span>Nombre *</span>
+            <input type="text" [(ngModel)]="formulario.nombre" name="nombre" />
+          </label>
+
+          <label class="campo-form">
+            <span>Descripción</span>
+            <textarea [(ngModel)]="formulario.descripcion" name="descripcion" rows="3"></textarea>
+          </label>
+
+          <label class="campo-form">
+            <span>Categoría *</span>
+            <ion-select
+              [(ngModel)]="formulario.id_categoria"
+              name="id_categoria"
+              interface="action-sheet"
+              cancelText="Cerrar"
+              placeholder="Selecciona una categoría"
+            >
+              <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.id_categoria">
+                {{ categoria.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </label>
+
+          <label class="campo-form">
+            <span>Comuna *</span>
+            <ion-select
+              [(ngModel)]="formulario.id_comuna"
+              name="id_comuna"
+              interface="action-sheet"
+              cancelText="Cerrar"
+              placeholder="Selecciona una comuna"
+            >
+              <ion-select-option *ngFor="let comuna of comunas" [value]="comuna.id_comuna">
+                {{ comuna.nombre }}
+              </ion-select-option>
+            </ion-select>
+          </label>
+
+          <label class="campo-form campo-checkbox">
+            <ion-checkbox [(ngModel)]="formulario.es_gratuito" name="es_gratuito"></ion-checkbox>
+            <span>Es gratuito</span>
+          </label>
+
+          <label class="campo-form">
+            <span>Dirección</span>
+            <input type="text" [(ngModel)]="formulario.direccion" name="direccion" />
+          </label>
+
+          <label class="campo-form">
+            <span>Horario</span>
+            <input type="text" [(ngModel)]="formulario.horario" name="horario" placeholder="Ej: Martes a domingo, 10:00 - 18:00" />
+          </label>
+
+          <div class="fila-doble">
+            <label class="campo-form">
+              <span>Teléfono</span>
+              <input type="text" [(ngModel)]="formulario.telefono" name="telefono" />
+            </label>
+            <label class="campo-form">
+              <span>Email de contacto</span>
+              <input type="email" [(ngModel)]="formulario.email_contacto" name="email_contacto" />
+            </label>
+          </div>
+
+          <div class="campo-form">
+            <span>Imagen principal</span>
+            <div class="subida-imagen">
+              <div
+                class="preview-imagen"
+                [style.backgroundImage]="formulario.url_imagen_principal ? 'url(' + formulario.url_imagen_principal + ')' : null"
+              >
+                <span *ngIf="!formulario.url_imagen_principal">Sin imagen</span>
+              </div>
+              <input
+                type="file"
+                accept="image/*"
+                (change)="onArchivoSeleccionado($event)"
+                #inputArchivo
+                hidden
+              />
+              <button
+                type="button"
+                class="boton-subir-imagen"
+                [disabled]="subiendoImagen"
+                (click)="inputArchivo.click()"
+              >
+                {{ subiendoImagen ? 'Subiendo...' : (formulario.url_imagen_principal ? 'Cambiar imagen' : 'Subir imagen') }}
+              </button>
+            </div>
+          </div>
+
+          <div class="fila-doble">
+            <label class="campo-form">
+              <span>Latitud</span>
+              <input type="number" [(ngModel)]="formulario.latitud" name="latitud" step="0.000001" />
+            </label>
+            <label class="campo-form">
+              <span>Longitud</span>
+              <input type="number" [(ngModel)]="formulario.longitud" name="longitud" step="0.000001" />
+            </label>
+          </div>
+        </div>
+      </ion-content>
+
+      <ion-footer class="ion-no-border">
+        <div class="footer-guardar">
+          <button
+            class="boton-guardar"
+            [disabled]="!formularioValido || guardando"
+            (click)="guardarLugar()"
+          >
+            <ion-icon name="checkmark-circle-outline" *ngIf="!guardando"></ion-icon>
+            {{ guardando ? 'Guardando...' : (lugarEditandoId ? 'Guardar cambios' : 'Crear lugar') }}
+          </button>
+        </div>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="2200"
+    position="bottom"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>
