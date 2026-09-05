@@ -35,8 +35,10 @@
     <div class="fila-categorias-wrapper">
       <div class="fila-categorias" (scroll)="onScrollCategorias()">
         <ion-chip
-          *ngFor="let categoria of categorias; let i = index"
-          [ngClass]="'chip-color-' + (i % 4)"
+          *ngFor="let categoria of categorias"
+          [style.--chip-solido]="obtenerColorCategoria(categoria).solido"
+          [style.--chip-tenue]="obtenerColorCategoria(categoria).tenue"
+          [style.--chip-texto]="obtenerColorCategoria(categoria).texto"
           [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
           (click)="onCategoriaSeleccionada(categoria.id_categoria)"
         >
