@@ -95,8 +95,7 @@ export class PaginaPerfilComponent implements OnInit {
   }
 
   personalizarAvatar() {
-    // Personalización de avatar PROXIMAMENTE
-    this.mostrarAviso('Próximamente');
+    this.router.navigateByUrl('/perfil/personalizar-avatar');
   }
 
   irAConfiguracion() {
