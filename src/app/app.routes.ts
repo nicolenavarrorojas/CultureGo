@@ -83,7 +83,15 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
-
+  // Mis tickets (accesible desde Perfil)
+  {
+    path: 'perfil/mis-tickets',
+    loadComponent: () =>
+      import('./features/perfil/mis-tickets/mis-tickets.component').then(
+        (m) => m.MisTicketsComponent
+      ),
+    canActivate: [authGuard],
+  },
   // Admin
   {
     path: 'admin/gestion-lugares',

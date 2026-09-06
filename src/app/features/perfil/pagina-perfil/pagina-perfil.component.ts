@@ -17,6 +17,7 @@ import {
   logOutOutline,
   chevronForwardOutline,
   shieldCheckmarkOutline,
+  receiptOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
@@ -69,6 +70,7 @@ export class PaginaPerfilComponent implements OnInit {
       logOutOutline,
       chevronForwardOutline,
       shieldCheckmarkOutline,
+      receiptOutline,
     });
   }
 
@@ -103,6 +105,10 @@ export class PaginaPerfilComponent implements OnInit {
 
   irAHistorial() {
     this.router.navigateByUrl('/perfil/historial');
+  }
+
+  irAMisTickets() {
+    this.router.navigateByUrl('/perfil/mis-tickets');
   }
 
   personalizarAvatar() {

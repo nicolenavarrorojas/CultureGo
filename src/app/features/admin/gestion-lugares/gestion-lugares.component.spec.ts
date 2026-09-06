@@ -25,7 +25,9 @@ describe('GestionLugaresComponent', () => {
             editarLugar: async () => ({}),
             eliminarLugar: async () => undefined,
             listarReportes: async () => [],
-            resolverReporte: async () => undefined,
+            actualizarEstadoReporte: async () => undefined,
+            listarSugerenciasLugar: async () => [],
+            marcarSugerenciaRevisada: async () => undefined,
             subirImagenLugar: async () => 'https://ejemplo.com/imagen.jpg',
             eliminarImagenLugar: async () => undefined,
           },
@@ -44,7 +46,10 @@ describe('GestionLugaresComponent', () => {
         },
         {
           provide: Auth,
-          useValue: { cerrarSesion: async () => undefined },
+          useValue: {
+            cerrarSesion: async () => undefined,
+            obtenerUsuarioActual: async () => ({ id_usuario: 'admin-abc' }),
+          },
         },
         {
           provide: Router,

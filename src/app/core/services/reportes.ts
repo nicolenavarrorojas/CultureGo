@@ -30,4 +30,15 @@ export class Reportes {
     if (error) throw error;
     return data as Reporte;
   }
+  
+  /** Los propios reportes del usuario, con su estado. */
+  async listarMisReportes(idUsuario: string): Promise<Reporte[]> {
+    const { data, error } = await this.supabase
+      .from('reporte')
+      .select('*, lugar(nombre)')
+      .eq('id_usuario', idUsuario)
+      .order('fecha_creacion', { ascending: false });
+    if (error) throw error;
+    return data as Reporte[];
+  }
 }

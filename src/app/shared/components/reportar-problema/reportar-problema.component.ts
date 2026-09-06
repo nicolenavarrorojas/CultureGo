@@ -108,9 +108,10 @@ export class ReportarProblemaComponent {
       this.descripcion = '';
       this.tipo = null;
       setTimeout(() => this.cerrar(), 1200);
-    } catch {
-      this.mostrarAviso('No se pudo enviar el reporte. Intenta de nuevo.');
-    } finally {
+    } catch (error) {
+  console.error('Error al crear reporte:', error);
+  this.mostrarAviso('No se pudo enviar el reporte. Intenta de nuevo.');
+  } finally {
       this.enviando = false;
     }
   }

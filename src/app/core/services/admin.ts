@@ -1,7 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Supabase } from './supabase';
-import { Lugar, Reporte } from '../models';
-
+import { Lugar, Reporte, LugarSugerido} from '../models';
 /**
  * Panel administrador: CRUD de lugares + gestión de reportes.
  * Administrador hereda de Usuario en el diagrama de clases, con crearLugar(), editarLugar(), eliminarLugar(), gestionarReportes().
@@ -36,18 +35,20 @@ export class Admin {
     if (error) throw error;
   }
 
-  async listarReportes(soloNoResueltos = true): Promise<Reporte[]> {
-    let query = this.supabase.from('reporte').select('*');
-    if (soloNoResueltos) query = query.eq('resuelto', false);
-    const { data, error } = await query;
+  async listarReportes(estados?: Array<Reporte['estado']>): Promise<Reporte[]> {
+    let query = this.supabase.from('reporte').select('*, lugar(nombre)');
+    if (estados && estados.length) {
+      query = query.in('estado', estados);
+    }
+    const { data, error } = await query.order('fecha_creacion', { ascending: false });
     if (error) throw error;
     return data as Reporte[];
   }
-
-  async resolverReporte(idReporte: string): Promise<void> {
+ 
+  async actualizarEstadoReporte(idReporte: string, estado: Reporte['estado']): Promise<void> {
     const { error } = await this.supabase
       .from('reporte')
-      .update({ resuelto: true })
+      .update({ estado })
       .eq('id_reporte', idReporte);
     if (error) throw error;
   }
@@ -70,6 +71,34 @@ export class Admin {
    */
   async eliminarImagenLugar(rutaArchivo: string): Promise<void> {
     const { error } = await this.supabase.storage.from('lugares').remove([rutaArchivo]);
+    if (error) throw error;
+  }
+
+  async listarSugerenciasLugar(soloPendientes = true): Promise<LugarSugerido[]> {
+    let query = this.supabase.from('lugar_sugerido').select('*, categoria(*)');
+    if (soloPendientes) {
+      query = query.eq('estado', 'pendiente');
+    }
+    const { data, error } = await query.order('fecha_creacion', { ascending: false });
+    if (error) throw error;
+    return data as LugarSugerido[];
+  }
+ 
+  /**
+   * Marca una sugerencia como aprobada o rechazada. Al aprobar, esto no
+   * crea el lugar automáticamente, el admin lo aprueba 
+   * para precargar el formulario de "Nuevo lugar" y revisarlo
+   * antes de publicar (crearLugar() se llama aparte, como siempre).
+   */
+  async marcarSugerenciaRevisada(
+    idSugerencia: string,
+    idAdmin: string,
+    estado: 'aprobado' | 'rechazado'
+  ): Promise<void> {
+    const { error } = await this.supabase
+      .from('lugar_sugerido')
+      .update({ estado, revisado_por: idAdmin, fecha_revision: new Date().toISOString() })
+      .eq('id_lugar_sugerido', idSugerencia);
     if (error) throw error;
   }
 }

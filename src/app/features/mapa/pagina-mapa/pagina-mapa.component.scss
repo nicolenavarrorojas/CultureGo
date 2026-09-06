@@ -132,6 +132,28 @@
   color: var(--ion-color-primary);
 }
 
+.boton-sugerir-lugar {
+  position: absolute;
+  left: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px 10px 12px;
+  box-shadow: 0 2px 8px rgba(43, 36, 54, 0.18);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ion-color-secondary); // adobe, coherente con el color del pin de sugerencias
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
 .overlay-cargando {
   position: absolute;
   inset: 0;

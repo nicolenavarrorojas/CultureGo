@@ -61,6 +61,17 @@
     <ion-icon name="locate-outline"></ion-icon>
   </button>
 
+  <!-- Botón: sugerir un lugar nuevo (se oculta si hay una tarjeta de detalle abajo) -->
+  <button
+    class="boton-sugerir-lugar"
+    *ngIf="!lugarSeleccionado"
+    (click)="mostrarSugerirLugar = true"
+    aria-label="Sugerir un lugar"
+  >
+    <ion-icon name="add-circle-outline"></ion-icon>
+    Sugerir lugar
+  </button>
+
   <!-- Carga -->
   <div class="overlay-cargando" *ngIf="cargando">
     <ion-spinner name="crescent"></ion-spinner>
@@ -97,5 +108,10 @@
       Ver detalles
     </button>
   </div>
+
+  <app-sugerir-lugar
+    [abierto]="mostrarSugerirLugar"
+    (cerrado)="mostrarSugerirLugar = false"
+  ></app-sugerir-lugar>
 
 </ion-content>

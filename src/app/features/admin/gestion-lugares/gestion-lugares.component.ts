@@ -38,9 +38,10 @@ import { Lugares } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
 import { Auth } from 'src/app/core/services/auth';
-import { Lugar, Reporte } from 'src/app/core/models';
+import { Lugar, Reporte, LugarSugerido } from 'src/app/core/models';
 
-type Segmento = 'lugares' | 'reportes';
+type Segmento = 'lugares' | 'reportes' | 'sugerencias';
+type EstadoReporte = Reporte['estado'];
 
 interface FormularioLugar {
   nombre: string;
@@ -70,6 +71,13 @@ const FORMULARIO_VACIO: FormularioLugar = {
   url_imagen_principal: '',
   latitud: null,
   longitud: null,
+};
+
+const ETIQUETAS_ESTADO_REPORTE: Record<EstadoReporte, string> = {
+  pendiente: 'Pendiente',
+  en_revision: 'En revisión',
+  resuelto: 'Resuelto',
+  rechazado: 'Rechazado',
 };
 
 @Component({
@@ -107,16 +115,20 @@ export class GestionLugaresComponent implements OnInit {
 
   lugares: Lugar[] = [];
   reportes: Reporte[] = [];
+  sugerencias: LugarSugerido[] = [];
 
   categorias: { id_categoria: string; nombre: string }[] = [];
   comunas: { id_comuna: string; nombre: string }[] = [];
 
   mostrarFormulario = false;
   lugarEditandoId: string | null = null;
+  sugerenciaAprobandoId: string | null = null; 
   formulario: FormularioLugar = { ...FORMULARIO_VACIO };
 
   toastMensaje = '';
   mostrarToast = false;
+
+  readonly etiquetasEstadoReporte = ETIQUETAS_ESTADO_REPORTE;
 
   constructor(
     private adminService: Admin,
@@ -152,15 +164,17 @@ export class GestionLugaresComponent implements OnInit {
   }
 
   async cambiarSegmento(segmento: string | number | undefined) {
-    if (segmento !== 'lugares' && segmento !== 'reportes') return;
+    if (segmento !== 'lugares' && segmento !== 'reportes' && segmento !== 'sugerencias') return;
     this.segmentoActivo = segmento;
 
     this.cargando = true;
     try {
       if (segmento === 'lugares') {
         this.lugares = await this.lugaresService.listar({});
+      } else if (segmento === 'reportes') {
+        this.reportes = await this.adminService.listarReportes(['pendiente', 'en_revision']);
       } else {
-        this.reportes = await this.adminService.listarReportes(true);
+        this.sugerencias = await this.adminService.listarSugerenciasLugar(true);
       }
     } finally {
       this.cargando = false;
@@ -171,12 +185,14 @@ export class GestionLugaresComponent implements OnInit {
 
   abrirFormularioNuevo() {
     this.lugarEditandoId = null;
+    this.sugerenciaAprobandoId = null;
     this.formulario = { ...FORMULARIO_VACIO };
     this.mostrarFormulario = true;
   }
 
   abrirFormularioEditar(lugar: Lugar) {
     this.lugarEditandoId = lugar.id_lugar;
+    this.sugerenciaAprobandoId = null;
     this.formulario = {
       nombre: lugar.nombre,
       descripcion: lugar.descripcion ?? '',
@@ -190,6 +206,23 @@ export class GestionLugaresComponent implements OnInit {
       url_imagen_principal: lugar.url_imagen_principal ?? '',
       latitud: lugar.latitud,
       longitud: lugar.longitud,
+    };
+    this.mostrarFormulario = true;
+  }
+
+  /** Abre el formulario de "Nuevo lugar" precargado con los datos de una
+   * sugerencia de un usuario. Al guardar, además de crear el lugar, la
+   * sugerencia queda marcada como aprobada (ver guardarLugar()). */
+  abrirFormularioDesdeSugerencia(sugerencia: LugarSugerido) {
+    this.lugarEditandoId = null;
+    this.sugerenciaAprobandoId = sugerencia.id_lugar_sugerido;
+    this.formulario = {
+      ...FORMULARIO_VACIO,
+      nombre: sugerencia.nombre,
+      descripcion: sugerencia.descripcion ?? '',
+      id_categoria: sugerencia.id_categoria,
+      latitud: sugerencia.latitud,
+      longitud: sugerencia.longitud,
     };
     this.mostrarFormulario = true;
   }
@@ -230,7 +263,6 @@ export class GestionLugaresComponent implements OnInit {
       const url = await this.adminService.subirImagenLugar(archivo);
       this.formulario.url_imagen_principal = url;
 
-
       await this.eliminarImagenSiEsPropia(urlAnterior);
     } catch {
       this.mostrarAviso('No se pudo subir la imagen. Intenta de nuevo.');
@@ -239,7 +271,6 @@ export class GestionLugaresComponent implements OnInit {
       input.value = '';
     }
   }
-
 
   private extraerRutaStorage(url: string): string | null {
     const marcador = '/storage/v1/object/public/lugares/';
@@ -251,12 +282,11 @@ export class GestionLugaresComponent implements OnInit {
   private async eliminarImagenSiEsPropia(url: string) {
     if (!url) return;
     const ruta = this.extraerRutaStorage(url);
-    if (!ruta) return; 
+    if (!ruta) return;
 
     try {
       await this.adminService.eliminarImagenLugar(ruta);
     } catch {
-
     }
   }
 
@@ -288,6 +318,14 @@ export class GestionLugaresComponent implements OnInit {
         this.mostrarAviso('Lugar creado.');
       }
 
+      // Si este lugar vino de una sugerencia, la marcamos aprobada recién
+      // ahora así, si algo falla al crear el lugar, la sugerencia queda
+      // tal cual (pendiente)
+      if (this.sugerenciaAprobandoId) {
+        await this.marcarSugerenciaComo(this.sugerenciaAprobandoId, 'aprobado');
+        this.sugerenciaAprobandoId = null;
+      }
+
       this.mostrarFormulario = false;
       this.lugares = await this.lugaresService.listar({});
     } catch {
@@ -302,10 +340,7 @@ export class GestionLugaresComponent implements OnInit {
       header: 'Eliminar lugar',
       message: `¿Eliminar "${lugar.nombre}"? Esta acción no se puede deshacer.`,
       buttons: [
-        {
-          text: 'Cancelar',
-          role: 'cancel',
-        },
+        { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar',
           role: 'destructive',
@@ -330,15 +365,103 @@ export class GestionLugaresComponent implements OnInit {
     }
   }
 
-  // Reportes
+  // Reportes - estado (pendiente / en_revision / resuelto)
 
-  async resolverReporte(reporte: Reporte) {
+  async abrirReporte(reporte: Reporte) {
+    const alerta = await this.alertController.create({
+      header: 'Actualizar estado del reporte',
+      message: reporte.descripcion,
+      inputs: [
+        {
+          type: 'radio',
+          label: 'Pendiente',
+          value: 'pendiente',
+          checked: reporte.estado === 'pendiente',
+        },
+        {
+          type: 'radio',
+          label: 'En revisión',
+          value: 'en_revision',
+          checked: reporte.estado === 'en_revision',
+        },
+        {
+          type: 'radio',
+          label: 'Resuelto',
+          value: 'resuelto',
+          checked: reporte.estado === 'resuelto',
+        },
+        {
+          type: 'radio',
+          label: 'Rechazado',
+          value: 'rechazado',
+          checked: reporte.estado === 'rechazado',
+        },
+      ],
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Guardar',
+          handler: (nuevoEstado: EstadoReporte) => this.actualizarEstadoReporte(reporte, nuevoEstado),
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async actualizarEstadoReporte(reporte: Reporte, nuevoEstado: EstadoReporte) {
+    if (!nuevoEstado || nuevoEstado === reporte.estado) return;
+
     try {
-      await this.adminService.resolverReporte(reporte.id_reporte);
-      this.reportes = this.reportes.filter((r) => r.id_reporte !== reporte.id_reporte);
-      this.mostrarAviso('Reporte marcado como resuelto.');
+      await this.adminService.actualizarEstadoReporte(reporte.id_reporte, nuevoEstado);
+
+      if (nuevoEstado === 'resuelto' || nuevoEstado === 'rechazado') {
+        this.reportes = this.reportes.filter((r) => r.id_reporte !== reporte.id_reporte);
+      } else {
+        reporte.estado = nuevoEstado;
+      }
+
+      this.mostrarAviso('Estado del reporte actualizado.');
     } catch {
       this.mostrarAviso('No se pudo actualizar el reporte.');
+    }
+  }
+
+  // Sugerencias de lugar
+
+  async rechazarSugerencia(sugerencia: LugarSugerido) {
+    const alerta = await this.alertController.create({
+      header: 'Rechazar sugerencia',
+      message: `¿Rechazar "${sugerencia.nombre}"?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Rechazar',
+          role: 'destructive',
+          cssClass: 'boton-alerta-eliminar',
+          handler: () => this.marcarSugerenciaComo(sugerencia.id_lugar_sugerido, 'rechazado', true),
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async marcarSugerenciaComo(
+    idSugerencia: string,
+    estado: 'aprobado' | 'rechazado',
+    quitarDeLaLista = false
+  ) {
+    try {
+      const admin = await this.authService.obtenerUsuarioActual();
+      if (!admin) return;
+
+      await this.adminService.marcarSugerenciaRevisada(idSugerencia, admin.id_usuario, estado);
+
+      if (quitarDeLaLista) {
+        this.sugerencias = this.sugerencias.filter((s) => s.id_lugar_sugerido !== idSugerencia);
+        this.mostrarAviso('Sugerencia rechazada.');
+      }
+    } catch {
+      this.mostrarAviso('No se pudo actualizar la sugerencia.');
     }
   }
 

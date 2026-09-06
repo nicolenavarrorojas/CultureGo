@@ -1,0 +1,72 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Mis tickets</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [value]="segmentoActivo" (ionChange)="cambiarSegmento($event.detail.value)">
+      <ion-segment-button value="reportes">
+        <ion-label>Reportes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="sugerencias">
+        <ion-label>Sugerencias</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="tickets-content">
+
+  <div class="lista-skeleton" *ngIf="cargando">
+    <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3]"></ion-skeleton-text>
+  </div>
+
+  <ng-container *ngIf="!cargando">
+
+    <!-- REPORTES -->
+    <div class="seccion" *ngIf="segmentoActivo === 'reportes'">
+      <div class="lista-tickets" *ngIf="misReportes.length">
+        <div class="fila-ticket" *ngFor="let reporte of misReportes">
+          <div class="fila-ticket-cabecera">
+            <span class="fila-ticket-tipo">{{ reporte.tipo }}</span>
+            <span class="badge-estado" [class]="'badge-estado-' + reporte.estado">
+              {{ etiquetasEstadoReporte[reporte.estado] }}
+            </span>
+          </div>
+          <p class="fila-ticket-desc">{{ reporte.descripcion }}</p>
+          <span class="fila-ticket-lugar" *ngIf="reporte.lugar?.nombre">Sobre: {{ reporte.lugar?.nombre }}</span>
+          <span class="fila-ticket-fecha">{{ reporte.fecha_creacion | date: 'd MMM yyyy, HH:mm' }}</span>
+        </div>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!misReportes.length">
+        Todavía no has enviado ningún reporte.
+      </p>
+    </div>
+
+    <!-- SUGERENCIAS -->
+    <div class="seccion" *ngIf="segmentoActivo === 'sugerencias'">
+      <div class="lista-tickets" *ngIf="misSugerencias.length">
+        <div class="fila-ticket" *ngFor="let sugerencia of misSugerencias">
+          <div class="fila-ticket-cabecera">
+            <span class="fila-ticket-tipo">{{ sugerencia.categoria?.nombre || 'Sin categoría' }}</span>
+            <span class="badge-estado" [class]="'badge-estado-sugerencia-' + sugerencia.estado">
+              {{ etiquetasEstadoSugerencia[sugerencia.estado] }}
+            </span>
+          </div>
+          <p class="fila-ticket-desc fila-ticket-nombre">{{ sugerencia.nombre }}</p>
+          <p class="fila-ticket-desc" *ngIf="sugerencia.descripcion">{{ sugerencia.descripcion }}</p>
+          <span class="fila-ticket-fecha">{{ sugerencia.fecha_creacion | date: 'd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <p class="estado-vacio" *ngIf="!misSugerencias.length">
+        Todavía no has sugerido ningún lugar.
+      </p>
+    </div>
+
+  </ng-container>
+
+</ion-content>

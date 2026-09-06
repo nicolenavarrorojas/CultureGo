@@ -16,12 +16,13 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { locateOutline, closeOutline, handLeftOutline } from 'ionicons/icons';
+import { locateOutline, closeOutline, handLeftOutline, addCircleOutline } from 'ionicons/icons';
 
 import { Lugares, FiltrosLugar } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
 import { Lugar } from 'src/app/core/models';
+import { SugerirLugarComponent } from 'src/app/shared/components/sugerir-lugar/sugerir-lugar.component';
 
 // Centro por defecto: Santiago Centro 
 const CENTRO_SANTIAGO: L.LatLngTuple = [-33.4489, -70.6693];
@@ -31,7 +32,7 @@ const RADIO_CERCA_METROS = 2000;
 
 // Colores con sentido semántico para las categorías conocidas
 const COLORES_POR_NOMBRE: Record<string, { solido: string; tenue: string; texto: string }> = {
-  'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, // jacarandá
+  'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, // morado (cultura)
   'teatro':               { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' }, // adobe
   'parque':               { solido: '#3E9142', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde (naturaleza)
   'cerro':                { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde cerro
@@ -68,6 +69,7 @@ const PALETA_RESPALDO: { solido: string; tenue: string; texto: string }[] = [
     IonSelectOption,
     IonIcon,
     IonSpinner,
+    SugerirLugarComponent,
   ],
   templateUrl: './pagina-mapa.component.html',
   styleUrls: ['./pagina-mapa.component.scss'],
@@ -84,12 +86,12 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   lugares: Lugar[] = [];
   lugarSeleccionado: Lugar | null = null;
   sinResultadosCerca = false;
+  mostrarSugerirLugar = false;
 
   idCategoriaSeleccionada: string | null = null;
   idComunaSeleccionada: string | null = null;
   soloGratuitos = false;
 
-  // TODO: ajustar el tipo real si el modelo Categoria/Comuna difiere
   categorias: { id_categoria: string; nombre: string }[] = [];
   comunas: { id_comuna: string; nombre: string }[] = [];
 
@@ -100,7 +102,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    addIcons({ locateOutline, closeOutline, handLeftOutline });
+    addIcons({ locateOutline, closeOutline, handLeftOutline, addCircleOutline });
   }
 
   mostrarHintDeslizar = true;
@@ -312,7 +314,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for (const lugar of this.lugares) {
       if (lugar.latitud == null || lugar.longitud == null) {
-        continue; // sin coordenadas, no se puede mostrar (mismo criterio que RF-08)
+        continue; 
       }
 
       const marcador = L.marker([lugar.latitud, lugar.longitud], {
@@ -370,7 +372,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mapa?.flyTo([posicion.lat, posicion.lng], 15);
       this.mostrarMiUbicacion(posicion.lat, posicion.lng);
     } catch {
-      // TODO: mostrar un toast si el permiso de geolocalización fue denegado
+      
     } finally {
       this.cargando = false;
     }
