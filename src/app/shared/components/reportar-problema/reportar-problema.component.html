@@ -1,0 +1,64 @@
+<ion-modal [isOpen]="abierto" (didDismiss)="cerrar()">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>{{ lugar ? 'Reportar este lugar' : 'Reportar un problema' }}</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrar()">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="reportar-contenido">
+      <p class="lugar-referencia" *ngIf="lugar">
+        Sobre: <strong>{{ lugar.nombre }}</strong>
+      </p>
+
+      <label class="campo-form">
+        <span>Tipo *</span>
+        <ion-select
+          [(ngModel)]="tipo"
+          interface="action-sheet"
+          cancelText="Cerrar"
+          placeholder="Selecciona una opción"
+        >
+          <ion-select-option *ngFor="let opcion of opcionesTipo" [value]="opcion.valor">
+            {{ opcion.etiqueta }}
+          </ion-select-option>
+        </ion-select>
+      </label>
+
+      <label class="campo-form">
+        <span>Cuéntanos qué pasa *</span>
+        <textarea
+          [(ngModel)]="descripcion"
+          rows="5"
+          placeholder="Mínimo 10 caracteres..."
+        ></textarea>
+      </label>
+    </ion-content>
+
+    <ion-footer class="ion-no-border">
+      <div class="footer-enviar">
+        <button
+          class="boton-enviar"
+          [disabled]="!formularioValido || enviando"
+          (click)="enviar()"
+        >
+          <ion-icon name="paper-plane-outline" *ngIf="!enviando"></ion-icon>
+          {{ enviando ? 'Enviando...' : 'Enviar reporte' }}
+        </button>
+      </div>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-toast
+  [isOpen]="mostrarToast"
+  [message]="toastMensaje"
+  [duration]="2500"
+  position="top"
+  (didDismiss)="mostrarToast = false"
+></ion-toast>

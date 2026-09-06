@@ -79,21 +79,16 @@
     font-weight: 500;
     font-size: 0.8rem;
     margin: 0;
+    --background: var(--chip-tenue, #E3DCF2);
+    color: var(--chip-texto, #4A3670);
+    transition: background 0.15s, color 0.15s;
+
+    &.activo {
+      --background: var(--chip-solido, var(--ion-color-primary));
+      color: #fff;
+    }
   }
-
-  // tinte suave por defecto 
-  .chip-color-0 { --background: #E3DCF2; color: #4A3670; } // violeta
-  .chip-color-1 { --background: #F3DDCB; color: #7A3A1B; } // terracota
-  .chip-color-2 { --background: #DCEADF; color: #2F4F3A; } // verde
-  .chip-color-3 { --background: #FBEACB; color: #7A5A0F; } // ámbar
-
-  // sólido cuando está activo, mismo color de la familia
-  .chip-color-0.activo { --background: var(--ion-color-primary); color: #fff; }
-  .chip-color-1.activo { --background: var(--ion-color-secondary); color: #fff; }
-  .chip-color-2.activo { --background: var(--ion-color-tertiary); color: #fff; }
-  .chip-color-3.activo { --background: var(--ion-color-warning); color: var(--ion-color-warning-contrast); }
 }
-
 .hint-deslizar {
   position: absolute;
   top: 0;
@@ -135,6 +130,28 @@
   justify-content: center;
   font-size: 1.3rem;
   color: var(--ion-color-primary);
+}
+
+.boton-sugerir-lugar {
+  position: absolute;
+  left: 16px;
+  bottom: calc(72px + env(safe-area-inset-bottom));
+  z-index: 1001;
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: #fff;
+  border: none;
+  border-radius: 999px;
+  padding: 10px 16px 10px 12px;
+  box-shadow: 0 2px 8px rgba(43, 36, 54, 0.18);
+  font-size: 0.82rem;
+  font-weight: 700;
+  color: var(--ion-color-secondary); // adobe, coherente con el color del pin de sugerencias
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
 }
 
 .overlay-cargando {
@@ -279,12 +296,16 @@
 ::ng-deep .pin-lugar {
   .pin-punto {
     display: block;
-    width: 22px;
-    height: 22px;
     border-radius: 50% 50% 50% 0;
     transform: rotate(-45deg);
     border: 2px solid #fff;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.35);
+    transition: width 0.15s, height 0.15s;
+  }
+
+  &.pin-lugar--seleccionado .pin-punto {
+    border-width: 3px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.45);
   }
 }
 

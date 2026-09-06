@@ -1,0 +1,78 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Personalizar avatar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="personalizar-content">
+
+  <!-- Vista previa del avatar -->
+  <div class="avatar-preview">
+    <div
+      class="capa capa-cuerpo"
+      [style.backgroundImage]="seleccion.cuerpo?.url_imagen ? 'url(' + seleccion.cuerpo?.url_imagen + ')' : null"
+    >
+      <ion-icon *ngIf="!seleccion.cuerpo?.url_imagen" name="person-outline"></ion-icon>
+    </div>
+    <div
+      class="capa capa-cabeza"
+      [style.backgroundImage]="seleccion.cabeza?.url_imagen ? 'url(' + seleccion.cabeza?.url_imagen + ')' : null"
+    ></div>
+    <div
+      class="capa capa-ojos"
+      [style.backgroundImage]="seleccion.ojos?.url_imagen ? 'url(' + seleccion.ojos?.url_imagen + ')' : null"
+    ></div>
+    <div
+      class="capa capa-boca"
+      [style.backgroundImage]="seleccion.boca?.url_imagen ? 'url(' + seleccion.boca?.url_imagen + ')' : null"
+    ></div>
+  </div>
+  <p class="nota-preview">Las imágenes de cada pieza se agregarán próximamente</p>
+
+  <!-- Selector de partes -->
+  <div class="selector-partes">
+    <button
+      *ngFor="let parte of partes"
+      class="parte-btn"
+      [class.activa]="parteActiva === parte.clave"
+      (click)="seleccionarParte(parte.clave)"
+    >
+      {{ parte.etiqueta }}
+    </button>
+  </div>
+
+  <!-- Opciones de la parte activa -->
+  <div class="lista-opciones-avatar">
+    <div
+      class="opcion-avatar"
+      *ngFor="let opcion of opcionesPorParte[parteActiva]"
+      [class.seleccionada]="estaSeleccionada(opcion)"
+      [class.bloqueada]="opcion.desbloqueable"
+      (click)="elegirOpcion(opcion)"
+    >
+      <div
+        class="opcion-imagen"
+        [style.backgroundImage]="opcion.url_imagen ? 'url(' + opcion.url_imagen + ')' : null"
+      >
+        <ion-icon *ngIf="!opcion.url_imagen" name="image-outline"></ion-icon>
+        <ion-icon *ngIf="opcion.desbloqueable" name="lock-closed-outline" class="icono-bloqueo"></ion-icon>
+        <ion-icon *ngIf="estaSeleccionada(opcion)" name="checkmark-circle" class="icono-check"></ion-icon>
+      </div>
+      <span>{{ opcion.nombre }}</span>
+    </div>
+  </div>
+
+  <button class="boton-guardar" (click)="guardar()">Guardar cambios</button>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="1800"
+    position="bottom"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>

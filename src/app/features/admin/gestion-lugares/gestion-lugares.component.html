@@ -15,6 +15,9 @@
       <ion-segment-button value="reportes">
         <ion-label>Reportes</ion-label>
       </ion-segment-button>
+      <ion-segment-button value="sugerencias">
+        <ion-label>Sugerencias</ion-label>
+      </ion-segment-button>
     </ion-segment>
   </ion-toolbar>
 </ion-header>
@@ -62,26 +65,61 @@
     </div>
 
     <div class="lista-reportes" *ngIf="!cargando">
-      <div class="fila-reporte" *ngFor="let reporte of reportes">
+      <button class="fila-reporte" *ngFor="let reporte of reportes" (click)="abrirReporte(reporte)">
         <div class="fila-reporte-info">
-          <span class="fila-reporte-tipo">{{ reporte.tipo }}</span>
+          <div class="fila-reporte-cabecera">
+            <span class="fila-reporte-tipo">{{ reporte.tipo }}</span>
+            <span class="badge-estado" [class]="'badge-estado-' + reporte.estado">
+              {{ etiquetasEstadoReporte[reporte.estado] }}
+            </span>
+          </div>
           <span class="fila-reporte-desc">{{ reporte.descripcion }}</span>
+          <span class="fila-reporte-lugar" *ngIf="reporte.lugar?.nombre">Sobre: {{ reporte.lugar?.nombre }}</span>
           <span class="fila-reporte-fecha">{{ reporte.fecha_creacion | date: 'd MMM yyyy, HH:mm' }}</span>
         </div>
-        <button class="boton-resolver" (click)="resolverReporte(reporte)">
-          <ion-icon name="checkmark-circle-outline"></ion-icon>
-          Resolver
-        </button>
+      </button>
+
+      <p class="estado-vacio" *ngIf="!reportes.length">No hay reportes pendientes ni en revisión. </p>
+    </div>
+  </div>
+
+  <!-- SUGERENCIAS -->
+  <div class="seccion" *ngIf="segmentoActivo === 'sugerencias'">
+    <div class="lista-skeleton" *ngIf="cargando">
+      <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3]"></ion-skeleton-text>
+    </div>
+
+    <div class="lista-sugerencias" *ngIf="!cargando">
+      <div class="fila-sugerencia" *ngFor="let sugerencia of sugerencias">
+        <div class="fila-sugerencia-info">
+          <span class="fila-sugerencia-nombre">{{ sugerencia.nombre }}</span>
+          <span class="fila-sugerencia-detalle">{{ sugerencia.categoria?.nombre }}</span>
+          <span class="fila-sugerencia-coords">
+            📍 {{ sugerencia.latitud.toFixed(5) }}, {{ sugerencia.longitud.toFixed(5) }}
+          </span>
+          <p class="fila-sugerencia-desc" *ngIf="sugerencia.descripcion">{{ sugerencia.descripcion }}</p>
+          <span class="fila-sugerencia-fecha">{{ sugerencia.fecha_creacion | date: 'd MMM yyyy' }}</span>
+        </div>
+        <div class="fila-sugerencia-acciones">
+          <button class="boton-aprobar" (click)="abrirFormularioDesdeSugerencia(sugerencia)">
+            Revisar y publicar
+          </button>
+          <button class="boton-rechazar" (click)="rechazarSugerencia(sugerencia)">
+            Rechazar
+          </button>
+        </div>
       </div>
 
-      <p class="estado-vacio" *ngIf="!reportes.length">No hay reportes pendientes. 🎉</p>
+      <p class="estado-vacio" *ngIf="!sugerencias.length">No hay sugerencias pendientes.</p>
     </div>
   </div>
 
   <!-- Modal de crear/editar lugar -->
   <ion-modal
     [isOpen]="mostrarFormulario"
+    (didPresent)="onModalPresentado()"
     (didDismiss)="cerrarFormulario()"
+    (willDismiss)="onModalOcultado()"
   >
     <ng-template>
       <ion-header class="ion-no-border">
@@ -193,12 +231,29 @@
           <div class="fila-doble">
             <label class="campo-form">
               <span>Latitud</span>
-              <input type="number" [(ngModel)]="formulario.latitud" name="latitud" step="0.000001" />
+              <input
+                type="number"
+                [(ngModel)]="formulario.latitud"
+                (ngModelChange)="onCoordenadaEditadaManualmente()"
+                name="latitud"
+                step="0.000001"
+              />
             </label>
             <label class="campo-form">
               <span>Longitud</span>
-              <input type="number" [(ngModel)]="formulario.longitud" name="longitud" step="0.000001" />
+              <input
+                type="number"
+                [(ngModel)]="formulario.longitud"
+                (ngModelChange)="onCoordenadaEditadaManualmente()"
+                name="longitud"
+                step="0.000001"
+              />
             </label>
+          </div>
+
+          <div class="campo-form">
+            <span>Ubicación en el mapa (toca para ajustar)</span>
+            <div #miniMapaContenedor class="mini-mapa-admin"></div>
           </div>
         </div>
       </ion-content>

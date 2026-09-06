@@ -5,6 +5,8 @@ import { ActivatedRoute, convertToParamMap } from '@angular/router';
 
 import { Lugares } from 'src/app/core/services/lugares';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
+import { Auth } from 'src/app/core/services/auth';
+import { Reportes } from 'src/app/core/services/reportes';
 import { DetalleLugarComponent } from './detalle-lugar.component';
 
 describe('DetalleLugarComponent', () => {
@@ -36,6 +38,14 @@ describe('DetalleLugarComponent', () => {
         {
           provide: Gamificacion,
           useValue: { registrarVisita: async () => undefined },
+        },
+        {
+          provide: Auth,
+          useValue: { obtenerUsuarioActual: async () => null },
+        },
+        {
+          provide: Reportes,
+          useValue: { crear: async () => ({}) },
         },
         {
           provide: ActivatedRoute,

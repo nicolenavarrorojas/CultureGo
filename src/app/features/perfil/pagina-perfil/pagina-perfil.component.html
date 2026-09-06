@@ -81,7 +81,12 @@
       </button>
       <button class="opcion" (click)="irAAyuda()">
         <ion-icon name="help-circle-outline"></ion-icon>
-        <span>Ayuda</span>
+        <span>Ayuda / Reportar un problema</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
+      <button class="opcion" (click)="irAMisTickets()">
+        <ion-icon name="receipt-outline"></ion-icon>
+        <span>Mis tickets</span>
         <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
       </button>
       <button class="opcion opcion-salir" (click)="cerrarSesion()">
@@ -92,6 +97,12 @@
     </div>
 
   </ng-container>
+
+  <app-reportar-problema
+    [abierto]="mostrarReporte"
+    [lugar]="null"
+    (cerrado)="mostrarReporte = false"
+  ></app-reportar-problema>
 
   <ion-toast
     [isOpen]="mostrarToast"

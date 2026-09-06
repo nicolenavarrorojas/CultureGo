@@ -16,18 +16,42 @@ import {
   IonSpinner,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { locateOutline, closeOutline, handLeftOutline } from 'ionicons/icons';
+import { locateOutline, closeOutline, handLeftOutline, addCircleOutline } from 'ionicons/icons';
 
 import { Lugares, FiltrosLugar } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
 import { Lugar } from 'src/app/core/models';
+import { SugerirLugarComponent } from 'src/app/shared/components/sugerir-lugar/sugerir-lugar.component';
 
 // Centro por defecto: Santiago Centro 
 const CENTRO_SANTIAGO: L.LatLngTuple = [-33.4489, -70.6693];
 const ZOOM_DEFECTO = 14;
 // RADIO, de cuanto esta cerca en metros.
 const RADIO_CERCA_METROS = 2000;
+
+// Colores con sentido semántico para las categorías conocidas
+const COLORES_POR_NOMBRE: Record<string, { solido: string; tenue: string; texto: string }> = {
+  'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, // morado (cultura)
+  'teatro':               { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' }, // adobe
+  'parque':               { solido: '#3E9142', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde (naturaleza)
+  'cerro':                { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde cerro
+  'edificio patrimonial': { solido: '#9B5B3F', tenue: '#EEDDD3', texto: '#5F3421' }, // terracota
+  'iglesia':              { solido: '#8E5A9E', tenue: '#EBDCEF', texto: '#5A3866' }, // violeta
+  'biblioteca':           { solido: '#2E6E8E', tenue: '#D7E7EC', texto: '#1D4658' }, // azul (conocimiento)
+  'cine':                 { solido: '#4A3F73', tenue: '#DDD9EC', texto: '#2E2650' }, // púrpura oscuro (sala oscura)
+  'galería de arte':      { solido: '#C9A227', tenue: '#FBEACB', texto: '#7A5A0F' }, // dorado
+};
+
+// Respaldo para categorías nuevas que no estén en el diccionario de arriba
+const PALETA_RESPALDO: { solido: string; tenue: string; texto: string }[] = [
+  { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' },
+  { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' },
+  { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' },
+  { solido: '#C9A227', tenue: '#FBEACB', texto: '#7A5A0F' },
+  { solido: '#2E6E8E', tenue: '#D7E7EC', texto: '#1D4658' },
+  { solido: '#8E5A9E', tenue: '#EBDCEF', texto: '#5A3866' },
+];
 
 @Component({
   selector: 'app-pagina-mapa',
@@ -45,6 +69,7 @@ const RADIO_CERCA_METROS = 2000;
     IonSelectOption,
     IonIcon,
     IonSpinner,
+    SugerirLugarComponent,
   ],
   templateUrl: './pagina-mapa.component.html',
   styleUrls: ['./pagina-mapa.component.scss'],
@@ -61,12 +86,12 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   lugares: Lugar[] = [];
   lugarSeleccionado: Lugar | null = null;
   sinResultadosCerca = false;
+  mostrarSugerirLugar = false;
 
   idCategoriaSeleccionada: string | null = null;
   idComunaSeleccionada: string | null = null;
   soloGratuitos = false;
 
-  // TODO: ajustar el tipo real si el modelo Categoria/Comuna difiere
   categorias: { id_categoria: string; nombre: string }[] = [];
   comunas: { id_comuna: string; nombre: string }[] = [];
 
@@ -77,7 +102,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     private route: ActivatedRoute,
     private router: Router
   ) {
-    addIcons({ locateOutline, closeOutline, handLeftOutline });
+    addIcons({ locateOutline, closeOutline, handLeftOutline, addCircleOutline });
   }
 
   mostrarHintDeslizar = true;
@@ -125,7 +150,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => this.mapa?.invalidateSize(), 100);
   }
 
-  ngOnDestroy() {
+    ngOnDestroy() {
     this.observadorTamano?.disconnect();
     this.mapa?.remove();
   }
@@ -150,16 +175,55 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     });
   }
 
-  private crearIconoPin(seleccionado: boolean): L.DivIcon {
-    const color = seleccionado ? 'var(--ion-color-secondary)' : 'var(--ion-color-primary)';
-    return L.divIcon({
-      className: 'pin-lugar',
-      html: `<span class="pin-punto" style="background:${color}"></span>`,
-      iconSize: [22, 22],
-      iconAnchor: [11, 11],
-    });
+  private colorPorCategoriaDesconocida = new Map<string, { solido: string; tenue: string; texto: string }>();
+  private normalizarNombre(nombre: string): string {
+    return nombre
+      .normalize('NFD').replace(/[\u0300-\u036f]/g, '') // quita tildes
+      .toLowerCase()
+      .trim();
   }
 
+  /** Devuelve el color de una categoría. Usa el diccionario semántico si la conoce; 
+   *  si no (categoría nueva del admin), asigna un color estable por hash del id. */
+  obtenerColorCategoria(categoria: { id_categoria: string; nombre?: string } | null | undefined) {
+    if (!categoria) return PALETA_RESPALDO[0];
+
+    const claveNombre = categoria.nombre ? this.normalizarNombre(categoria.nombre) : '';
+    if (COLORES_POR_NOMBRE[claveNombre]) {
+      return COLORES_POR_NOMBRE[claveNombre];
+    }
+
+    const clave = categoria.id_categoria;
+    if (!this.colorPorCategoriaDesconocida.has(clave)) {
+      let hash = 0;
+      for (let i = 0; i < clave.length; i++) {
+        hash = (hash * 31 + clave.charCodeAt(i)) >>> 0;
+      }
+      this.colorPorCategoriaDesconocida.set(clave, PALETA_RESPALDO[hash % PALETA_RESPALDO.length]);
+    }
+    return this.colorPorCategoriaDesconocida.get(clave)!;
+  }
+
+  /** Ajusta esto si tu modelo Lugar guarda la categoría distinto */
+  private categoriaDeLugar(lugar: Lugar): { id_categoria: string; nombre?: string } | undefined {
+    const cat = (lugar as any).categoria;
+    if (cat) return { id_categoria: cat.id_categoria, nombre: cat.nombre };
+    if ((lugar as any).id_categoria) return { id_categoria: (lugar as any).id_categoria };
+    return undefined;
+  }
+
+
+  private crearIconoPin(lugar: Lugar, seleccionado: boolean): L.DivIcon {
+    const color = this.obtenerColorCategoria(this.categoriaDeLugar(lugar)).solido;
+    const tamano = seleccionado ? 28 : 22;
+    return L.divIcon({
+      className: seleccionado ? 'pin-lugar pin-lugar--seleccionado' : 'pin-lugar',
+      html: `<span class="pin-punto" style="background:${color}; width:${tamano}px; height:${tamano}px;"></span>`,
+      iconSize: [tamano, tamano],
+      iconAnchor: [tamano / 2, tamano / 2],
+    });
+  }
+  
   private crearIconoMiUbicacion(): L.DivIcon {
     return L.divIcon({
       className: 'pin-mi-ubicacion',
@@ -250,11 +314,11 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
     for (const lugar of this.lugares) {
       if (lugar.latitud == null || lugar.longitud == null) {
-        continue; // sin coordenadas, no se puede mostrar (mismo criterio que RF-08)
+        continue; 
       }
 
       const marcador = L.marker([lugar.latitud, lugar.longitud], {
-        icon: this.crearIconoPin(this.lugarSeleccionado?.id_lugar === lugar.id_lugar),
+      icon: this.crearIconoPin(lugar, this.lugarSeleccionado?.id_lugar === lugar.id_lugar),
       });
 
       marcador.on('click', (evento) => {
@@ -308,7 +372,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mapa?.flyTo([posicion.lat, posicion.lng], 15);
       this.mostrarMiUbicacion(posicion.lat, posicion.lng);
     } catch {
-      // TODO: mostrar un toast si el permiso de geolocalización fue denegado
+      
     } finally {
       this.cargando = false;
     }

@@ -17,11 +17,13 @@ import {
   logOutOutline,
   chevronForwardOutline,
   shieldCheckmarkOutline,
+  receiptOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
+import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 
 type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
 
@@ -39,6 +41,7 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
     IonIcon,
     IonSkeletonText,
     IonToast,
+    ReportarProblemaComponent,
   ],
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
@@ -54,6 +57,7 @@ export class PaginaPerfilComponent implements OnInit {
 
   toastMensaje = '';
   mostrarToast = false;
+  mostrarReporte = false;
 
   constructor(
     private authService: Auth,
@@ -66,6 +70,7 @@ export class PaginaPerfilComponent implements OnInit {
       logOutOutline,
       chevronForwardOutline,
       shieldCheckmarkOutline,
+      receiptOutline,
     });
   }
 
@@ -102,9 +107,12 @@ export class PaginaPerfilComponent implements OnInit {
     this.router.navigateByUrl('/perfil/historial');
   }
 
+  irAMisTickets() {
+    this.router.navigateByUrl('/perfil/mis-tickets');
+  }
+
   personalizarAvatar() {
-    // Personalización de avatar
-    this.mostrarAviso('Próximamente');
+    this.router.navigateByUrl('/perfil/personalizar-avatar');
   }
 
   irAConfiguracion() {
@@ -116,8 +124,7 @@ export class PaginaPerfilComponent implements OnInit {
   }
 
   irAAyuda() {
-    // Soporte/recomendaciones 
-    this.mostrarAviso('Próximamente');
+    this.mostrarReporte = true;
   }
 
   async cerrarSesion() {

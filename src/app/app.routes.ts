@@ -73,6 +73,25 @@ export const routes: Routes = [
       import('./features/gamificacion/medallas/medallas.component').then((m) => m.MedallasComponent),
     canActivate: [authGuard],
   },
+
+  // Personalización de avatar (accesible desde Perfil)
+  {
+    path: 'perfil/personalizar-avatar',
+    loadComponent: () =>
+      import('./features/perfil/personalizar-avatar/personalizar-avatar.component').then(
+        (m) => m.PersonalizarAvatarComponent
+      ),
+    canActivate: [authGuard],
+  },
+  // Mis tickets (accesible desde Perfil)
+  {
+    path: 'perfil/mis-tickets',
+    loadComponent: () =>
+      import('./features/perfil/mis-tickets/mis-tickets.component').then(
+        (m) => m.MisTicketsComponent
+      ),
+    canActivate: [authGuard],
+  },
   // Admin
   {
     path: 'admin/gestion-lugares',

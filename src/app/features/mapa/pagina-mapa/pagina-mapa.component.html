@@ -35,8 +35,10 @@
     <div class="fila-categorias-wrapper">
       <div class="fila-categorias" (scroll)="onScrollCategorias()">
         <ion-chip
-          *ngFor="let categoria of categorias; let i = index"
-          [ngClass]="'chip-color-' + (i % 4)"
+          *ngFor="let categoria of categorias"
+          [style.--chip-solido]="obtenerColorCategoria(categoria).solido"
+          [style.--chip-tenue]="obtenerColorCategoria(categoria).tenue"
+          [style.--chip-texto]="obtenerColorCategoria(categoria).texto"
           [class.activo]="idCategoriaSeleccionada === categoria.id_categoria"
           (click)="onCategoriaSeleccionada(categoria.id_categoria)"
         >
@@ -57,6 +59,17 @@
   <!-- Botón : centrar ubicación -->
   <button class="boton-mi-ubicacion" (click)="irAMiUbicacion()" aria-label="Ir a mi ubicación">
     <ion-icon name="locate-outline"></ion-icon>
+  </button>
+
+  <!-- Botón: sugerir un lugar nuevo (se oculta si hay una tarjeta de detalle abajo) -->
+  <button
+    class="boton-sugerir-lugar"
+    *ngIf="!lugarSeleccionado"
+    (click)="mostrarSugerirLugar = true"
+    aria-label="Sugerir un lugar"
+  >
+    <ion-icon name="add-circle-outline"></ion-icon>
+    Sugerir lugar
   </button>
 
   <!-- Carga -->
@@ -95,5 +108,10 @@
       Ver detalles
     </button>
   </div>
+
+  <app-sugerir-lugar
+    [abierto]="mostrarSugerirLugar"
+    (cerrado)="mostrarSugerirLugar = false"
+  ></app-sugerir-lugar>
 
 </ion-content>

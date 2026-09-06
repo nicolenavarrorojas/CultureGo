@@ -6,6 +6,8 @@ import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 import { Lugares } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
+import { SugerenciasLugar } from 'src/app/core/services/sugerencias-lugar';
+import { Auth } from 'src/app/core/services/auth';
 import { PaginaMapaComponent } from './pagina-mapa.component';
 
 describe('PaginaMapaComponent', () => {
@@ -32,6 +34,14 @@ describe('PaginaMapaComponent', () => {
           useValue: { listar: async () => [] },
         },
         {
+          provide: SugerenciasLugar,
+          useValue: { crear: async () => ({}) },
+        },
+        {
+          provide: Auth,
+          useValue: { obtenerUsuarioActual: async () => ({ id_usuario: 'abc-123' }) },
+        },
+        {
           provide: Router,
           useValue: { navigate: () => Promise.resolve(true) },
         },
@@ -50,7 +60,6 @@ describe('PaginaMapaComponent', () => {
   }));
 
   afterEach(() => {
-    // Limpia el mapa de Leaflet y otros recursos para evitar fugas de memoria entre pruebas
     fixture?.destroy();
   });
 

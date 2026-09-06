@@ -5,6 +5,7 @@ import { Router } from '@angular/router';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
+import { Reportes } from 'src/app/core/services/reportes';
 import { PaginaPerfilComponent } from './pagina-perfil.component';
 
 describe('PaginaPerfilComponent', () => {
@@ -39,6 +40,10 @@ describe('PaginaPerfilComponent', () => {
         {
           provide: Router,
           useValue: { navigateByUrl: () => Promise.resolve(true) },
+        },
+        {
+          provide: Reportes,
+          useValue: { crear: async () => ({}) },
         },
       ],
     }).compileComponents();
