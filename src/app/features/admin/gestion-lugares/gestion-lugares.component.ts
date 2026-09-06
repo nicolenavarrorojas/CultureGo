@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import * as L from 'leaflet';
 import {
   IonHeader,
   IonToolbar,
@@ -80,6 +81,9 @@ const ETIQUETAS_ESTADO_REPORTE: Record<EstadoReporte, string> = {
   rechazado: 'Rechazado',
 };
 
+// Centro por defecto del mini-mapa cuando el lugar todavía no tiene coordenadas
+const CENTRO_SANTIAGO: L.LatLngTuple = [-33.4489, -70.6693];
+
 @Component({
   selector: 'app-gestion-lugares',
   standalone: true,
@@ -108,6 +112,11 @@ const ETIQUETAS_ESTADO_REPORTE: Record<EstadoReporte, string> = {
   styleUrls: ['./gestion-lugares.component.scss'],
 })
 export class GestionLugaresComponent implements OnInit {
+  @ViewChild('miniMapaContenedor') miniMapaContenedor?: ElementRef<HTMLDivElement>;
+
+  private miniMapa?: L.Map;
+  private miniMarcador?: L.Marker;
+
   segmentoActivo: Segmento = 'lugares';
   cargando = true;
   guardando = false;
@@ -239,6 +248,81 @@ export class GestionLugaresComponent implements OnInit {
     );
   }
 
+  // Mini-mapa de ubicación dentro del formulario
+
+  /** Se llama cuando ion-modal termina de presentarse (didPresent) --
+   * recién ahí existe de verdad el <div> del mapa en el DOM, porque el
+   * contenido del ng-template de ion-modal se monta de forma perezosa. */
+  onModalPresentado() {
+    this.inicializarMiniMapa();
+  }
+
+  /** Se llama al cerrar el modal (willDismiss) -- si no se destruye acá,
+   * Leaflet tira "Map container is already initialized" la próxima vez
+   * que se abre el formulario. */
+  onModalOcultado() {
+    this.miniMapa?.remove();
+    this.miniMapa = undefined;
+    this.miniMarcador = undefined;
+  }
+
+  private inicializarMiniMapa() {
+    if (!this.miniMapaContenedor) return;
+
+    const centro: L.LatLngTuple =
+      this.formulario.latitud != null && this.formulario.longitud != null
+        ? [this.formulario.latitud, this.formulario.longitud]
+        : CENTRO_SANTIAGO;
+
+    this.miniMapa = L.map(this.miniMapaContenedor.nativeElement, { zoomControl: false }).setView(
+      centro,
+      14
+    );
+    L.control.zoom({ position: 'bottomright' }).addTo(this.miniMapa);
+
+    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+      maxZoom: 19,
+    }).addTo(this.miniMapa);
+
+    if (this.formulario.latitud != null && this.formulario.longitud != null) {
+      this.colocarMiniMarcador(this.formulario.latitud, this.formulario.longitud);
+    }
+
+    // Tocar el mapa fija el punto y actualiza los campos de Latitud/Longitud
+    this.miniMapa.on('click', (evento: L.LeafletMouseEvent) => {
+      this.formulario.latitud = evento.latlng.lat;
+      this.formulario.longitud = evento.latlng.lng;
+      this.colocarMiniMarcador(evento.latlng.lat, evento.latlng.lng);
+    });
+
+    requestAnimationFrame(() => this.miniMapa?.invalidateSize());
+  }
+
+  private colocarMiniMarcador(lat: number, lng: number) {
+    if (!this.miniMapa) return;
+
+    if (this.miniMarcador) {
+      this.miniMarcador.setLatLng([lat, lng]);
+    } else {
+      const icono = L.divIcon({
+        className: 'pin-admin-lugar',
+        html: `<span class="pin-punto"></span>`,
+        iconSize: [22, 22],
+        iconAnchor: [11, 22],
+      });
+      this.miniMarcador = L.marker([lat, lng], { icon: icono }).addTo(this.miniMapa);
+    }
+  }
+
+  /** Si el admin escribe la latitud/longitud a mano en vez de tocar el
+   * mapa, el marcador y la vista del mini-mapa se actualizan igual. */
+  onCoordenadaEditadaManualmente() {
+    if (this.formulario.latitud == null || this.formulario.longitud == null) return;
+    this.colocarMiniMarcador(this.formulario.latitud, this.formulario.longitud);
+    this.miniMapa?.panTo([this.formulario.latitud, this.formulario.longitud]);
+  }
+
   async onArchivoSeleccionado(evento: Event) {
     const input = evento.target as HTMLInputElement;
     const archivo = input.files?.[0];
@@ -365,7 +449,7 @@ export class GestionLugaresComponent implements OnInit {
     }
   }
 
-  // Reportes - estado (pendiente / en_revision / resuelto)
+  // Reportes - estado (pendiente / en_revision / resuelto / rechazado)
 
   async abrirReporte(reporte: Reporte) {
     const alerta = await this.alertController.create({

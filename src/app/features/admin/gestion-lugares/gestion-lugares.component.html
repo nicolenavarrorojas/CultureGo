@@ -117,7 +117,9 @@
   <!-- Modal de crear/editar lugar -->
   <ion-modal
     [isOpen]="mostrarFormulario"
+    (didPresent)="onModalPresentado()"
     (didDismiss)="cerrarFormulario()"
+    (willDismiss)="onModalOcultado()"
   >
     <ng-template>
       <ion-header class="ion-no-border">
@@ -229,12 +231,29 @@
           <div class="fila-doble">
             <label class="campo-form">
               <span>Latitud</span>
-              <input type="number" [(ngModel)]="formulario.latitud" name="latitud" step="0.000001" />
+              <input
+                type="number"
+                [(ngModel)]="formulario.latitud"
+                (ngModelChange)="onCoordenadaEditadaManualmente()"
+                name="latitud"
+                step="0.000001"
+              />
             </label>
             <label class="campo-form">
               <span>Longitud</span>
-              <input type="number" [(ngModel)]="formulario.longitud" name="longitud" step="0.000001" />
+              <input
+                type="number"
+                [(ngModel)]="formulario.longitud"
+                (ngModelChange)="onCoordenadaEditadaManualmente()"
+                name="longitud"
+                step="0.000001"
+              />
             </label>
+          </div>
+
+          <div class="campo-form">
+            <span>Ubicación en el mapa (toca para ajustar)</span>
+            <div #miniMapaContenedor class="mini-mapa-admin"></div>
           </div>
         </div>
       </ion-content>
