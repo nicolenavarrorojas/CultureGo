@@ -73,6 +73,17 @@ export const routes: Routes = [
       import('./features/gamificacion/medallas/medallas.component').then((m) => m.MedallasComponent),
     canActivate: [authGuard],
   },
+
+  // Personalización de avatar (accesible desde Perfil)
+  {
+    path: 'perfil/personalizar-avatar',
+    loadComponent: () =>
+      import('./features/perfil/personalizar-avatar/personalizar-avatar.component').then(
+        (m) => m.PersonalizarAvatarComponent
+      ),
+    canActivate: [authGuard],
+  },
+
   // Admin
   {
     path: 'admin/gestion-lugares',

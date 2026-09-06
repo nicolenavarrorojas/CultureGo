@@ -77,3 +77,4 @@ desktop.ini
 .sass-cache/
 connect.lock
 typings/
+/src/environments
