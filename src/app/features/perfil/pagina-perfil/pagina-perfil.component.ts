@@ -16,11 +16,13 @@ import {
   helpCircleOutline,
   logOutOutline,
   chevronForwardOutline,
+  shieldCheckmarkOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
+import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 
 type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
 
@@ -38,6 +40,7 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
     IonIcon,
     IonSkeletonText,
     IonToast,
+    ReportarProblemaComponent,
   ],
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
@@ -53,18 +56,26 @@ export class PaginaPerfilComponent implements OnInit {
 
   toastMensaje = '';
   mostrarToast = false;
+  mostrarReporte = false;
 
   constructor(
     private authService: Auth,
     private gamificacionService: Gamificacion,
     private router: Router
   ) {
-    addIcons({ settingsOutline, helpCircleOutline, logOutOutline, chevronForwardOutline });
+    addIcons({
+      settingsOutline,
+      helpCircleOutline,
+      logOutOutline,
+      chevronForwardOutline,
+      shieldCheckmarkOutline,
+    });
   }
 
   async ngOnInit() {
     this.cargando = true;
     try {
+
       this.usuario = await this.authService.obtenerUsuarioActual();
       if (!this.usuario) return;
 
@@ -99,13 +110,15 @@ export class PaginaPerfilComponent implements OnInit {
   }
 
   irAConfiguracion() {
-    // No hay pantalla de configuración definida 
     this.mostrarAviso('Próximamente');
   }
 
+  irAPanelAdmin() {
+    this.router.navigateByUrl('/admin/gestion-lugares');
+  }
+
   irAAyuda() {
-    // Soporte/recomendaciones 
-    this.mostrarAviso('Próximamente');
+    this.mostrarReporte = true;
   }
 
   async cerrarSesion() {

@@ -1,0 +1,185 @@
+.historial-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 24px;
+}
+
+.lista-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+
+  .skeleton-fila {
+    height: 64px;
+    border-radius: 14px;
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 40px 12px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+// LUGARES
+.lista-lugares {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fila-lugar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  background: #e3deed;
+  text-align: left;
+  color: var(--ion-color-dark);
+
+  .fila-imagen {
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ion-color-primary-tint);
+    flex-shrink: 0;
+  }
+
+  .fila-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .fila-nombre {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--ion-color-dark);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .fila-detalle {
+      font-size: 0.78rem;
+      color: var(--ion-color-medium);
+    }
+  }
+}
+
+// MEDALLAS
+.lista-medallas-historial {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fila-medalla {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px;
+  border-radius: 16px;
+  background: var(--ion-color-light);
+
+  &.bloqueada {
+    opacity: 0.75;
+
+    .fila-medalla-icono {
+      filter: grayscale(1);
+    }
+  }
+
+  .fila-medalla-icono {
+    width: 52px;
+    height: 52px;
+    border-radius: 50%;
+    background-color: #e3deed;
+    background-size: cover;
+    background-position: center;
+    border: 2px solid var(--ion-color-primary-tint);
+    flex-shrink: 0;
+  }
+
+  .fila-medalla-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
+
+    .fila-medalla-nombre {
+      font-weight: 600;
+      font-size: 0.92rem;
+      color: var(--ion-color-dark);
+    }
+
+    .fila-medalla-desc {
+      font-size: 0.78rem;
+      color: var(--ion-color-medium);
+      margin-bottom: 4px;
+    }
+
+    .fila-medalla-fecha {
+      font-size: 0.76rem;
+      color: var(--ion-color-success);
+      font-weight: 600;
+    }
+
+    .barra-progreso {
+      height: 6px;
+      border-radius: 999px;
+      background: var(--ion-color-light-shade);
+      overflow: hidden;
+      margin-top: 2px;
+    }
+
+    .barra-progreso-relleno {
+      height: 100%;
+      background: var(--ion-color-primary);
+      border-radius: 999px;
+    }
+
+    .fila-medalla-progreso-texto {
+      font-size: 0.72rem;
+      color: var(--ion-color-medium);
+      margin-top: 2px;
+    }
+  }
+}
+
+// CATEGORÍAS
+.lista-categorias {
+  display: flex;
+  flex-direction: column;
+}
+
+.fila-categoria {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 14px 4px;
+  border-top: 1px solid var(--ion-color-light-shade);
+
+  &:last-child {
+    border-bottom: 1px solid var(--ion-color-light-shade);
+  }
+
+  .fila-categoria-nombre {
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .fila-categoria-cantidad {
+    font-size: 0.82rem;
+    color: var(--ion-color-medium);
+  }
+}

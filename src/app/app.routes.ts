@@ -86,11 +86,6 @@ export const routes: Routes = [
 
   // Admin
   {
-    path: 'admin/login-admin',
-    loadComponent: () =>
-      import('./features/admin/login-admin/login-admin.component').then((m) => m.LoginAdminComponent),
-  },
-  {
     path: 'admin/gestion-lugares',
     loadComponent: () =>
       import('./features/admin/gestion-lugares/gestion-lugares.component').then((m) => m.GestionLugaresComponent),

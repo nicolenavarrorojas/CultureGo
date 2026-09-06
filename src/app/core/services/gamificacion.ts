@@ -1,6 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Supabase } from './supabase';
-import { Medalla, UsuarioMedalla, Visita } from '../models';
+import { Medalla, UsuarioMedalla, Visita, Lugar} from '../models';
 
 /**
  * Sistema de gamificación (mascota, medallas).
@@ -66,4 +66,55 @@ export class Gamificacion {
     );
     return idsUnicos.size;
   }
+  /** Lugares visitados por el usuario, sin duplicados, más recientes primero. */
+  async listarLugaresVisitados(
+    idUsuario: string
+  ): Promise<{ lugar: Lugar; fecha_visita: string }[]> {
+    const { data, error } = await this.supabase
+      .from('visita')
+      .select('fecha_visita, lugar(*, categoria(*), comuna(*))')
+      .eq('id_usuario', idUsuario)
+      .order('fecha_visita', { ascending: false });
+    if (error) throw error;
+ 
+    const vistos = new Set<string>();
+    const resultado: { lugar: Lugar; fecha_visita: string }[] = [];
+    for (const fila of (data ?? []) as any[]) {
+      const lugar = fila.lugar as Lugar;
+      if (!lugar || vistos.has(lugar.id_lugar)) continue;
+      vistos.add(lugar.id_lugar);
+      resultado.push({ lugar, fecha_visita: fila.fecha_visita });
+    }
+    return resultado;
+  }
+ 
+  /**
+   * Cantidad de visitas del usuario por categoría (cuenta TOTAL de visitas,
+   * no lugares distintos 
+   */
+  async contarVisitasPorCategoria(idUsuario: string): Promise<Record<string, number>> {
+    const { data, error } = await this.supabase
+      .from('visita')
+      .select('lugar(id_categoria)')
+      .eq('id_usuario', idUsuario);
+    if (error) throw error;
+ 
+    const conteo: Record<string, number> = {};
+    for (const fila of (data ?? []) as any[]) {
+      const idCategoria = fila.lugar?.id_categoria;
+      if (!idCategoria) continue;
+      conteo[idCategoria] = (conteo[idCategoria] ?? 0) + 1;
+    }
+    return conteo;
+  }
+ 
+  /** Total de visitas del usuario */
+  async contarVisitasTotales(idUsuario: string): Promise<number> {
+    const { count, error } = await this.supabase
+      .from('visita')
+      .select('id_visita', { count: 'exact', head: true })
+      .eq('id_usuario', idUsuario);
+    if (error) throw error;
+    return count ?? 0;
+  }  
 }
