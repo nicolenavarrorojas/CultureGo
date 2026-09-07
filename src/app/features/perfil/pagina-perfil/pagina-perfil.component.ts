@@ -116,7 +116,7 @@ export class PaginaPerfilComponent implements OnInit {
   }
 
   irAConfiguracion() {
-    this.mostrarAviso('Próximamente');
+    this.router.navigateByUrl('/perfil/configuracion');
   }
 
   irAPanelAdmin() {

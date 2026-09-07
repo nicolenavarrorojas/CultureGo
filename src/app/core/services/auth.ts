@@ -57,4 +57,29 @@ export class Auth {
     const { error } = await this.supabase.auth.updateUser({ password: nuevaPassword });
     if (error) throw error;
   }
+
+  /** Edición de perfil */
+  async actualizarPerfil(datos: Partial<Pick<Usuario, 'nombre'>>): Promise<Usuario> {
+    const { data: sesion } = await this.supabase.auth.getUser();
+    if (!sesion.user) throw new Error('No hay sesión activa.');
+ 
+    const { data, error } = await this.supabase
+      .from('usuario')
+      .update(datos)
+      .eq('id_usuario', sesion.user.id)
+      .select()
+      .single();
+    if (error) throw error;
+    return data as Usuario;
+  }
+ 
+  /**
+   * Elimina la cuenta del usuario actual de forma permanente
+   * Al borrar auth.users, la sesión local queda inválida
+   */
+  async eliminarCuenta(): Promise<void> {
+    const { error } = await this.supabase.rpc('fn_eliminar_mi_cuenta');
+    if (error) throw error;
+  }
+
 }

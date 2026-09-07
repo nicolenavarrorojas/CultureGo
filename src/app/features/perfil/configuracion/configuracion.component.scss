@@ -1,0 +1,302 @@
+.config-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+}
+
+// Lista de opciones -- mismo patrón que .lista-opciones en pagina-perfil
+.lista-opciones {
+  display: flex;
+  flex-direction: column;
+
+  .opcion {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: none;
+    border: none;
+    border-top: 1px solid var(--ion-color-light-shade);
+    padding: 16px 4px;
+    text-align: left;
+    color: var(--ion-color-dark);
+    font-size: 0.92rem;
+
+    ion-icon:not(.flecha) {
+      font-size: 1.15rem;
+      color: var(--ion-color-primary);
+    }
+
+    span {
+      flex: 1;
+    }
+
+    .flecha {
+      color: var(--ion-color-medium);
+      font-size: 0.9rem;
+    }
+
+    &.opcion-peligro {
+      ion-icon:not(.flecha) {
+        color: var(--ion-color-danger);
+      }
+      span {
+        color: var(--ion-color-danger);
+      }
+    }
+
+    &[disabled] {
+      opacity: 0.6;
+    }
+
+    &:last-child {
+      border-bottom: 1px solid var(--ion-color-light-shade);
+    }
+  }
+}
+
+// Contenido de los modales
+
+.modal-contenido {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 16px;
+}
+
+.campo-form {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  margin-bottom: 14px;
+
+  span {
+    font-size: 0.78rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+  }
+
+  input {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--ion-color-light);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.9rem;
+    color: var(--ion-color-dark);
+    font-family: inherit;
+  }
+}
+
+.campo-con-icono {
+  display: flex;
+  align-items: center;
+  background: var(--ion-color-light);
+  border-radius: 10px;
+  padding-right: 6px;
+
+  input {
+    background: transparent;
+    padding: 10px 12px;
+    flex: 1;
+    min-width: 0;
+  }
+
+  .boton-ojo {
+    flex-shrink: 0;
+    background: none;
+    border: none;
+    padding: 6px;
+    display: flex;
+    align-items: center;
+    color: var(--ion-color-medium);
+    font-size: 1.1rem;
+  }
+}
+
+.mensaje-validacion {
+  margin: -6px 0 10px;
+  font-size: 0.8rem;
+  color: var(--ion-color-danger);
+}
+
+.footer-boton {
+  padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
+  background: #fff;
+}
+
+.boton-principal {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  box-shadow: 0 4px 14px rgba(107, 79, 160, 0.35);
+
+  &[disabled] {
+    opacity: 0.6;
+    box-shadow: none;
+  }
+}
+
+.boton-secundario {
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 12px;
+  padding: 12px 18px;
+  font-size: 0.88rem;
+  font-weight: 700;
+}
+
+// Permisos
+
+.fila-permiso {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  margin-bottom: 16px;
+
+  > ion-icon {
+    font-size: 1.3rem;
+    color: var(--ion-color-primary);
+    margin-top: 2px;
+    flex-shrink: 0;
+  }
+
+  .fila-permiso-info {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    .fila-permiso-nombre {
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    .fila-permiso-desc {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+      line-height: 1.4;
+    }
+
+    .fila-permiso-estado {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--ion-color-medium);
+      margin-top: 2px;
+
+      ion-icon {
+        font-size: 1rem;
+      }
+
+      &.estado-ok {
+        color: var(--ion-color-success);
+      }
+
+      &.estado-mal {
+        color: var(--ion-color-danger);
+      }
+    }
+  }
+}
+
+// Acerca de
+
+.fila-info-simple {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  font-size: 0.88rem;
+  color: var(--ion-color-dark);
+  margin-bottom: 14px;
+
+  span:last-child {
+    color: var(--ion-color-medium);
+  }
+}
+
+.boton-texto-expandible {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  background: none;
+  border: none;
+  color: var(--ion-color-primary);
+  font-size: 0.88rem;
+  font-weight: 600;
+  padding: 6px 0;
+
+  ion-icon {
+    font-size: 1.05rem;
+  }
+}
+
+.texto-descripcion {
+  margin: 0 0 18px;
+  font-size: 0.85rem;
+  line-height: 1.5;
+  color: var(--ion-color-dark);
+}
+
+.bloque-proyecto {
+  h3 {
+    margin: 0 0 6px;
+    font-size: 0.8rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ion-color-medium);
+  }
+
+  p {
+    margin: 0 0 16px;
+    font-size: 0.88rem;
+    color: var(--ion-color-dark);
+  }
+
+  .lista-equipo {
+    margin: 0 0 4px;
+    padding-left: 18px;
+    font-size: 0.88rem;
+    color: var(--ion-color-dark);
+
+    li {
+      margin-bottom: 4px;
+    }
+  }
+}
+
+.bloque-terminos {
+  margin-top: 10px;
+  padding: 14px;
+  border-radius: 12px;
+  background: var(--ion-color-light);
+
+  p {
+    margin: 0 0 10px;
+    font-size: 0.82rem;
+    line-height: 1.5;
+    color: var(--ion-color-dark);
+
+    &:last-child {
+      margin-bottom: 0;
+    }
+  }
+
+  .texto-nota {
+    font-size: 0.74rem;
+    color: var(--ion-color-medium);
+    font-style: italic;
+  }
+}

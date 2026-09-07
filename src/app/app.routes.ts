@@ -92,6 +92,15 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
+  // Configuración de perfil (accesible desde Perfil)
+  {
+    path: 'perfil/configuracion',
+    loadComponent: () =>
+      import('./features/perfil/configuracion/configuracion.component').then(
+        (m) => m.ConfiguracionComponent
+      ),
+    canActivate: [authGuard],
+  },
   // Admin
   {
     path: 'admin/gestion-lugares',

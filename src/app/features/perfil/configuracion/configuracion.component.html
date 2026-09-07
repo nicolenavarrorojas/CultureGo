@@ -1,0 +1,596 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Configuración</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="config-content">
+
+  <div class="lista-opciones">
+    <button class="opcion" (click)="abrirModalPerfil()">
+      <ion-icon name="person-outline"></ion-icon>
+      <span>Editar perfil</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+
+    <button class="opcion" (click)="abrirModalPassword()">
+      <ion-icon name="lock-closed-outline"></ion-icon>
+      <span>Cambiar contraseña</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+
+    <button class="opcion" (click)="abrirModalPermisos()">
+      <ion-icon name="location-outline"></ion-icon>
+      <span>Permisos</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+
+    <button class="opcion" (click)="abrirModalAcercaDe()">
+      <ion-icon name="information-circle-outline"></ion-icon>
+      <span>Acerca de CultureGo</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+
+    <button class="opcion" (click)="abrirModalTerminos()">
+      <ion-icon name="document-text-outline"></ion-icon>
+      <span>Términos y condiciones</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+
+    <button class="opcion opcion-peligro" [disabled]="eliminandoCuenta" (click)="confirmarEliminarCuenta()">
+      <ion-icon name="trash-outline"></ion-icon>
+      <span>{{ eliminandoCuenta ? 'Eliminando...' : 'Eliminar cuenta' }}</span>
+      <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+    </button>
+  </div>
+
+  <!-- Modal: Editar perfil -->
+  <ion-modal [isOpen]="mostrarModalPerfil" (didDismiss)="mostrarModalPerfil = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Editar perfil</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="mostrarModalPerfil = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-contenido">
+        <label class="campo-form">
+          <span>Nombre</span>
+          <input type="text" [(ngModel)]="nombreEditado" name="nombre" />
+        </label>
+      </ion-content>
+
+      <ion-footer class="ion-no-border">
+        <div class="footer-boton">
+          <button
+            class="boton-principal"
+            [disabled]="!nombreValido || guardandoPerfil"
+            (click)="guardarPerfil()"
+          >
+            {{ guardandoPerfil ? 'Guardando...' : 'Guardar cambios' }}
+          </button>
+        </div>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal: Cambiar contraseña -->
+  <ion-modal [isOpen]="mostrarModalPassword" (didDismiss)="mostrarModalPassword = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Cambiar contraseña</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="mostrarModalPassword = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-contenido">
+        <label class="campo-form">
+          <span>Nueva contraseña</span>
+          <div class="campo-con-icono">
+            <input
+              [type]="mostrarPasswordNueva ? 'text' : 'password'"
+              [(ngModel)]="passwordNueva"
+              name="passwordNueva"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="boton-ojo"
+              (click)="toggleMostrarPasswordNueva()"
+              [attr.aria-label]="mostrarPasswordNueva ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <ion-icon [name]="mostrarPasswordNueva ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+        </label>
+
+        <label class="campo-form">
+          <span>Confirmar nueva contraseña</span>
+          <div class="campo-con-icono">
+            <input
+              [type]="mostrarPasswordConfirmar ? 'text' : 'password'"
+              [(ngModel)]="passwordConfirmar"
+              name="passwordConfirmar"
+              autocomplete="new-password"
+            />
+            <button
+              type="button"
+              class="boton-ojo"
+              (click)="toggleMostrarPasswordConfirmar()"
+              [attr.aria-label]="mostrarPasswordConfirmar ? 'Ocultar contraseña' : 'Mostrar contraseña'"
+            >
+              <ion-icon [name]="mostrarPasswordConfirmar ? 'eye-off-outline' : 'eye-outline'"></ion-icon>
+            </button>
+          </div>
+        </label>
+
+        <p class="mensaje-validacion" *ngIf="erroresPassword">{{ erroresPassword }}</p>
+      </ion-content>
+
+      <ion-footer class="ion-no-border">
+        <div class="footer-boton">
+          <button
+            class="boton-principal"
+            [disabled]="!passwordValida || cambiandoPassword"
+            (click)="cambiarPassword()"
+          >
+            {{ cambiandoPassword ? 'Actualizando...' : 'Actualizar contraseña' }}
+          </button>
+        </div>
+      </ion-footer>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal: Permisos -->
+  <ion-modal [isOpen]="mostrarModalPermisos" (didDismiss)="mostrarModalPermisos = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Permisos</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="mostrarModalPermisos = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-contenido">
+        <div class="fila-permiso">
+          <ion-icon name="location-outline"></ion-icon>
+          <div class="fila-permiso-info">
+            <span class="fila-permiso-nombre">Ubicación</span>
+            <span class="fila-permiso-desc">
+              Se usa solo para "Cerca de mí" en el mapa y para confirmar que estás en el lugar al registrar una visita. Nunca se guarda tu ubicación exacta en la base de datos.
+            </span>
+            <span
+              class="fila-permiso-estado"
+              [class.estado-ok]="estadoPermisoUbicacion === 'granted'"
+              [class.estado-mal]="estadoPermisoUbicacion === 'denied'"
+            >
+              <ion-icon
+                [name]="estadoPermisoUbicacion === 'granted' ? 'checkmark-circle-outline' : 'alert-circle-outline'"
+              ></ion-icon>
+              <ng-container [ngSwitch]="estadoPermisoUbicacion">
+                <span *ngSwitchCase="'granted'">Permitido</span>
+                <span *ngSwitchCase="'denied'">Bloqueado — actívalo desde la configuración del navegador/celular</span>
+                <span *ngSwitchCase="'no_disponible'">No se pudo revisar el estado</span>
+                <span *ngSwitchDefault>Todavía no se ha pedido</span>
+              </ng-container>
+            </span>
+          </div>
+        </div>
+
+        <button
+          class="boton-secundario"
+          *ngIf="estadoPermisoUbicacion !== 'granted' && estadoPermisoUbicacion !== 'denied'"
+          (click)="solicitarPermisoUbicacion()"
+        >
+          Solicitar permiso
+        </button>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal: Acerca de CultureGo (info del proyecto) -->
+  <ion-modal [isOpen]="mostrarModalAcercaDe" (didDismiss)="mostrarModalAcercaDe = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Acerca de CultureGo</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="mostrarModalAcercaDe = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-contenido">
+        <div class="fila-info-simple">
+          <span>Versión</span>
+          <span>{{ version }}</span>
+        </div>
+
+        <p class="texto-descripcion">
+          CultureGo centraliza y presenta de forma resumida, accesible y filtrable la información de atractivos
+          turísticos y culturales de Santiago, con foco en lugares de menor visibilidad que no suelen aparecer en
+          las plataformas turísticas tradicionales.
+        </p>
+
+        <div class="bloque-proyecto">
+          <h3>Proyecto de título</h3>
+          <p>Ingeniería en Informática Duoc UC, sede San Joaquín.</p>
+
+          <h3>Equipo</h3>
+          <ul class="lista-equipo">
+            <li>Nicole Navarro</li>
+            <li>Benjamín González</li>
+            <li>Diana Ávila</li>
+          </ul>
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <!-- Modal: Términos y condiciones -->
+  <ion-modal [isOpen]="mostrarModalTerminos" (didDismiss)="mostrarModalTerminos = false">
+    <ng-template>
+      <ion-header class="ion-no-border">
+        <ion-toolbar>
+          <ion-title>Términos y condiciones</ion-title>
+          <ion-buttons slot="end">
+            <ion-button (click)="mostrarModalTerminos = false">
+              <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+            </ion-button>
+          </ion-buttons>
+        </ion-toolbar>
+      </ion-header>
+
+      <ion-content class="modal-contenido">
+        <div class="bloque-terminos">
+
+          <h3>Términos de Servicio de CultureGo</h3>
+          <p class="texto-nota">Última modificación: 06/09/2026</p>
+
+          <h4>1. Condiciones</h4>
+          <p>
+            Bienvenido a CultureGo. Ofrecemos una aplicación móvil que permite descubrir atractivos
+            turísticos y culturales de Santiago mediante un catálogo filtrable, un mapa interactivo y
+            un sistema de gamificación que incluye el registro de visitas y la obtención de medallas.
+            Estos Términos de Servicio regulan el acceso y uso de la aplicación y de sus funcionalidades
+            relacionadas (en adelante, los "Servicios").
+          </p>
+
+          <p>
+            CultureGo es un proyecto de título de la carrera de Ingeniería en Informática, desarrollado
+            sin fines comerciales por un equipo de estudiantes, con fines exclusivamente académicos y
+            demostrativos.
+          </p>
+
+          <p>
+            Al registrarse, acceder o utilizar los Servicios, usted declara haber leído y aceptado estos
+            Términos. Si no está de acuerdo con alguno de ellos, deberá abstenerse de utilizar la App.
+            CultureGo podrá modificar estos Términos cuando sea necesario. Cualquier modificación será
+            informada mediante su publicación dentro de la App. El uso continuado de los Servicios
+            después de una modificación implicará la aceptación de los nuevos Términos.
+          </p>
+
+          <p>
+            En caso de incumplimiento de estos Términos, CultureGo podrá suspender o eliminar la cuenta
+            del usuario. La suspensión o eliminación podrá implicar la pérdida de acceso a determinadas
+            funcionalidades, información, registros de visitas y medallas asociadas a la cuenta.
+          </p>
+
+
+          <h4>2. Privacidad y protección de datos</h4>
+          <p>
+            CultureGo puede recopilar datos necesarios para proporcionar sus funcionalidades, incluyendo
+            correo electrónico, nombre, avatar, historial de visitas, reportes, sugerencias y, cuando
+            el usuario lo autorice, información relacionada con la ubicación del dispositivo.
+          </p>
+
+          <p>
+            La información recopilada será utilizada para proporcionar, mantener y mejorar las
+            funcionalidades de la App, incluyendo la administración de cuentas, personalización del
+            perfil, registro de visitas, obtención de medallas y funcionamiento de las funcionalidades
+            relacionadas con mapas y geolocalización.
+          </p>
+
+          <p>
+            El tratamiento de los datos personales se encuentra regulado por nuestra Política de
+            Privacidad, disponible dentro de la App, donde se informa con mayor detalle qué información
+            se recopila, para qué se utiliza, cómo se almacena, durante cuánto tiempo puede conservarse
+            y cuáles son los derechos de los usuarios.
+          </p>
+
+          <p>
+            CultureGo no comercializa los datos personales de sus usuarios. Cuando sea necesario utilizar
+            servicios tecnológicos de terceros para el funcionamiento de la App, los datos podrán ser
+            procesados de acuerdo con las condiciones y políticas aplicables de dichos proveedores.
+          </p>
+
+
+          <h4>3. Uso de los Servicios</h4>
+
+          <p>
+            <strong>3.1 Uso apropiado.</strong> Usted acepta utilizar los Servicios de manera responsable,
+            conforme a la legislación vigente, estos Términos y los derechos de otros usuarios. No podrá
+            utilizar la App para publicar información deliberadamente falsa, ofensiva, difamatoria o
+            que infrinja derechos de terceros al reportar problemas o sugerir lugares.
+          </p>
+
+          <p>
+            <strong>3.2 Geolocalización.</strong> Algunas funcionalidades de CultureGo requieren utilizar
+            información de ubicación del dispositivo para determinar la proximidad del usuario respecto
+            de determinados lugares. El uso de esta funcionalidad requiere que el usuario otorgue los
+            permisos correspondientes desde su dispositivo.
+          </p>
+
+          <p>
+            El usuario podrá desactivar el acceso a su ubicación mediante la configuración de su
+            dispositivo. En dicho caso, algunas funcionalidades relacionadas con mapas, lugares cercanos
+            o registro de visitas podrían dejar de estar disponibles o funcionar de manera limitada.
+          </p>
+
+          <p>
+            <strong>3.3 Visitas a lugares físicos.</strong> CultureGo está diseñada para incentivar la
+            visita a lugares turísticos y culturales. El usuario es responsable de su propia seguridad
+            durante dichas visitas y deberá respetar las normas, restricciones, horarios e indicaciones
+            establecidas por cada lugar. CultureGo no supervisa ni garantiza las condiciones de seguridad,
+            accesibilidad o funcionamiento de los lugares incluidos en el catálogo.
+          </p>
+
+          <p>
+            <strong>3.4 Cuenta de usuario.</strong> Para utilizar determinadas funciones deberá crear una
+            cuenta mediante correo electrónico y contraseña. Usted es responsable de mantener la
+            confidencialidad de sus credenciales y de toda actividad realizada desde su cuenta. Deberá
+            informar cualquier uso no autorizado de su cuenta cuando tenga conocimiento de ello.
+          </p>
+
+          <p>
+            <strong>3.5 Suspensión o cancelación.</strong> CultureGo podrá suspender o eliminar una cuenta
+            cuando detecte incumplimientos de estos Términos, uso fraudulento del sistema de visitas,
+            manipulación de la ubicación u otras actividades que puedan afectar el funcionamiento o la
+            seguridad de la App. El usuario podrá eliminar su cuenta en cualquier momento mediante la
+            opción "Eliminar cuenta" disponible dentro de su perfil.
+          </p>
+
+
+          <h4>4. Licencia limitada de uso</h4>
+          <p>
+            Sujeto al cumplimiento de estos Términos, CultureGo concede al usuario una licencia limitada,
+            no exclusiva, intransferible y revocable para utilizar la App en un dispositivo compatible
+            de su propiedad o bajo su control, con fines personales y no comerciales.
+          </p>
+
+          <p>
+            El usuario no podrá: (a) copiar, modificar o crear obras derivadas de la App; (b) distribuir,
+            sublicenciar, arrendar o revender la App; (c) practicar ingeniería inversa, descompilar o
+            desmontar la App, salvo cuando dicha actividad esté expresamente permitida por la legislación
+            aplicable; o (d) utilizar la App con fines distintos a los previstos en estos Términos.
+          </p>
+
+
+          <h4>5. Contenido y derechos de Contenido</h4>
+
+          <p>
+            <strong>5.1 Titularidad.</strong> CultureGo y su equipo de desarrollo mantienen la titularidad
+            del diseño, código fuente, elementos gráficos, marca y demás contenido original desarrollado
+            específicamente para la App. La información sobre lugares turísticos y culturales puede
+            provenir de fuentes públicas, servicios externos o contenido enviado por usuarios.
+          </p>
+
+          <p>
+            <strong>5.2 Contenido enviado por usuarios.</strong> Al enviar reportes de problemas o
+            sugerencias de lugares, usted autoriza a CultureGo a revisar, adaptar y publicar dicha
+            información dentro de la App, cuando corresponda y previa revisión o aprobación por parte
+            de un administrador.
+          </p>
+
+          <p>
+            El usuario declara que la información proporcionada es verídica según su conocimiento y que
+            posee los derechos o autorizaciones necesarios para compartir cualquier contenido que envíe.
+          </p>
+
+          <p>
+            <strong>5.3 Responsabilidad del contenido.</strong> El usuario será responsable del contenido
+            que envíe a CultureGo y de cualquier consecuencia derivada de información que infrinja derechos
+            de terceros o la legislación aplicable.
+          </p>
+
+
+          <h4>6. Conducta y Prohibiciones Generales</h4>
+
+          <p>Al utilizar CultureGo, el usuario se compromete a no:</p>
+
+          <p>- Registrar visitas falsas o manipular deliberadamente su ubicación (GPS spoofing) para obtener medallas o estadísticas de manera indebida.</p>
+          <p>- Crear múltiples cuentas con el propósito de obtener ventajas indebidas dentro de la App.</p>
+          <p>- Compartir sus credenciales o permitir deliberadamente que terceros utilicen su cuenta.</p>
+          <p>- Intentar acceder a áreas administrativas, cuentas o información para las cuales no tenga autorización.</p>
+          <p>- Publicar contenido falso, ofensivo, difamatorio o que infrinja derechos de propiedad intelectual.</p>
+          <p>- Introducir virus, código malicioso o cualquier elemento destinado a perjudicar el funcionamiento de la App.</p>
+          <p>- Interferir deliberadamente con el funcionamiento normal de los Servicios o intentar vulnerar sus mecanismos de seguridad.</p>
+
+          <p>
+            CultureGo se reserva el derecho de eliminar contenido, invalidar registros de visitas o
+            suspender cuentas cuando existan motivos razonables para considerar que se han producido
+            estas conductas.
+          </p>
+
+
+          <h4>7. Registro de visitas y gamificación</h4>
+
+          <p>
+            El registro de una visita requiere que el usuario se encuentre dentro de una determinada
+            proximidad geográfica respecto del lugar correspondiente y está sujeto a un tiempo de espera
+            mínimo de seis (6) horas entre registros para el mismo lugar, con el objetivo de reducir
+            registros fraudulentos.
+          </p>
+
+          <p>
+            Las medallas, estadísticas y demás elementos de gamificación se asignan automáticamente de
+            acuerdo con la actividad registrada dentro de la App. Estos elementos no poseen valor
+            monetario, no constituyen premios económicos y no pueden venderse, transferirse ni canjearse
+            por dinero u otros bienes.
+          </p>
+
+          <p>
+            CultureGo podrá invalidar registros, estadísticas o medallas cuando determine que fueron
+            obtenidos mediante mecanismos fraudulentos, manipulación de ubicación u otros métodos que
+            vulneren el funcionamiento previsto de la App.
+          </p>
+
+
+          <h4>8. Sitios o recursos de terceros</h4>
+
+          <p>
+            La App puede utilizar mapas, información geográfica, servicios de autenticación, almacenamiento
+            de datos u otras funcionalidades proporcionadas por terceros. Entre estos servicios pueden
+            encontrarse proveedores como OpenStreetMap u otros servicios tecnológicos utilizados para el
+            funcionamiento de CultureGo.
+          </p>
+
+          <p>
+            CultureGo no controla los servicios de terceros y no garantiza su disponibilidad, exactitud,
+            actualización o funcionamiento continuo. El uso de determinados servicios externos puede
+            encontrarse sujeto a sus propios términos y políticas de privacidad.
+          </p>
+
+
+          <h4>9. Exclusión de garantías</h4>
+
+          <p>
+            En la máxima medida permitida por la legislación aplicable, los Servicios se proporcionan
+            según su disponibilidad y sin garantías adicionales que no estén expresamente establecidas
+            en estos Términos.
+          </p>
+
+          <p>
+            Debido a que CultureGo es un proyecto académico en desarrollo, no se garantiza la disponibilidad
+            ininterrumpida de los Servicios ni que la información del catálogo sea permanentemente exacta,
+            completa o actualizada, incluyendo horarios, precios, direcciones, disponibilidad o condiciones
+            de los lugares.
+          </p>
+
+          <p>
+            El usuario deberá verificar, cuando sea necesario, la información directamente con el
+            establecimiento, institución, autoridad o fuente correspondiente antes de realizar una visita.
+          </p>
+
+
+          <h4>10. Limitación de responsabilidad</h4>
+
+          <p>
+            En la máxima medida permitida por la legislación aplicable, CultureGo y su equipo de desarrollo
+            no serán responsables por daños indirectos, incidentales o consecuentes derivados del uso o
+            imposibilidad de uso de los Servicios.
+          </p>
+
+          <p>
+            Esto incluye, entre otros casos, interrupciones del servicio, errores o desactualización de
+            información, fallos de servicios externos o incidentes ocurridos durante la visita física a
+            lugares recomendados o mostrados en la App.
+          </p>
+
+          <p>
+            CultureGo no garantiza que la información proporcionada por la App sea suficiente para
+            determinar las condiciones de seguridad, accesibilidad o funcionamiento de un lugar. El
+            usuario deberá tomar las precauciones necesarias y seguir las indicaciones oficiales
+            correspondientes.
+          </p>
+
+          <p>
+            Al tratarse de un proyecto académico sin fines comerciales, CultureGo no contempla actualmente
+            compensaciones económicas asociadas al uso de sus funcionalidades, sin perjuicio de los
+            derechos que correspondan al usuario conforme a la legislación aplicable.
+          </p>
+
+
+          <h4>11. Resolución de controversias</h4>
+
+          <p>
+            Cualquier duda, reclamo o controversia relacionada con el uso de CultureGo podrá comunicarse
+            en primera instancia al equipo de desarrollo mediante el canal de soporte disponible dentro
+            de la App.
+          </p>
+
+          <p>
+            Estos Términos se interpretarán de acuerdo con la legislación vigente de la República de Chile,
+            sin perjuicio de los derechos que correspondan a los usuarios conforme a dicha legislación.
+          </p>
+
+
+          <h4>12. Generalidades</h4>
+
+          <p>
+            <strong>12.1 Acuerdo completo.</strong> Estos Términos, junto con la Política de Privacidad y
+            cualquier otra política expresamente incorporada a la App, constituyen el acuerdo aplicable
+            al uso de los Servicios.
+          </p>
+
+          <p>
+            <strong>12.2 Separabilidad.</strong> Si alguna disposición de estos Términos fuera declarada
+            inválida o inaplicable, las demás disposiciones continuarán vigentes en la medida permitida
+            por la legislación aplicable.
+          </p>
+
+          <p>
+            <strong>12.3 Notificaciones.</strong> Las modificaciones y comunicaciones generales relativas
+            a estos Términos podrán realizarse mediante su publicación dentro de la App.
+          </p>
+
+          <p>
+            <strong>12.4 Contacto.</strong> Para consultas relacionadas con estos Términos, el usuario
+            podrá comunicarse con el equipo de desarrollo mediante la sección de soporte disponible
+            dentro de la App.
+          </p>
+
+
+          <h4>13. Naturaleza académica del proyecto</h4>
+
+          <p>
+            CultureGo es un proyecto de título desarrollado en el contexto de la carrera de Ingeniería
+            en Informática, sin fines de lucro y con objetivos académicos y demostrativos.
+          </p>
+
+          <p>
+            Estos Términos han sido elaborados como parte de la documentación del proyecto y no constituyen
+            asesoría jurídica profesional. Para una implementación comercial o pública a gran escala,
+            se recomienda realizar una revisión legal especializada y adaptar estos Términos a las
+            obligaciones legales y regulatorias correspondientes.
+          </p>
+
+          <p>
+            El equipo de desarrollo podrá modificar, suspender o finalizar determinadas funcionalidades
+            de CultureGo durante o después del período de evaluación académica del proyecto.
+          </p>
+
+        </div>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="2500"
+    [color]="toastColor"
+    position="top"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>

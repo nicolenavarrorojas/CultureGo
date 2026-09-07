@@ -147,7 +147,7 @@
   box-shadow: 0 2px 8px rgba(43, 36, 54, 0.18);
   font-size: 0.82rem;
   font-weight: 700;
-  color: var(--ion-color-secondary); // adobe, coherente con el color del pin de sugerencias
+  color: var(--ion-color-secondary);
 
   ion-icon {
     font-size: 1.2rem;
@@ -207,7 +207,7 @@
   bottom: calc(72px + env(safe-area-inset-bottom));
   z-index: 1002;
   display: flex;
-  flex-direction: column; // antes: fila única con align-items: center
+  flex-direction: column; 
   gap: 12px;
   padding: 14px;
   border-radius: 18px;
