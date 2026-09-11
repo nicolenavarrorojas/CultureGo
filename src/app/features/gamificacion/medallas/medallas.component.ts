@@ -11,13 +11,28 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  IonIcon,
   IonSkeletonText,
 } from '@ionic/angular/standalone';
+import { addIcons } from 'ionicons';
+import {
+  ribbonOutline,
+  colorPaletteOutline,
+  ticketOutline,
+  leafOutline,
+  trailSignOutline,
+  businessOutline,
+  flameOutline,
+  bookOutline,
+  filmOutline,
+  imagesOutline,
+} from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Lugar, Medalla, UsuarioMedalla } from 'src/app/core/models';
+import { ColorTema, obtenerColorCategoria, obtenerIconoCategoria } from 'src/app/core/utils/tema-categoria';
 
 type Segmento = 'lugares' | 'medallas' | 'categorias';
 type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
@@ -33,6 +48,8 @@ interface ProgresoMedalla {
   fechaObtencion: string | null;
   actual: number;
   requerido: number;
+  icono: string;
+  color: ColorTema;
 }
 
 interface ConteoCategoria {
@@ -55,6 +72,7 @@ interface ConteoCategoria {
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonIcon,
     IonSkeletonText,
   ],
   templateUrl: './medallas.component.html',
@@ -73,7 +91,20 @@ export class MedallasComponent implements OnInit {
     private gamificacionService: Gamificacion,
     private categoriasService: Categorias,
     private router: Router
-  ) {}
+  ) {
+    addIcons({
+      ribbonOutline,
+      colorPaletteOutline,
+      ticketOutline,
+      leafOutline,
+      trailSignOutline,
+      businessOutline,
+      flameOutline,
+      bookOutline,
+      filmOutline,
+      imagesOutline,
+    });
+  }
 
   async ngOnInit() {
     this.cargando = true;
@@ -93,6 +124,12 @@ export class MedallasComponent implements OnInit {
 
       this.lugaresVisitados = lugaresVisitados;
 
+      // id_categoria -> nombre, para poder resolver el ícono/color de cada
+      // medalla.
+      const nombrePorIdCategoria = new Map<string, string>(
+        (categorias as any[]).map((c) => [c.id_categoria, c.nombre])
+      );
+
       // Progreso de cada medalla, ganada o no. Si medalla.id_categoria es
       // null, el requisito es sobre el total de visitas
       const idsGanadas = new Map(medallasGanadas.map((m) => [m.id_medalla, m.fecha_obtencion]));
@@ -101,15 +138,24 @@ export class MedallasComponent implements OnInit {
           const actualSinTope = medalla.id_categoria
             ? conteoPorCategoria[medalla.id_categoria] ?? 0
             : totalVisitas;
+          const nombreCategoria = medalla.id_categoria
+            ? nombrePorIdCategoria.get(medalla.id_categoria)
+            : null;
           return {
             medalla,
             obtenida: idsGanadas.has(medalla.id_medalla),
             fechaObtencion: idsGanadas.get(medalla.id_medalla) ?? null,
             actual: Math.min(actualSinTope, medalla.cantidad_requerida),
             requerido: medalla.cantidad_requerida,
+            icono: obtenerIconoCategoria(nombreCategoria),
+            color: obtenerColorCategoria(nombreCategoria, medalla.id_categoria),
           };
         })
         .sort((a, b) => {
+          const aGeneral = a.medalla.id_categoria == null;
+          const bGeneral = b.medalla.id_categoria == null;
+          if (aGeneral !== bGeneral) return aGeneral ? -1 : 1;
+
           if (a.obtenida !== b.obtenida) return a.obtenida ? -1 : 1;
           return b.actual / b.requerido - a.actual / a.requerido;
         });

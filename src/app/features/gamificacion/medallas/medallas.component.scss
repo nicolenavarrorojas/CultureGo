@@ -91,10 +91,6 @@
 
   &.bloqueada {
     opacity: 0.75;
-
-    .fila-medalla-icono {
-      filter: grayscale(1);
-    }
   }
 
   .fila-medalla-icono {
@@ -106,6 +102,14 @@
     background-position: center;
     border: 2px solid var(--ion-color-primary-tint);
     flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon {
+      font-size: 1.4rem;
+      color: var(--ion-color-primary);
+    }
   }
 
   .fila-medalla-info {
