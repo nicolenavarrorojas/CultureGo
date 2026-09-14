@@ -101,4 +101,10 @@ export class Admin {
       .eq('id_lugar_sugerido', idSugerencia);
     if (error) throw error;
   }
+  
+  async eliminarResena(idResena: string): Promise<void> {
+    const { error } = await this.supabase.from('resena').delete().eq('id_resena', idResena);
+    if (error) throw error;
+  }
+ 
 }

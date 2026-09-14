@@ -53,12 +53,20 @@
       </div>
 
       <div class="lista-medallas" *ngIf="medallasRecientes.length">
-        <div class="medalla-item" *ngFor="let medalla of medallasRecientes">
+        <div class="medalla-item" *ngFor="let item of medallasRecientes">
           <div
             class="medalla-icono"
-            [style.backgroundImage]="medalla.url_icono ? 'url(' + medalla.url_icono + ')' : null"
-          ></div>
-          <span>{{ medalla.nombre }}</span>
+            [style.backgroundImage]="item.medalla.url_icono ? 'url(' + item.medalla.url_icono + ')' : null"
+            [style.background-color]="!item.medalla.url_icono ? item.color.tenue : null"
+            [style.border-color]="!item.medalla.url_icono ? item.color.solido : null"
+          >
+            <ion-icon
+              *ngIf="!item.medalla.url_icono"
+              [name]="item.icono"
+              [style.color]="item.color.solido"
+            ></ion-icon>
+          </div>
+          <span>{{ item.medalla.nombre }}</span>
         </div>
       </div>
 

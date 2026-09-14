@@ -1,5 +1,6 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { ActivatedRoute } from '@angular/router';
 import {
   IonHeader,
@@ -10,6 +11,7 @@ import {
   IonIcon,
   IonSkeletonText,
   IonToast,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
@@ -18,12 +20,17 @@ import {
   pricetagOutline,
   checkmarkCircleOutline,
   flagOutline,
+  star,
+  starOutline,
+  trashOutline,
 } from 'ionicons/icons';
 
 import { Lugares } from 'src/app/core/services/lugares';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Auth } from 'src/app/core/services/auth';
-import { Lugar } from 'src/app/core/models';
+import { Resenas } from 'src/app/core/services/resenas';
+import { Admin } from 'src/app/core/services/admin';
+import { Lugar, Resena } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 
 // Radio del cual se acepta el registro de visita.
@@ -40,6 +47,7 @@ const RADIO_VALIDACION_POR_CATEGORIA: Record<string, number> = {
   standalone: true,
   imports: [
     CommonModule,
+    FormsModule,
     IonHeader,
     IonToolbar,
     IonButtons,
@@ -64,12 +72,26 @@ export class DetalleLugarComponent implements OnInit {
   toastColor: 'success' | 'warning' = 'success';
   mostrarToast = false;
 
+  // Reseñas
+  resenas: Resena[] = [];
+  cargandoResenas = true;
+  promedioCalificacion: number | null = null;
+  idUsuarioActual: string | null = null;
+  esAdmin = false;
+
+  calificacionSeleccionada = 0;
+  comentarioResena = '';
+  guardandoResena = false;
+
   constructor(
     private lugaresService: Lugares,
     private gamificacionService: Gamificacion,
     private authService: Auth,
+    private resenasService: Resenas,
+    private adminService: Admin,
     private route: ActivatedRoute,
-    private location: Location
+    private location: Location,
+    private alertController: AlertController
   ) {
     addIcons({
       locationOutline,
@@ -77,6 +99,9 @@ export class DetalleLugarComponent implements OnInit {
       pricetagOutline,
       checkmarkCircleOutline,
       flagOutline,
+      star,
+      starOutline,
+      trashOutline,
     });
   }
 
@@ -88,6 +113,9 @@ export class DetalleLugarComponent implements OnInit {
       return;
     }
     await this.cargarLugar(idLugar);
+    if (this.lugar) {
+      await this.cargarDatosUsuarioYResenas(idLugar);
+    }
   }
 
   private async cargarLugar(idLugar: string) {
@@ -99,6 +127,109 @@ export class DetalleLugarComponent implements OnInit {
       this.errorCarga = true;
     } finally {
       this.cargando = false;
+    }
+  }
+
+  // Reseñas
+
+  private async cargarDatosUsuarioYResenas(idLugar: string) {
+    this.cargandoResenas = true;
+    try {
+      const usuarioActual = await this.authService.obtenerUsuarioActual();
+      this.idUsuarioActual = usuarioActual?.id_usuario ?? null;
+      this.esAdmin = !!usuarioActual?.es_admin;
+
+      this.resenas = await this.resenasService.listarPorLugar(idLugar);
+      this.calcularPromedio();
+
+      if (usuarioActual) {
+        const miResena = this.resenas.find((r) => r.id_usuario === usuarioActual.id_usuario);
+        if (miResena) {
+          this.calificacionSeleccionada = miResena.calificacion;
+          this.comentarioResena = miResena.comentario ?? '';
+        }
+      }
+    } finally {
+      this.cargandoResenas = false;
+    }
+  }
+
+  private calcularPromedio() {
+    if (!this.resenas.length) {
+      this.promedioCalificacion = null;
+      return;
+    }
+    const suma = this.resenas.reduce((total, r) => total + r.calificacion, 0);
+    this.promedioCalificacion = suma / this.resenas.length;
+  }
+
+  get yaTengoResena(): boolean {
+    return this.resenas.some((r) => r.id_usuario === this.idUsuarioActual);
+  }
+
+  seleccionarEstrella(valor: number) {
+    this.calificacionSeleccionada = valor;
+  }
+
+  get formularioResenaValido(): boolean {
+    return this.calificacionSeleccionada >= 1 && this.calificacionSeleccionada <= 5;
+  }
+
+  async guardarResena() {
+    if (!this.lugar || !this.formularioResenaValido || this.guardandoResena) return;
+
+    this.guardandoResena = true;
+    try {
+      const usuarioActual = await this.authService.obtenerUsuarioActual();
+      if (!usuarioActual) {
+        this.mostrarAviso('Inicia sesión para dejar una reseña', 'warning');
+        return;
+      }
+
+      await this.resenasService.guardar({
+        id_usuario: usuarioActual.id_usuario,
+        id_lugar: this.lugar.id_lugar,
+        calificacion: this.calificacionSeleccionada,
+        comentario: this.comentarioResena.trim() || null,
+      });
+
+      this.mostrarAviso(
+        this.yaTengoResena ? 'Reseña actualizada.' : '¡Gracias por tu reseña!',
+        'success'
+      );
+      await this.cargarDatosUsuarioYResenas(this.lugar.id_lugar);
+    } catch {
+      this.mostrarAviso('No se pudo guardar la reseña. Intenta de nuevo.', 'warning');
+    } finally {
+      this.guardandoResena = false;
+    }
+  }
+
+  async eliminarResena(resena: Resena) {
+    const alerta = await this.alertController.create({
+      header: 'Eliminar reseña',
+      message: `¿Eliminar la reseña de "${resena.usuario?.nombre ?? 'este usuario'}"? Esta acción no se puede deshacer.`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Eliminar',
+          role: 'destructive',
+          cssClass: 'boton-alerta-eliminar',
+          handler: () => this.confirmarEliminarResena(resena),
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async confirmarEliminarResena(resena: Resena) {
+    try {
+      await this.adminService.eliminarResena(resena.id_resena);
+      this.resenas = this.resenas.filter((r) => r.id_resena !== resena.id_resena);
+      this.calcularPromedio();
+      this.mostrarAviso('Reseña eliminada.', 'success');
+    } catch {
+      this.mostrarAviso('No se pudo eliminar la reseña.', 'warning');
     }
   }
 

@@ -7,6 +7,8 @@ import { Lugares } from 'src/app/core/services/lugares';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Auth } from 'src/app/core/services/auth';
 import { Reportes } from 'src/app/core/services/reportes';
+import { Resenas } from 'src/app/core/services/resenas';
+import { Admin } from 'src/app/core/services/admin';
 import { DetalleLugarComponent } from './detalle-lugar.component';
 
 describe('DetalleLugarComponent', () => {
@@ -46,6 +48,18 @@ describe('DetalleLugarComponent', () => {
         {
           provide: Reportes,
           useValue: { crear: async () => ({}) },
+        },
+        {
+          provide: Resenas,
+          useValue: {
+            listarPorLugar: async () => [],
+            obtenerMiResena: async () => null,
+            guardar: async () => ({}),
+          },
+        },
+        {
+          provide: Admin,
+          useValue: { eliminarResena: async () => undefined },
         },
         {
           provide: ActivatedRoute,

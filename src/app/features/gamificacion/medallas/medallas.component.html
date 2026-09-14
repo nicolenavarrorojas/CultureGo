@@ -64,7 +64,15 @@
           <div
             class="fila-medalla-icono"
             [style.backgroundImage]="progreso.medalla.url_icono ? 'url(' + progreso.medalla.url_icono + ')' : null"
-          ></div>
+            [style.background-color]="!progreso.medalla.url_icono ? progreso.color.tenue : null"
+            [style.border-color]="!progreso.medalla.url_icono ? (progreso.obtenida ? progreso.color.solido : progreso.color.tenue) : null"
+          >
+            <ion-icon
+              *ngIf="!progreso.medalla.url_icono"
+              [name]="progreso.icono"
+              [style.color]="progreso.obtenida ? progreso.color.solido : 'var(--ion-color-medium)'"
+            ></ion-icon>
+          </div>
           <div class="fila-medalla-info">
             <span class="fila-medalla-nombre">{{ progreso.medalla.nombre }}</span>
             <span class="fila-medalla-desc">{{ progreso.medalla.descripcion }}</span>

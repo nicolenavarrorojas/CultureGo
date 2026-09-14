@@ -95,26 +95,31 @@ export class Gamificacion {
   async contarVisitasPorCategoria(idUsuario: string): Promise<Record<string, number>> {
     const { data, error } = await this.supabase
       .from('visita')
-      .select('lugar(id_categoria)')
+      .select('id_lugar, lugar(id_categoria)')
       .eq('id_usuario', idUsuario);
     if (error) throw error;
  
-    const conteo: Record<string, number> = {};
+    const lugaresPorCategoria: Record<string, Set<string>> = {};
     for (const fila of (data ?? []) as any[]) {
       const idCategoria = fila.lugar?.id_categoria;
       if (!idCategoria) continue;
-      conteo[idCategoria] = (conteo[idCategoria] ?? 0) + 1;
+      if (!lugaresPorCategoria[idCategoria]) lugaresPorCategoria[idCategoria] = new Set();
+      lugaresPorCategoria[idCategoria].add(fila.id_lugar);
+    }
+ 
+    const conteo: Record<string, number> = {};
+    for (const [idCategoria, lugares] of Object.entries(lugaresPorCategoria)) {
+      conteo[idCategoria] = lugares.size;
     }
     return conteo;
   }
  
-  /** Total de visitas del usuario */
   async contarVisitasTotales(idUsuario: string): Promise<number> {
-    const { count, error } = await this.supabase
+    const { data, error } = await this.supabase
       .from('visita')
-      .select('id_visita', { count: 'exact', head: true })
+      .select('id_lugar')
       .eq('id_usuario', idUsuario);
     if (error) throw error;
-    return count ?? 0;
-  }  
+    return new Set((data ?? []).map((v: any) => v.id_lugar)).size;
+  }
 }
