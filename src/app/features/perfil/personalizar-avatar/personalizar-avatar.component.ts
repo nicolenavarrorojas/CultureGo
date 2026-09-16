@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import {
   IonHeader,
@@ -11,11 +11,15 @@ import {
   IonToast,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { personOutline, imageOutline, lockClosedOutline, checkmarkCircle } from 'ionicons/icons';
+import { chevronBackOutline, chevronForwardOutline, giftOutline } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { OpcionAvatar, ParteAvatar } from 'src/app/core/models';
 
+const RUTA_AVATARES = 'assets/avatares';
+const RUTA_BASE = `${RUTA_AVATARES}/base.png`;
+
+// Orden de arriba hacia abajo de los controles.
 const PARTES: { clave: ParteAvatar; etiqueta: string }[] = [
   { clave: 'cabeza', etiqueta: 'Cabeza' },
   { clave: 'ojos', etiqueta: 'Ojos' },
@@ -23,29 +27,37 @@ const PARTES: { clave: ParteAvatar; etiqueta: string }[] = [
   { clave: 'cuerpo', etiqueta: 'Cuerpo' },
 ];
 
-// Catálogo de ejemplo: las imágenes de cada pieza se cargarán más adelante,
-// mientras tanto cada opción se muestra como un placeholder.
-const OPCIONES_MOCK: OpcionAvatar[] = [
-  { id_opcion: 'cabeza-1', parte: 'cabeza', nombre: 'Cabeza 1', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cabeza-2', parte: 'cabeza', nombre: 'Cabeza 2', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cabeza-3', parte: 'cabeza', nombre: 'Cabeza 3', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cabeza-4', parte: 'cabeza', nombre: 'Cabeza 4', url_imagen: '', desbloqueable: true },
+// Cantidad de piezas disponibles por parte (archivos <parte>-1.png ... <parte>-N.png).
+const CANTIDAD_POR_PARTE: Record<ParteAvatar, number> = {
+  cabeza: 10,
+  ojos: 9,
+  boca: 10,
+  cuerpo: 6,
+};
 
-  { id_opcion: 'ojos-1', parte: 'ojos', nombre: 'Ojos 1', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'ojos-2', parte: 'ojos', nombre: 'Ojos 2', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'ojos-3', parte: 'ojos', nombre: 'Ojos 3', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'ojos-4', parte: 'ojos', nombre: 'Ojos 4', url_imagen: '', desbloqueable: true },
+// Avatar por defecto: sin cabeza ni cuerpo, con ojos y boca predefinidos.
+const INDICES_INICIALES: Record<ParteAvatar, number> = {
+  cabeza: 0,
+  ojos: 2,
+  boca: 6,
+  cuerpo: 0,
+};
 
-  { id_opcion: 'boca-1', parte: 'boca', nombre: 'Boca 1', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'boca-2', parte: 'boca', nombre: 'Boca 2', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'boca-3', parte: 'boca', nombre: 'Boca 3', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'boca-4', parte: 'boca', nombre: 'Boca 4', url_imagen: '', desbloqueable: true },
+const RETRASO_INICIAL_MS = 400;
+const INTERVALO_CAMBIO_MS = 180;
 
-  { id_opcion: 'cuerpo-1', parte: 'cuerpo', nombre: 'Cuerpo 1', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cuerpo-2', parte: 'cuerpo', nombre: 'Cuerpo 2', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cuerpo-3', parte: 'cuerpo', nombre: 'Cuerpo 3', url_imagen: '', desbloqueable: false },
-  { id_opcion: 'cuerpo-4', parte: 'cuerpo', nombre: 'Cuerpo 4', url_imagen: '', desbloqueable: true },
-];
+function generarOpciones(parte: ParteAvatar, etiqueta: string, cantidad: number): OpcionAvatar[] {
+  return Array.from({ length: cantidad }, (_, i) => {
+    const numero = i + 1;
+    return {
+      id_opcion: `${parte}-${numero}`,
+      parte,
+      nombre: `${etiqueta} ${numero}`,
+      url_imagen: `${RUTA_AVATARES}/${parte}/${parte}-${numero}.png`,
+      desbloqueable: false,
+    };
+  });
+}
 
 @Component({
   selector: 'app-personalizar-avatar',
@@ -64,16 +76,19 @@ const OPCIONES_MOCK: OpcionAvatar[] = [
   templateUrl: './personalizar-avatar.component.html',
   styleUrls: ['./personalizar-avatar.component.scss'],
 })
-export class PersonalizarAvatarComponent implements OnInit {
+export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
+  readonly rutaBase = RUTA_BASE;
   partes = PARTES;
-  parteActiva: ParteAvatar = 'cabeza';
 
   opcionesPorParte: Record<ParteAvatar, OpcionAvatar[]> = {
-    cabeza: OPCIONES_MOCK.filter((o) => o.parte === 'cabeza'),
-    ojos: OPCIONES_MOCK.filter((o) => o.parte === 'ojos'),
-    boca: OPCIONES_MOCK.filter((o) => o.parte === 'boca'),
-    cuerpo: OPCIONES_MOCK.filter((o) => o.parte === 'cuerpo'),
+    cabeza: generarOpciones('cabeza', 'Cabeza', CANTIDAD_POR_PARTE.cabeza),
+    ojos: generarOpciones('ojos', 'Ojos', CANTIDAD_POR_PARTE.ojos),
+    boca: generarOpciones('boca', 'Boca', CANTIDAD_POR_PARTE.boca),
+    cuerpo: generarOpciones('cuerpo', 'Cuerpo', CANTIDAD_POR_PARTE.cuerpo),
   };
+
+  // 0 = ninguno; N = opción N de esa parte.
+  indices: Record<ParteAvatar, number> = { ...INDICES_INICIALES };
 
   seleccion: Record<ParteAvatar, OpcionAvatar | null> = {
     cabeza: null,
@@ -86,42 +101,73 @@ export class PersonalizarAvatarComponent implements OnInit {
   mostrarToast = false;
 
   private idUsuario: string | null = null;
+  private timeoutId: ReturnType<typeof setTimeout> | null = null;
+  private intervaloId: ReturnType<typeof setInterval> | null = null;
 
   constructor(private authService: Auth, private location: Location) {
-    addIcons({ personOutline, imageOutline, lockClosedOutline, checkmarkCircle });
+    addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline });
   }
 
   async ngOnInit() {
     const usuario = await this.authService.obtenerUsuarioActual();
     this.idUsuario = usuario?.id_usuario ?? null;
     this.cargarSeleccionGuardada();
+    this.actualizarSeleccion();
   }
 
-  seleccionarParte(parte: ParteAvatar) {
-    this.parteActiva = parte;
+  ngOnDestroy() {
+    this.detenerCambioContinuo();
   }
 
-  elegirOpcion(opcion: OpcionAvatar) {
-    if (opcion.desbloqueable) {
-      this.mostrarAviso('Todavía no has desbloqueado esta pieza');
-      return;
+  /** Un solo paso (tap breve). */
+  cambiarPaso(parte: ParteAvatar, direccion: 1 | -1) {
+    const total = CANTIDAD_POR_PARTE[parte] + 1;
+    this.indices[parte] = (this.indices[parte] + direccion + total) % total;
+    this.actualizarSeleccion();
+  }
+
+  /** Mientras se mantenga presionada la flecha, sigue avanzando. */
+  iniciarCambioContinuo(parte: ParteAvatar, direccion: 1 | -1) {
+    this.detenerCambioContinuo();
+    this.cambiarPaso(parte, direccion);
+    this.timeoutId = setTimeout(() => {
+      this.intervaloId = setInterval(() => this.cambiarPaso(parte, direccion), INTERVALO_CAMBIO_MS);
+    }, RETRASO_INICIAL_MS);
+  }
+
+  detenerCambioContinuo() {
+    if (this.timeoutId) {
+      clearTimeout(this.timeoutId);
+      this.timeoutId = null;
     }
-    this.seleccion[opcion.parte] = opcion;
-  }
-
-  estaSeleccionada(opcion: OpcionAvatar): boolean {
-    return this.seleccion[opcion.parte]?.id_opcion === opcion.id_opcion;
+    if (this.intervaloId) {
+      clearInterval(this.intervaloId);
+      this.intervaloId = null;
+    }
   }
 
   guardar() {
     if (this.idUsuario) {
-      localStorage.setItem(this.claveAlmacenamiento(this.idUsuario), JSON.stringify(this.seleccion));
+      localStorage.setItem(this.claveAlmacenamiento(this.idUsuario), JSON.stringify(this.indices));
     }
     this.mostrarAviso('Avatar guardado');
   }
 
+  restablecer() {
+    this.indices = { ...INDICES_INICIALES };
+    this.actualizarSeleccion();
+    this.mostrarAviso('Avatar restablecido');
+  }
+
   volver() {
     this.location.back();
+  }
+
+  private actualizarSeleccion() {
+    for (const { clave } of this.partes) {
+      const indice = this.indices[clave];
+      this.seleccion[clave] = indice === 0 ? null : this.opcionesPorParte[clave][indice - 1];
+    }
   }
 
   private cargarSeleccionGuardada() {
@@ -129,7 +175,7 @@ export class PersonalizarAvatarComponent implements OnInit {
     const guardado = localStorage.getItem(this.claveAlmacenamiento(this.idUsuario));
     if (!guardado) return;
     try {
-      this.seleccion = JSON.parse(guardado);
+      this.indices = JSON.parse(guardado);
     } catch {
       // dato corrupto: se ignora y se mantiene la selección por defecto
     }
