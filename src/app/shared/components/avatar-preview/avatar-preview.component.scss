@@ -1,0 +1,26 @@
+:host {
+  display: block;
+  width: 100%;
+  height: 100%;
+}
+
+.avatar-preview-lienzo {
+  position: relative;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+
+  .capa {
+    position: absolute;
+    inset: 0;
+    background-size: contain;
+    background-position: center;
+    background-repeat: no-repeat;
+  }
+
+  &.ajuste-cover .capa {
+    background-size: cover;
+    // Centrado más arriba en el lienzo para que se vea la cara/orejas en vez de recortarlas.
+    background-position: center 20%;
+  }
+}

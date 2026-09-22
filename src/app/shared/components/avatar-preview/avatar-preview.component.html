@@ -1,0 +1,9 @@
+<div class="avatar-preview-lienzo" [class.ajuste-cover]="ajuste === 'cover'">
+  <div class="capa capa-base" [style.backgroundImage]="'url(' + rutaBase + ')'"></div>
+  <div
+    *ngFor="let parte of partes"
+    class="capa"
+    [class]="'capa-' + parte"
+    [style.backgroundImage]="urlParte(parte) ? 'url(' + urlParte(parte) + ')' : null"
+  ></div>
+</div>

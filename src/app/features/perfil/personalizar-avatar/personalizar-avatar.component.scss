@@ -14,7 +14,6 @@
 }
 
 .avatar-preview {
-  position: relative;
   width: clamp(140px, 44vw, 200px);
   flex-shrink: 0;
   // Mismo lienzo que las piezas exportadas (2013x2762) para que todas las capas calcen.
@@ -22,14 +21,6 @@
   border-radius: 20px;
   background: #e3deed;
   overflow: hidden;
-
-  .capa {
-    position: absolute;
-    inset: 0;
-    background-size: contain;
-    background-position: center;
-    background-repeat: no-repeat;
-  }
 }
 
 .columna-flechas {

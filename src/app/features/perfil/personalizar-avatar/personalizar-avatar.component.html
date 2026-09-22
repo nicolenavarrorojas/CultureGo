@@ -28,25 +28,9 @@
       </button>
     </div>
 
-    <!-- Capas superpuestas sobre la base -->
+    <!-- Vista previa compuesta (base + cuerpo/cabeza/ojos/boca) -->
     <div class="avatar-preview">
-      <div class="capa capa-base" [style.backgroundImage]="'url(' + rutaBase + ')'"></div>
-      <div
-        class="capa capa-cuerpo"
-        [style.backgroundImage]="seleccion.cuerpo ? 'url(' + seleccion.cuerpo.url_imagen + ')' : null"
-      ></div>
-      <div
-        class="capa capa-cabeza"
-        [style.backgroundImage]="seleccion.cabeza ? 'url(' + seleccion.cabeza.url_imagen + ')' : null"
-      ></div>
-      <div
-        class="capa capa-ojos"
-        [style.backgroundImage]="seleccion.ojos ? 'url(' + seleccion.ojos.url_imagen + ')' : null"
-      ></div>
-      <div
-        class="capa capa-boca"
-        [style.backgroundImage]="seleccion.boca ? 'url(' + seleccion.boca.url_imagen + ')' : null"
-      ></div>
+      <app-avatar-preview [indices]="indices" ajuste="contain"></app-avatar-preview>
     </div>
 
     <div class="columna-flechas">
@@ -78,7 +62,9 @@
     </div>
   </div>
 
-  <button class="boton-guardar" (click)="guardar()">Guardar cambios</button>
+  <button class="boton-guardar" [disabled]="guardando" (click)="guardar()">
+    {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+  </button>
   <button class="boton-restablecer" (click)="restablecer()">Restablecer valores originales</button>
 
   <ion-toast

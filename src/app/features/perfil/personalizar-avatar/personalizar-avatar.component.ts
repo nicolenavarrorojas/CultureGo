@@ -14,10 +14,9 @@ import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline, giftOutline } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
-import { OpcionAvatar, ParteAvatar } from 'src/app/core/models';
-
-const RUTA_AVATARES = 'assets/avatares';
-const RUTA_BASE = `${RUTA_AVATARES}/base.png`;
+import { AvatarService } from 'src/app/core/services/avatar';
+import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
+import { ConfiguracionAvatar, ParteAvatar } from 'src/app/core/models';
 
 // Orden de arriba hacia abajo de los controles.
 const PARTES: { clave: ParteAvatar; etiqueta: string }[] = [
@@ -46,19 +45,6 @@ const INDICES_INICIALES: Record<ParteAvatar, number> = {
 const RETRASO_INICIAL_MS = 400;
 const INTERVALO_CAMBIO_MS = 180;
 
-function generarOpciones(parte: ParteAvatar, etiqueta: string, cantidad: number): OpcionAvatar[] {
-  return Array.from({ length: cantidad }, (_, i) => {
-    const numero = i + 1;
-    return {
-      id_opcion: `${parte}-${numero}`,
-      parte,
-      nombre: `${etiqueta} ${numero}`,
-      url_imagen: `${RUTA_AVATARES}/${parte}/${parte}-${numero}.png`,
-      desbloqueable: false,
-    };
-  });
-}
-
 @Component({
   selector: 'app-personalizar-avatar',
   standalone: true,
@@ -72,47 +58,47 @@ function generarOpciones(parte: ParteAvatar, etiqueta: string, cantidad: number)
     IonContent,
     IonIcon,
     IonToast,
+    AvatarPreviewComponent,
   ],
   templateUrl: './personalizar-avatar.component.html',
   styleUrls: ['./personalizar-avatar.component.scss'],
 })
 export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
-  readonly rutaBase = RUTA_BASE;
   partes = PARTES;
 
-  opcionesPorParte: Record<ParteAvatar, OpcionAvatar[]> = {
-    cabeza: generarOpciones('cabeza', 'Cabeza', CANTIDAD_POR_PARTE.cabeza),
-    ojos: generarOpciones('ojos', 'Ojos', CANTIDAD_POR_PARTE.ojos),
-    boca: generarOpciones('boca', 'Boca', CANTIDAD_POR_PARTE.boca),
-    cuerpo: generarOpciones('cuerpo', 'Cuerpo', CANTIDAD_POR_PARTE.cuerpo),
-  };
-
   // 0 = ninguno; N = opción N de esa parte.
-  indices: Record<ParteAvatar, number> = { ...INDICES_INICIALES };
-
-  seleccion: Record<ParteAvatar, OpcionAvatar | null> = {
-    cabeza: null,
-    ojos: null,
-    boca: null,
-    cuerpo: null,
-  };
+  indices: ConfiguracionAvatar = { ...INDICES_INICIALES };
 
   toastMensaje = '';
   mostrarToast = false;
+  guardando = false;
 
   private idUsuario: string | null = null;
   private timeoutId: ReturnType<typeof setTimeout> | null = null;
   private intervaloId: ReturnType<typeof setInterval> | null = null;
 
-  constructor(private authService: Auth, private location: Location) {
+  constructor(
+    private authService: Auth,
+    private avatarService: AvatarService,
+    private location: Location
+  ) {
     addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline });
   }
 
   async ngOnInit() {
     const usuario = await this.authService.obtenerUsuarioActual();
     this.idUsuario = usuario?.id_usuario ?? null;
-    this.cargarSeleccionGuardada();
-    this.actualizarSeleccion();
+    if (!this.idUsuario) return;
+
+    // Caché local: se muestra de inmediato mientras se confirma con Supabase.
+    this.cargarCacheLocal();
+
+    try {
+      this.indices = await this.avatarService.obtenerConfiguracion(this.idUsuario);
+      this.guardarCacheLocal();
+    } catch {
+      // Sin conexión o error de lectura: se mantiene lo que había en caché local.
+    }
   }
 
   ngOnDestroy() {
@@ -123,7 +109,6 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
   cambiarPaso(parte: ParteAvatar, direccion: 1 | -1) {
     const total = CANTIDAD_POR_PARTE[parte] + 1;
     this.indices[parte] = (this.indices[parte] + direccion + total) % total;
-    this.actualizarSeleccion();
   }
 
   /** Mientras se mantenga presionada la flecha, sigue avanzando. */
@@ -146,16 +131,23 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     }
   }
 
-  guardar() {
-    if (this.idUsuario) {
-      localStorage.setItem(this.claveAlmacenamiento(this.idUsuario), JSON.stringify(this.indices));
+  async guardar() {
+    if (!this.idUsuario || this.guardando) return;
+
+    this.guardando = true;
+    try {
+      await this.avatarService.guardarConfiguracion(this.idUsuario, this.indices);
+      this.guardarCacheLocal();
+      this.mostrarAviso('Avatar guardado');
+    } catch (error) {
+      this.mostrarAviso(this.traducirErrorAvatar(error));
+    } finally {
+      this.guardando = false;
     }
-    this.mostrarAviso('Avatar guardado');
   }
 
   restablecer() {
     this.indices = { ...INDICES_INICIALES };
-    this.actualizarSeleccion();
     this.mostrarAviso('Avatar restablecido');
   }
 
@@ -163,14 +155,7 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     this.location.back();
   }
 
-  private actualizarSeleccion() {
-    for (const { clave } of this.partes) {
-      const indice = this.indices[clave];
-      this.seleccion[clave] = indice === 0 ? null : this.opcionesPorParte[clave][indice - 1];
-    }
-  }
-
-  private cargarSeleccionGuardada() {
+  private cargarCacheLocal() {
     if (!this.idUsuario) return;
     const guardado = localStorage.getItem(this.claveAlmacenamiento(this.idUsuario));
     if (!guardado) return;
@@ -181,8 +166,25 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     }
   }
 
+  private guardarCacheLocal() {
+    if (!this.idUsuario) return;
+    localStorage.setItem(this.claveAlmacenamiento(this.idUsuario), JSON.stringify(this.indices));
+  }
+
   private claveAlmacenamiento(idUsuario: string): string {
     return `culturego-avatar-${idUsuario}`;
+  }
+
+  /** Supabase (PostgrestError) no es instancia de Error, por eso se usa duck typing. */
+  private traducirErrorAvatar(error: unknown): string {
+    const mensaje =
+      typeof error === 'object' && error !== null && 'message' in error
+        ? String((error as { message: unknown }).message)
+        : '';
+
+    return mensaje
+      ? 'No se pudo guardar el avatar. Intenta de nuevo.'
+      : 'No se pudo guardar el avatar. Revisa tu conexión e intenta de nuevo.';
   }
 
   private mostrarAviso(mensaje: string) {

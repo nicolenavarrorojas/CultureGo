@@ -33,8 +33,10 @@ import {
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Categorias } from 'src/app/core/services/categorias';
-import { Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
+import { AvatarService } from 'src/app/core/services/avatar';
+import { ConfiguracionAvatar, Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
+import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
 import { ColorTema, obtenerColorCategoria, obtenerIconoCategoria } from 'src/app/core/utils/tema-categoria';
 
 type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
@@ -60,12 +62,14 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
     IonSkeletonText,
     IonToast,
     ReportarProblemaComponent,
+    AvatarPreviewComponent,
   ],
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
 })
 export class PaginaPerfilComponent implements OnInit {
   usuario: Usuario | null = null;
+  configuracionAvatar: ConfiguracionAvatar | null = null;
   cargando = true;
 
   totalLugaresVisitados: number | null = null;
@@ -81,6 +85,7 @@ export class PaginaPerfilComponent implements OnInit {
     private authService: Auth,
     private gamificacionService: Gamificacion,
     private categoriasService: Categorias,
+    private avatarService: AvatarService,
     private router: Router
   ) {
     addIcons({
@@ -143,6 +148,17 @@ export class PaginaPerfilComponent implements OnInit {
       });
     } finally {
       this.cargando = false;
+    }
+
+    this.cargarConfiguracionAvatar();
+  }
+
+  private async cargarConfiguracionAvatar() {
+    if (!this.usuario) return;
+    try {
+      this.configuracionAvatar = await this.avatarService.obtenerConfiguracion(this.usuario.id_usuario);
+    } catch {
+      // Si falla, se muestra el círculo con la inicial del nombre como respaldo.
     }
   }
 

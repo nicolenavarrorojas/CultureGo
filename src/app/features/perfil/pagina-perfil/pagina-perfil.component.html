@@ -17,7 +17,14 @@
     <!-- Avatar + personalizar -->
     <div class="bloque-avatar">
       <div class="avatar-circulo">
-        {{ usuarioActual.nombre.charAt(0).toUpperCase() || '?' }}
+        <app-avatar-preview
+          *ngIf="configuracionAvatar; else inicialAvatar"
+          [indices]="configuracionAvatar"
+          ajuste="cover"
+        ></app-avatar-preview>
+        <ng-template #inicialAvatar>
+          {{ usuarioActual.nombre.charAt(0).toUpperCase() || '?' }}
+        </ng-template>
       </div>
       <button class="boton-personalizar" (click)="personalizarAvatar()">
         Personalizar
