@@ -1,7 +1,7 @@
 import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 import {
   IonHeader,
   IonToolbar,
@@ -90,6 +90,7 @@ export class DetalleLugarComponent implements OnInit {
     private resenasService: Resenas,
     private adminService: Admin,
     private route: ActivatedRoute,
+    private router: Router,
     private location: Location,
     private alertController: AlertController
   ) {
@@ -183,6 +184,7 @@ export class DetalleLugarComponent implements OnInit {
       const usuarioActual = await this.authService.obtenerUsuarioActual();
       if (!usuarioActual) {
         this.mostrarAviso('Inicia sesión para dejar una reseña', 'warning');
+        this.redirigirALogin();
         return;
       }
 
@@ -241,6 +243,7 @@ export class DetalleLugarComponent implements OnInit {
       const usuarioActual = await this.authService.obtenerUsuarioActual();
       if (!usuarioActual) {
         this.mostrarAviso('Inicia sesión para registrar tu visita', 'warning');
+        this.redirigirALogin();
         return;
       }
 
@@ -372,6 +375,17 @@ export class DetalleLugarComponent implements OnInit {
     this.toastMensaje = mensaje;
     this.toastColor = color;
     this.mostrarToast = true;
+  }
+
+  /**
+   * Lleva al usuario a iniciar sesión, dándole tiempo a leer el aviso
+   * (misma duración que el ion-toast) antes de salir de esta pantalla.
+   * Al iniciar sesión, login.component vuelve aquí mismo vía `redirectTo`.
+   */
+  private redirigirALogin() {
+    setTimeout(() => {
+      this.router.navigate(['/auth/login'], { queryParams: { redirectTo: this.router.url } });
+    }, 2500);
   }
 
   volver() {

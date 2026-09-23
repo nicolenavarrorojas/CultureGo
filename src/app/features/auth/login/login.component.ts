@@ -1,7 +1,7 @@
 import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
@@ -29,7 +29,7 @@ export class LoginComponent {
   errorMensaje = '';
   mostrarError = false;
 
-  constructor(private authService: Auth, private router: Router) {
+  constructor(private authService: Auth, private router: Router, private route: ActivatedRoute) {
     addIcons({ mailOutline, lockClosedOutline, alertCircleOutline, eyeOutline, eyeOffOutline });
   }
 
@@ -43,7 +43,7 @@ export class LoginComponent {
     this.cargando = true;
     try {
       await this.authService.iniciarSesion(this.email.trim(), this.password);
-      this.router.navigateByUrl('/tabs/inicio');
+      this.router.navigateByUrl(this.obtenerRedirectTo() ?? '/tabs/inicio');
     } catch (error) {
       this.mostrarAviso(traducirErrorAuth(error));
     } finally {
@@ -57,6 +57,16 @@ export class LoginComponent {
 
   toggleMostrarPassword() {
     this.mostrarPassword = !this.mostrarPassword;
+  }
+
+  /**
+   * `redirectTo` lo agrega authGuard cuando bloquea una ruta protegida, o una
+   * pantalla como detalle-lugar cuando el usuario intenta una acción que
+   * requiere sesión. Solo se acepta una ruta interna (empieza con '/').
+   */
+  private obtenerRedirectTo(): string | null {
+    const destino = this.route.snapshot.queryParamMap.get('redirectTo');
+    return destino && destino.startsWith('/') ? destino : null;
   }
 
   private mostrarAviso(mensaje: string) {
