@@ -36,7 +36,7 @@
     </div>
 
     <div class="lista-lugares-admin" *ngIf="!cargando">
-      <div class="fila-lugar-admin" *ngFor="let lugar of lugares">
+      <div class="fila-lugar-admin" *ngFor="let lugar of lugares; trackBy: trackPorIdLugar">
         <div class="fila-lugar-info">
           <span class="fila-lugar-nombre">{{ lugar.nombre }}</span>
           <span class="fila-lugar-detalle">
@@ -65,7 +65,7 @@
     </div>
 
     <div class="lista-reportes" *ngIf="!cargando">
-      <button class="fila-reporte" *ngFor="let reporte of reportes" (click)="abrirReporte(reporte)">
+      <button class="fila-reporte" *ngFor="let reporte of reportes; trackBy: trackPorIdReporte" (click)="abrirReporte(reporte)">
         <div class="fila-reporte-info">
           <div class="fila-reporte-cabecera">
             <span class="fila-reporte-tipo">{{ reporte.tipo }}</span>
@@ -90,7 +90,7 @@
     </div>
 
     <div class="lista-sugerencias" *ngIf="!cargando">
-      <div class="fila-sugerencia" *ngFor="let sugerencia of sugerencias">
+      <div class="fila-sugerencia" *ngFor="let sugerencia of sugerencias; trackBy: trackPorIdSugerencia">
         <div class="fila-sugerencia-info">
           <span class="fila-sugerencia-nombre">{{ sugerencia.nombre }}</span>
           <span class="fila-sugerencia-detalle">{{ sugerencia.categoria?.nombre }}</span>

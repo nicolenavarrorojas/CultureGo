@@ -11,6 +11,19 @@ import { Usuario } from '../models';
 export class Auth {
   private supabase = inject(Supabase).client;
 
+  // undefined = todavía no se consultó en esta sesión de la app; null = se
+  // consultó y no hay usuario logeado. Evita repetir auth.getUser() + el
+  // select a `usuario` en cada guard/página que llama a obtenerUsuarioActual().
+  private usuarioCache: Usuario | null | undefined = undefined;
+
+  constructor() {
+    // Login, logout y refresco de token invalidan la caché. Cubre también
+    // cierres de sesión que no pasan por cerrarSesion() (ej. token expirado).
+    this.supabase.auth.onAuthStateChange(() => {
+      this.usuarioCache = undefined;
+    });
+  }
+
   async registrarse(email: string, password: string, nombre: string) {
     const { data, error } = await this.supabase.auth.signUp({
       email,
@@ -33,8 +46,13 @@ export class Auth {
   }
 
   async obtenerUsuarioActual(): Promise<Usuario | null> {
+    if (this.usuarioCache !== undefined) return this.usuarioCache;
+
     const { data } = await this.supabase.auth.getUser();
-    if (!data.user) return null;
+    if (!data.user) {
+      this.usuarioCache = null;
+      return null;
+    }
 
     const { data: perfil, error } = await this.supabase
       .from('usuario')
@@ -42,8 +60,8 @@ export class Auth {
       .eq('id_usuario', data.user.id)
       .single();
 
-    if (error) return null;
-    return perfil as Usuario;
+    this.usuarioCache = error ? null : (perfil as Usuario);
+    return this.usuarioCache;
   }
 
   async recuperarPassword(email: string) {
@@ -70,7 +88,9 @@ export class Auth {
       .select()
       .single();
     if (error) throw error;
-    return data as Usuario;
+
+    this.usuarioCache = data as Usuario;
+    return this.usuarioCache;
   }
  
   /**
@@ -80,6 +100,7 @@ export class Auth {
   async eliminarCuenta(): Promise<void> {
     const { error } = await this.supabase.rpc('fn_eliminar_mi_cuenta');
     if (error) throw error;
+    this.usuarioCache = undefined;
   }
 
 }

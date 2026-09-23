@@ -137,7 +137,7 @@
       </div>
 
       <div class="lista-resenas" *ngIf="!cargandoResenas && resenas.length">
-        <div class="fila-resena" *ngFor="let resena of resenas">
+        <div class="fila-resena" *ngFor="let resena of resenas; trackBy: trackPorIdResena">
           <div class="fila-resena-cabecera">
             <div class="fila-resena-estrellas">
               <ion-icon

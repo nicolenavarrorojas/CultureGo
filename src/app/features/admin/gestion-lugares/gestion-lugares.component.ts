@@ -40,6 +40,7 @@ import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
 import { Auth } from 'src/app/core/services/auth';
 import { Lugar, Reporte, LugarSugerido } from 'src/app/core/models';
+import { comprimirImagen } from 'src/app/core/utils/comprimir-imagen';
 
 type Segmento = 'lugares' | 'reportes' | 'sugerencias';
 type EstadoReporte = Reporte['estado'];
@@ -344,7 +345,8 @@ export class GestionLugaresComponent implements OnInit {
 
     this.subiendoImagen = true;
     try {
-      const url = await this.adminService.subirImagenLugar(archivo);
+      const archivoComprimido = await comprimirImagen(archivo);
+      const url = await this.adminService.subirImagenLugar(archivoComprimido);
       this.formulario.url_imagen_principal = url;
 
       await this.eliminarImagenSiEsPropia(urlAnterior);
@@ -561,5 +563,17 @@ export class GestionLugaresComponent implements OnInit {
   private mostrarAviso(mensaje: string) {
     this.toastMensaje = mensaje;
     this.mostrarToast = true;
+  }
+
+  trackPorIdLugar(_indice: number, lugar: Lugar): string {
+    return lugar.id_lugar;
+  }
+
+  trackPorIdReporte(_indice: number, reporte: Reporte): string {
+    return reporte.id_reporte;
+  }
+
+  trackPorIdSugerencia(_indice: number, sugerencia: LugarSugerido): string {
+    return sugerencia.id_lugar_sugerido;
   }
 }
