@@ -9,7 +9,6 @@ import {
   IonIcon,
   IonLabel,
   IonButton,
-  IonAvatar,
   IonSkeletonText,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -33,7 +32,6 @@ type FiltroRapido = 'todos' | 'gratis' | 'cerca';
     IonIcon,
     IonLabel,
     IonButton,
-    IonAvatar,
     IonSkeletonText,
   ],
   templateUrl: './pagina-inicio.component.html',
@@ -107,6 +105,10 @@ export class PaginaInicioComponent implements OnInit {
 
   irADetalle(lugar: Lugar) {
     this.router.navigate(['/lugares', lugar.id_lugar]);
+  }
+
+  trackPorId(_indice: number, lugar: Lugar): string {
+    return lugar.id_lugar;
   }
 
   irAVerMapa() {

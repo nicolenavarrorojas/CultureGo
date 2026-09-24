@@ -152,6 +152,11 @@ export class ListaLugaresComponent implements OnInit {
     this.router.navigate(['/lugares', lugar.id_lugar]);
   }
 
+  /** Evita recrear las tarjetas (y volver a pedir sus imágenes) en cada búsqueda/filtro. */
+  trackPorId(_indice: number, lugar: Lugar): string {
+    return lugar.id_lugar;
+  }
+
   volver() {
     this.location.back();
   }

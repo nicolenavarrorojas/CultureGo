@@ -28,7 +28,7 @@
     <!-- REPORTES -->
     <div class="seccion" *ngIf="segmentoActivo === 'reportes'">
       <div class="lista-tickets" *ngIf="misReportes.length">
-        <div class="fila-ticket" *ngFor="let reporte of misReportes">
+        <div class="fila-ticket" *ngFor="let reporte of misReportes; trackBy: trackPorIdReporte">
           <div class="fila-ticket-cabecera">
             <span class="fila-ticket-tipo">{{ reporte.tipo }}</span>
             <span class="badge-estado" [class]="'badge-estado-' + reporte.estado">
@@ -49,7 +49,7 @@
     <!-- SUGERENCIAS -->
     <div class="seccion" *ngIf="segmentoActivo === 'sugerencias'">
       <div class="lista-tickets" *ngIf="misSugerencias.length">
-        <div class="fila-ticket" *ngFor="let sugerencia of misSugerencias">
+        <div class="fila-ticket" *ngFor="let sugerencia of misSugerencias; trackBy: trackPorIdSugerencia">
           <div class="fila-ticket-cabecera">
             <span class="fila-ticket-tipo">{{ sugerencia.categoria?.nombre || 'Sin categoría' }}</span>
             <span class="badge-estado" [class]="'badge-estado-sugerencia-' + sugerencia.estado">

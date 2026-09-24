@@ -35,8 +35,8 @@
   .select-comuna {
     flex: 1;
     min-width: 0;
-    background: #fff;
-    border-radius: 14px; 
+    background: var(--app-superficie);
+    border-radius: 14px;
     padding: 6px 14px;
     box-shadow: 0 3px 6px rgba(43, 36, 54, 0.15); 
     font-family: var(--ion-font-family);
@@ -47,7 +47,7 @@
 
   .chip-gratis {
     flex-shrink: 0;
-    --background: #fff;
+    --background: var(--app-superficie);
     box-shadow: 0 3px 6px rgba(43, 36, 54, 0.15);
     border-radius: 20px;
     font-weight: 500;
@@ -123,7 +123,7 @@
   height: 44px;
   border-radius: 50%;
   border: none;
-  background: #fff;
+  background: var(--app-superficie);
   box-shadow: 0 2px 8px rgba(43, 36, 54, 0.18);
   display: flex;
   align-items: center;
@@ -140,7 +140,7 @@
   display: flex;
   align-items: center;
   gap: 6px;
-  background: #fff;
+  background: var(--app-superficie);
   border: none;
   border-radius: 999px;
   padding: 10px 16px 10px 12px;
@@ -161,7 +161,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: rgba(247, 244, 239, 0.5); 
+  background: rgba(var(--ion-background-color-rgb), 0.6);
   pointer-events: none;
 
   ion-spinner {
@@ -178,7 +178,7 @@
   bottom: calc(72px + env(safe-area-inset-bottom));
   z-index: 1002;
   text-align: center;
-  background: #fff;
+  background: var(--app-superficie);
   border-radius: 16px;
   padding: 16px;
   box-shadow: 0 4px 18px rgba(0, 0, 0, 0.2);
@@ -211,7 +211,7 @@
   gap: 12px;
   padding: 14px;
   border-radius: 18px;
-  background: #fff;
+  background: var(--app-superficie);
   box-shadow: 0 4px 18px rgba(43, 36, 54, 0.2);
 
   .cerrar-tarjeta {
@@ -244,7 +244,7 @@
     border-radius: 12px;
     background-size: cover;
     background-position: center;
-    background-color: #e3deed;
+    background-color: var(--app-superficie-tenue);
     flex-shrink: 0;
   }
 

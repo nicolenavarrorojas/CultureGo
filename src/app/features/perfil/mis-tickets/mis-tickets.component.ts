@@ -91,4 +91,12 @@ export class MisTicketsComponent implements OnInit {
       this.segmentoActivo = segmento;
     }
   }
+
+  trackPorIdReporte(_indice: number, reporte: Reporte): string {
+    return reporte.id_reporte;
+  }
+
+  trackPorIdSugerencia(_indice: number, sugerencia: LugarSugerido): string {
+    return sugerencia.id_lugar_sugerido;
+  }
 }

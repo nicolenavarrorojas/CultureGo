@@ -377,6 +377,10 @@ export class DetalleLugarComponent implements OnInit {
     this.mostrarToast = true;
   }
 
+  trackPorIdResena(_indice: number, resena: Resena): string {
+    return resena.id_resena;
+  }
+
   /**
    * Lleva al usuario a iniciar sesión, dándole tiempo a leer el aviso
    * (misma duración que el ion-toast) antes de salir de esta pantalla.

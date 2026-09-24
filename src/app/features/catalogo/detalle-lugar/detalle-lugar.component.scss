@@ -61,7 +61,7 @@
   height: 220px;
   background-size: cover;
   background-position: center;
-  background-color: #e3deed; 
+  background-color: var(--app-superficie-tenue);
 }
 
 .bloque-titulo {
@@ -234,7 +234,7 @@
   .textarea-resena {
     width: 100%;
     box-sizing: border-box;
-    background: #fff;
+    background: var(--app-superficie);
     border: none;
     border-radius: 10px;
     padding: 10px 12px;

@@ -76,4 +76,79 @@
 
   /** Fuente **/
   --ion-font-family: 'Work Sans', -apple-system, 'Segoe UI', Roboto, sans-serif;
+
+  /** Fondo/texto explícitos (antes se usaba el default de Ionic, blanco/negro).
+   *  Se definen para poder usar su versión -rgb en overlays con transparencia. **/
+  --ion-background-color: #ffffff;
+  --ion-background-color-rgb: 255, 255, 255;
+  --ion-text-color: #2b2436;
+  --ion-text-color-rgb: 43, 36, 54;
+
+  /**
+   * Tokens propios de la app para superficies "planas" que hoy están
+   * hardcodeadas en varios componentes (tarjetas, íconos con fondo, footers
+   * de modal). Se definen acá para poder adaptarlas en modo oscuro sin tocar
+   * cada .scss por separado.
+   */
+  --app-superficie: #ffffff;
+  --app-superficie-tenue: #e3deed;
+}
+
+/**
+ * Modo oscuro manual (clase .tema-oscuro en <html>, ver Theme service).
+ * No usamos el .ion-palette-dark que trae Ionic porque reemplaza también
+ * primary/secondary/tertiary con su propia paleta genérica — acá solo
+ * queremos ajustar fondos/textos neutros y mantener el violeta/terracota/
+ * verde de la identidad de la app intactos.
+ */
+:root.tema-oscuro {
+  --ion-background-color: #1c1720;
+  --ion-background-color-rgb: 28, 23, 32;
+  --ion-text-color: #f1ecf7;
+  --ion-text-color-rgb: 241, 236, 247;
+
+  /** dark — se usa en toda la app como color de texto (títulos, cuerpo), no
+   *  como ion-color="dark" (no se usa ese prop en ningún lado), así que es
+   *  seguro invertirlo a un tono claro para que el texto se lea sobre fondo
+   *  oscuro. **/
+  --ion-color-dark: #f1ecf7;
+  --ion-color-dark-rgb: 241, 236, 247;
+  --ion-color-dark-contrast: #1c1720;
+  --ion-color-dark-contrast-rgb: 28, 23, 32;
+  --ion-color-dark-shade: #d4d0e0;
+  --ion-color-dark-tint: #f4f1fa;
+
+  /** light — funciona en la app como fondo de tarjetas/paneles "hundidos"
+   *  (stat boxes, buscador, inputs). En oscuro pasa a ser la superficie
+   *  elevada estándar. **/
+  --ion-color-light: #2a2333;
+  --ion-color-light-rgb: 42, 35, 51;
+  --ion-color-light-contrast: #f1ecf7;
+  --ion-color-light-contrast-rgb: 241, 236, 247;
+  /** OJO: acá "shade" queda más CLARO que la base, al revés que en modo
+   *  claro. Es a propósito: esta variable se usa como color de borde/línea
+   *  divisoria (ej. separadores de la lista de opciones del perfil), y un
+   *  borde más oscuro que su propia superficie sería invisible en oscuro. **/
+  --ion-color-light-shade: #3d3550;
+  --ion-color-light-tint: #443b57;
+
+  --ion-item-background: #2a2333;
+  --ion-toolbar-background: #2a2333;
+  --ion-tab-bar-background: #2a2333;
+  --ion-border-color: #3d3550;
+
+  /** Ionic usa un gris fijo (#595959/#666666) para el ícono+texto de la
+   *  pestaña NO seleccionada si no se define esta variable, y contra un
+   *  fondo tan oscuro se ve casi ilegible. La pestaña seleccionada ya usa
+   *  --ion-color-primary (el violeta) y no hace falta tocarla. **/
+  --ion-tab-bar-color: #a79fba;
+
+  /** ion-alert y ion-action-sheet en modo ios NO heredan de
+   *  --ion-background-color (van directo a un gris casi blanco fijo si esto
+   *  no está seteado) — sin esto, las confirmaciones de eliminar cuenta/
+   *  reseña/lugar quedarían blancas encima de una app en oscuro. **/
+  --ion-overlay-background-color: #2a2333;
+
+  --app-superficie: #2a2333;
+  --app-superficie-tenue: #362d46;
 }

@@ -89,6 +89,16 @@
         <span>Panel de administración</span>
         <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
       </button>
+      <div class="opcion">
+        <ion-icon name="moon-outline"></ion-icon>
+        <span>Modo oscuro</span>
+        <ion-toggle
+          color="primary"
+          aria-label="Modo oscuro"
+          [checked]="modoOscuro"
+          (ionChange)="alternarModoOscuro($event)"
+        ></ion-toggle>
+      </div>
       <button class="opcion" (click)="irAConfiguracion()">
         <ion-icon name="settings-outline"></ion-icon>
         <span>Configuración</span>

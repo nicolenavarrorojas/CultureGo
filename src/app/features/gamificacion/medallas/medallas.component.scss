@@ -38,7 +38,7 @@
   padding: 10px;
   border: none;
   border-radius: 16px;
-  background: #e3deed;
+  background: var(--app-superficie-tenue);
   text-align: left;
   color: var(--ion-color-dark);
 
@@ -97,7 +97,7 @@
     width: 52px;
     height: 52px;
     border-radius: 50%;
-    background-color: #e3deed;
+    background-color: var(--app-superficie-tenue);
     background-size: cover;
     background-position: center;
     border: 2px solid var(--ion-color-primary-tint);

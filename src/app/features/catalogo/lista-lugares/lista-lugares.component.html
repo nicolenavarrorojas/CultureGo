@@ -77,7 +77,7 @@
   <div class="lista-lugares" *ngIf="!cargando && lugares.length">
     <button
       class="tarjeta-lugar"
-      *ngFor="let lugar of lugares"
+      *ngFor="let lugar of lugares; trackBy: trackPorId"
       (click)="irADetalle(lugar)"
     >
       <div
