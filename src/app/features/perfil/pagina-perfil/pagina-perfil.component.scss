@@ -49,7 +49,7 @@
     position: absolute;
     right: 0;
     top: 8px;
-    background: #fff;
+    background: var(--app-superficie);
     border: 1px solid var(--ion-color-light-shade);
     border-radius: 999px;
     padding: 6px 14px;
@@ -145,7 +145,7 @@
       width: 56px;
       height: 56px;
       border-radius: 50%;
-      background-color: #e3deed;
+      background-color: var(--app-superficie-tenue);
       background-size: cover;
       background-position: center;
       border: 2px solid var(--ion-color-primary-tint);

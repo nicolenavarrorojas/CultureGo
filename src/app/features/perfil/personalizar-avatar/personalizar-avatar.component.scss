@@ -19,7 +19,7 @@
   // Mismo lienzo que las piezas exportadas (2013x2762) para que todas las capas calcen.
   aspect-ratio: 2013 / 2762;
   border-radius: 20px;
-  background: #e3deed;
+  background: var(--app-superficie-tenue);
   overflow: hidden;
 }
 
@@ -39,7 +39,7 @@
   height: clamp(32px, 9vw, 40px);
   border: none;
   border-radius: 50%;
-  background: #fff;
+  background: var(--app-superficie);
   color: var(--ion-color-primary);
   box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
   flex-shrink: 0;
@@ -68,7 +68,7 @@
     width: 56px;
     height: 56px;
     border-radius: 12px;
-    background: #e3deed;
+    background: var(--app-superficie-tenue);
     display: flex;
     align-items: center;
     justify-content: center;

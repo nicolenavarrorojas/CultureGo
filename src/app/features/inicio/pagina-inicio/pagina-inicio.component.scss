@@ -74,7 +74,7 @@
 
 .buscador {
   padding: 0 20px;
-  --background: #ffffff;
+  --background: var(--app-superficie);
   --border-radius: 14px;
   --box-shadow: 0 3px 6px rgba(43, 36, 54, 0.15);
   margin-bottom: 15px;
@@ -155,7 +155,7 @@
   padding: 10px;
   border: none;
   border-radius: 16px;
-  background: #e3deed;
+  background: var(--app-superficie-tenue);
   text-align: left;
   color: var(--ion-color-dark);
 

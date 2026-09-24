@@ -14,6 +14,21 @@
 
   <link rel="icon" type="image/png" href="assets/icon/favicon.png" />
 
+  <!--
+    Aplica el modo oscuro guardado ANTES de que se pinte cualquier cosa,
+    para evitar el parpadeo de tema claro -> oscuro al abrir la app.
+    Debe usar la misma clave/clase que core/services/theme.ts.
+  -->
+  <script>
+    (function () {
+      try {
+        if (localStorage.getItem('culturego-tema-oscuro') === 'true') {
+          document.documentElement.classList.add('tema-oscuro');
+        }
+      } catch (e) {}
+    })();
+  </script>
+
   <!-- add to homescreen for ios -->
   <meta name="mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black" />

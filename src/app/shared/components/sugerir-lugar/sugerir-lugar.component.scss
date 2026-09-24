@@ -68,7 +68,7 @@
 
 .footer-enviar {
   padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-  background: #fff;
+  background: var(--app-superficie);
 }
 
 .boton-enviar {

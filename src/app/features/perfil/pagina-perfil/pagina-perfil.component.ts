@@ -7,9 +7,11 @@ import {
   IonTitle,
   IonContent,
   IonIcon,
+  IonToggle,
   IonSkeletonText,
   IonToast,
 } from '@ionic/angular/standalone';
+import type { ToggleCustomEvent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import {
   settingsOutline,
@@ -28,12 +30,14 @@ import {
   bookOutline,
   filmOutline,
   imagesOutline,
+  moonOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Categorias } from 'src/app/core/services/categorias';
 import { AvatarService } from 'src/app/core/services/avatar';
+import { Theme } from 'src/app/core/services/theme';
 import { ConfiguracionAvatar, Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
@@ -59,6 +63,7 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
     IonTitle,
     IonContent,
     IonIcon,
+    IonToggle,
     IonSkeletonText,
     IonToast,
     ReportarProblemaComponent,
@@ -86,6 +91,7 @@ export class PaginaPerfilComponent implements OnInit {
     private gamificacionService: Gamificacion,
     private categoriasService: Categorias,
     private avatarService: AvatarService,
+    private themeService: Theme,
     private router: Router
   ) {
     addIcons({
@@ -93,6 +99,7 @@ export class PaginaPerfilComponent implements OnInit {
       helpCircleOutline,
       logOutOutline,
       chevronForwardOutline,
+      moonOutline,
       shieldCheckmarkOutline,
       receiptOutline,
       ribbonOutline,
@@ -160,6 +167,14 @@ export class PaginaPerfilComponent implements OnInit {
     } catch {
       // Si falla, se muestra el círculo con la inicial del nombre como respaldo.
     }
+  }
+
+  get modoOscuro(): boolean {
+    return this.themeService.modoOscuro;
+  }
+
+  alternarModoOscuro(evento: ToggleCustomEvent) {
+    this.themeService.establecerModoOscuro(evento.detail.checked);
   }
 
   irAHistorial() {

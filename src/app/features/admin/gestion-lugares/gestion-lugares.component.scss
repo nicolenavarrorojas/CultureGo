@@ -96,7 +96,7 @@
       height: 34px;
       border-radius: 10px;
       border: none;
-      background: #fff;
+      background: var(--app-superficie);
       color: var(--ion-color-primary);
       display: flex;
       align-items: center;
@@ -260,7 +260,7 @@
     }
 
     .boton-rechazar {
-      background: #fff;
+      background: var(--app-superficie);
       color: var(--ion-color-danger);
       border: 1px solid var(--ion-color-light-shade);
     }
@@ -279,7 +279,7 @@
 
 .footer-guardar {
   padding: 12px 20px calc(12px + env(safe-area-inset-bottom));
-  background: #fff;
+  background: var(--app-superficie);
 }
 
 .formulario-cuerpo {
@@ -353,7 +353,7 @@
     width: 72px;
     height: 72px;
     border-radius: 12px;
-    background-color: #e3deed;
+    background-color: var(--app-superficie-tenue);
     background-size: cover;
     background-position: center;
     flex-shrink: 0;
