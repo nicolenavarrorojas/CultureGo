@@ -53,15 +53,6 @@
   font-weight: 700 !important;
 }
 
-/**
- * Feedback táctil global para los botones "planos" de la app (tarjetas de
- * lugar, filas de lista, botones de acción, etc.) — ion-button ya trae su
- * propio efecto de activación, así que esto solo aplica a <button> nativos.
- * Al presionar, se oscurecen ligeramente con un velo del morado de la app
- * (funciona igual sobre fondo blanco, transparente o una imagen de fondo,
- * como en las tarjetas de lugar) y se hunden levemente. Se desactiva si el
- * usuario prefiere menos movimiento.
- */
 @media (prefers-reduced-motion: no-preference) {
   button:not(:disabled) {
     transition: transform 0.15s ease, box-shadow 0.15s ease;

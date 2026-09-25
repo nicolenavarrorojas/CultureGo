@@ -1,12 +1,6 @@
 /**
- * Redimensiona y comprime una imagen en el navegador (canvas) antes de
- * subirla. Las fotos de lugares se ven como miniatura en la lista y como
- * fondo en el detalle: no hace falta conservar la resolución original de
- * cámara/celular (varios MB) para eso.
- *
- * Si algo falla (navegador sin soporte, imagen corrupta, etc.) devuelve el
- * archivo original sin comprimir en vez de lanzar un error, para no romper
- * el flujo de subida.
+Este código redimensiona y comprime la imagen antes de subirla para reducir su peso. 
+Si ocurre algún error, mantiene el archivo original para no interrumpir la subida.
  */
 export async function comprimirImagen(
   archivo: File,
@@ -32,9 +26,6 @@ export async function comprimirImagen(
       canvas.toBlob(resolve, 'image/jpeg', calidad)
     );
     if (!blob) return archivo;
-
-    // Si la "compresión" resultó más pesada que el original (pasa con
-    // imágenes ya muy comprimidas o muy pequeñas), no vale la pena usarla.
     if (blob.size >= archivo.size) return archivo;
 
     const nombre = archivo.name.replace(/\.[^.]+$/, '') + '.jpg';

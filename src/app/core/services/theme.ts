@@ -2,13 +2,6 @@ import { Injectable } from '@angular/core';
 
 const CLAVE_ALMACENAMIENTO = 'culturego-tema-oscuro';
 const CLASE_TEMA_OSCURO = 'tema-oscuro';
-
-/**
- * Modo oscuro manual de la app (no ligado a prefers-color-scheme).
- * La clase que aplica es la misma que agrega el script inline en
- * index.html antes del primer render, para no repetir la preferencia
- * guardada dos veces ni causar un parpadeo del tema incorrecto.
- */
 @Injectable({
   providedIn: 'root',
 })

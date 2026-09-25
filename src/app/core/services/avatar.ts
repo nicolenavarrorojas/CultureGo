@@ -4,8 +4,7 @@ import { ConfiguracionAvatar } from '../models';
 
 /**
  * Configuración de personalización del avatar (cabeza, ojos, boca, cuerpo)
- * del usuario, persistida como columnas en `usuario`. La RLS de esa tabla
- * ya restringe la lectura/escritura a la propia fila del usuario.
+ * del usuario
  */
 @Injectable({
   providedIn: 'root',

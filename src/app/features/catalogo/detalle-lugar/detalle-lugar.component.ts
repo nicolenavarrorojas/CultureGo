@@ -381,11 +381,6 @@ export class DetalleLugarComponent implements OnInit {
     return resena.id_resena;
   }
 
-  /**
-   * Lleva al usuario a iniciar sesión, dándole tiempo a leer el aviso
-   * (misma duración que el ion-toast) antes de salir de esta pantalla.
-   * Al iniciar sesión, login.component vuelve aquí mismo vía `redirectTo`.
-   */
   private redirigirALogin() {
     setTimeout(() => {
       this.router.navigate(['/auth/login'], { queryParams: { redirectTo: this.router.url } });

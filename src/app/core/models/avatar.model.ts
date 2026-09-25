@@ -11,10 +11,8 @@ export interface Avatar {
 
 export type ParteAvatar = 'cabeza' | 'ojos' | 'boca' | 'cuerpo';
 
-/** Índice de la opción elegida por parte (0 = ninguno). Se persiste en `usuario`. */
 export type ConfiguracionAvatar = Record<ParteAvatar, number>;
 
-/** Una pieza seleccionable para una de las 4 partes personalizables del avatar. */
 export interface OpcionAvatar {
   id_opcion: string;
   parte: ParteAvatar;

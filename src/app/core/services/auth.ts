@@ -11,14 +11,9 @@ import { Usuario } from '../models';
 export class Auth {
   private supabase = inject(Supabase).client;
 
-  // undefined = todavía no se consultó en esta sesión de la app; null = se
-  // consultó y no hay usuario logeado. Evita repetir auth.getUser() + el
-  // select a `usuario` en cada guard/página que llama a obtenerUsuarioActual().
   private usuarioCache: Usuario | null | undefined = undefined;
 
   constructor() {
-    // Login, logout y refresco de token invalidan la caché. Cubre también
-    // cierres de sesión que no pasan por cerrarSesion() (ej. token expirado).
     this.supabase.auth.onAuthStateChange(() => {
       this.usuarioCache = undefined;
     });

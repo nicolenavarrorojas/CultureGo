@@ -58,12 +58,7 @@ export class LoginComponent {
   toggleMostrarPassword() {
     this.mostrarPassword = !this.mostrarPassword;
   }
-
-  /**
-   * `redirectTo` lo agrega authGuard cuando bloquea una ruta protegida, o una
-   * pantalla como detalle-lugar cuando el usuario intenta una acción que
-   * requiere sesión. Solo se acepta una ruta interna (empieza con '/').
-   */
+  
   private obtenerRedirectTo(): string | null {
     const destino = this.route.snapshot.queryParamMap.get('redirectTo');
     return destino && destino.startsWith('/') ? destino : null;
