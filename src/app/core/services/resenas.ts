@@ -21,10 +21,6 @@ export class Resenas {
   private supabase = inject(Supabase).client;
 
   async listarPorLugar(idLugar: string): Promise<Resena[]> {
-    // No se usa un join directo a "usuario" acá porque su política RLS
-    // solo deja leer la propia fila -- el nombre del autor de una reseña
-    // ajena saldría null. fn_listar_resenas_lugar (security definer)
-    // resuelve esto exponiendo solo el nombre, nada más de esa tabla.
     const { data, error } = await this.supabase.rpc('fn_listar_resenas_lugar', {
       p_id_lugar: idLugar,
     });
@@ -38,7 +34,15 @@ export class Resenas {
       comentario: fila.comentario,
       fecha_creacion: fila.fecha_creacion,
       moderada: fila.moderada,
-      usuario: { nombre: fila.nombre_usuario },
+      usuario: {
+        nombre: fila.nombre_usuario,
+        avatar: {
+          cabeza: fila.avatar_cabeza,
+          ojos: fila.avatar_ojos,
+          boca: fila.avatar_boca,
+          cuerpo: fila.avatar_cuerpo,
+        },
+      },
     })) as Resena[];
   }
 

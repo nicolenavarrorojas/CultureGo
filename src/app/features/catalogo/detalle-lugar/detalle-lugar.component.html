@@ -139,11 +139,26 @@
       <div class="lista-resenas" *ngIf="!cargandoResenas && resenas.length">
         <div class="fila-resena" *ngFor="let resena of resenas; trackBy: trackPorIdResena">
           <div class="fila-resena-cabecera">
-            <div class="fila-resena-estrellas">
-              <ion-icon
-                *ngFor="let estrella of [1,2,3,4,5]"
-                [name]="estrella <= resena.calificacion ? 'star' : 'star-outline'"
-              ></ion-icon>
+            <div class="fila-resena-persona">
+              <div class="fila-resena-avatar">
+                <app-avatar-preview
+                  *ngIf="resena.usuario?.avatar; else inicialResena"
+                  [indices]="resena.usuario?.avatar ?? null"
+                  ajuste="cover"
+                ></app-avatar-preview>
+                <ng-template #inicialResena>
+                  {{ (resena.usuario?.nombre || 'U').charAt(0).toUpperCase() }}
+                </ng-template>
+              </div>
+              <div class="fila-resena-persona-info">
+                <span class="fila-resena-autor">{{ resena.usuario?.nombre || 'Usuario' }}</span>
+                <div class="fila-resena-estrellas">
+                  <ion-icon
+                    *ngFor="let estrella of [1,2,3,4,5]"
+                    [name]="estrella <= resena.calificacion ? 'star' : 'star-outline'"
+                  ></ion-icon>
+                </div>
+              </div>
             </div>
             <button
               class="boton-eliminar-resena"
@@ -154,7 +169,6 @@
               <ion-icon name="trash-outline"></ion-icon>
             </button>
           </div>
-          <span class="fila-resena-autor">{{ resena.usuario?.nombre || 'Usuario' }}</span>
           <p class="fila-resena-comentario" *ngIf="resena.comentario">{{ resena.comentario }}</p>
           <span class="fila-resena-fecha">{{ resena.fecha_creacion | date: 'd MMM yyyy' }}</span>
         </div>

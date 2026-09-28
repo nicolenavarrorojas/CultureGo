@@ -289,9 +289,40 @@
 
   .fila-resena-cabecera {
     display: flex;
-    align-items: center;
+    align-items: flex-start;
     justify-content: space-between;
-    margin-bottom: 4px;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .fila-resena-persona {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .fila-resena-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #e3deed;
+    border: 2px solid var(--ion-color-primary-tint);
+    color: var(--ion-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .fila-resena-persona-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
   }
 
   .fila-resena-estrellas {
@@ -310,6 +341,7 @@
     color: var(--ion-color-danger);
     font-size: 1rem;
     padding: 2px;
+    flex-shrink: 0;
   }
 
   .fila-resena-autor {
@@ -317,7 +349,9 @@
     font-size: 0.82rem;
     font-weight: 700;
     color: var(--ion-color-dark);
-    margin-bottom: 4px;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
   }
 
   .fila-resena-comentario {

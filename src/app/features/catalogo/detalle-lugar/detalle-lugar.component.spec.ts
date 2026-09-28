@@ -52,7 +52,21 @@ describe('DetalleLugarComponent', () => {
         {
           provide: Resenas,
           useValue: {
-            listarPorLugar: async () => [],
+            listarPorLugar: async () => [
+              {
+                id_resena: 'r1',
+                id_usuario: 'u1',
+                id_lugar: 'abc-123',
+                calificacion: 5,
+                comentario: 'Excelente lugar',
+                fecha_creacion: '2026-09-01T00:00:00Z',
+                moderada: false,
+                usuario: {
+                  nombre: 'Nicole',
+                  avatar: { cabeza: 0, ojos: 2, boca: 6, cuerpo: 0 },
+                },
+              },
+            ],
             obtenerMiResena: async () => null,
             guardar: async () => ({}),
           },

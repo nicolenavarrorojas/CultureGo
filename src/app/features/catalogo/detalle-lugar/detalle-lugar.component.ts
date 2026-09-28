@@ -32,6 +32,7 @@ import { Resenas } from 'src/app/core/services/resenas';
 import { Admin } from 'src/app/core/services/admin';
 import { Lugar, Resena } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
+import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
 
 // Radio del cual se acepta el registro de visita.
 // lugares grandes (parques, cerros) usan un radio más grande porque las coordenadas registradas son un punto 
@@ -57,6 +58,7 @@ const RADIO_VALIDACION_POR_CATEGORIA: Record<string, number> = {
     IonSkeletonText,
     IonToast,
     ReportarProblemaComponent,
+    AvatarPreviewComponent,
   ],
   templateUrl: './detalle-lugar.component.html',
   styleUrls: ['./detalle-lugar.component.scss'],
