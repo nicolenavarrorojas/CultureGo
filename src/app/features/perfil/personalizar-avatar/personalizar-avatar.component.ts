@@ -1,4 +1,4 @@
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import {
   IonHeader,
@@ -9,6 +9,7 @@ import {
   IonContent,
   IonIcon,
   IonToast,
+  AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
 import { chevronBackOutline, chevronForwardOutline, giftOutline } from 'ionicons/icons';
@@ -34,16 +35,20 @@ const CANTIDAD_POR_PARTE: Record<ParteAvatar, number> = {
   cuerpo: 6,
 };
 
-// Avatar por defecto: sin cabeza ni cuerpo, con ojos y boca predefinidos.
+const PERMITE_NINGUNO: Record<ParteAvatar, boolean> = {
+  cabeza: true,
+  ojos: false,
+  boca: false,
+  cuerpo: true,
+};
+
+// Avatar por defecto: con ojos y boca predefinidos.
 const INDICES_INICIALES: Record<ParteAvatar, number> = {
   cabeza: 0,
   ojos: 2,
   boca: 6,
   cuerpo: 0,
 };
-
-const RETRASO_INICIAL_MS = 400;
-const INTERVALO_CAMBIO_MS = 180;
 
 @Component({
   selector: 'app-personalizar-avatar',
@@ -63,10 +68,9 @@ const INTERVALO_CAMBIO_MS = 180;
   templateUrl: './personalizar-avatar.component.html',
   styleUrls: ['./personalizar-avatar.component.scss'],
 })
-export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
+export class PersonalizarAvatarComponent implements OnInit {
   partes = PARTES;
 
-  // 0 = ninguno; N = opción N de esa parte.
   indices: ConfiguracionAvatar = { ...INDICES_INICIALES };
 
   toastMensaje = '';
@@ -74,13 +78,12 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
   guardando = false;
 
   private idUsuario: string | null = null;
-  private timeoutId: ReturnType<typeof setTimeout> | null = null;
-  private intervaloId: ReturnType<typeof setInterval> | null = null;
 
   constructor(
     private authService: Auth,
     private avatarService: AvatarService,
-    private location: Location
+    private location: Location,
+    private alertController: AlertController
   ) {
     addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline });
   }
@@ -90,45 +93,35 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     this.idUsuario = usuario?.id_usuario ?? null;
     if (!this.idUsuario) return;
 
-    // Caché local: se muestra de inmediato mientras se confirma con Supabase.
     this.cargarCacheLocal();
+    this.normalizarIndices();
 
     try {
       this.indices = await this.avatarService.obtenerConfiguracion(this.idUsuario);
+      this.normalizarIndices();
       this.guardarCacheLocal();
     } catch {
       // Sin conexión o error de lectura: se mantiene lo que había en caché local.
     }
   }
 
-  ngOnDestroy() {
-    this.detenerCambioContinuo();
+  /** si ojos/boca quedaron en 0, los sube a la primera opción real (1) para que nadie se
+   * quede con una cara sin ojos ni boca. */
+  private normalizarIndices() {
+    (Object.keys(PERMITE_NINGUNO) as ParteAvatar[]).forEach((parte) => {
+      if (!PERMITE_NINGUNO[parte] && this.indices[parte] === 0) {
+        this.indices[parte] = 1;
+      }
+    });
   }
 
-  /** Un solo paso (tap breve). */
+
   cambiarPaso(parte: ParteAvatar, direccion: 1 | -1) {
-    const total = CANTIDAD_POR_PARTE[parte] + 1;
-    this.indices[parte] = (this.indices[parte] + direccion + total) % total;
-  }
-
-  /** Mientras se mantenga presionada la flecha, sigue avanzando. */
-  iniciarCambioContinuo(parte: ParteAvatar, direccion: 1 | -1) {
-    this.detenerCambioContinuo();
-    this.cambiarPaso(parte, direccion);
-    this.timeoutId = setTimeout(() => {
-      this.intervaloId = setInterval(() => this.cambiarPaso(parte, direccion), INTERVALO_CAMBIO_MS);
-    }, RETRASO_INICIAL_MS);
-  }
-
-  detenerCambioContinuo() {
-    if (this.timeoutId) {
-      clearTimeout(this.timeoutId);
-      this.timeoutId = null;
-    }
-    if (this.intervaloId) {
-      clearInterval(this.intervaloId);
-      this.intervaloId = null;
-    }
+    const cantidad = CANTIDAD_POR_PARTE[parte];
+    const minimo = PERMITE_NINGUNO[parte] ? 0 : 1;
+    const total = cantidad - minimo + 1;
+    const posicionActual = this.indices[parte] - minimo;
+    this.indices[parte] = ((posicionActual + direccion + total) % total) + minimo;
   }
 
   async guardar() {
@@ -146,7 +139,24 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     }
   }
 
-  restablecer() {
+  async restablecer() {
+    const alerta = await this.alertController.create({
+      header: 'Restablecer avatar',
+      message: 'Vas a volver a la configuración original. ¿Quieres continuar?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Restablecer',
+          role: 'destructive',
+          cssClass: 'boton-alerta-eliminar',
+          handler: () => this.confirmarRestablecer(),
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private confirmarRestablecer() {
     this.indices = { ...INDICES_INICIALES };
     this.mostrarAviso('Avatar restablecido');
   }
@@ -162,7 +172,6 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     try {
       this.indices = JSON.parse(guardado);
     } catch {
-      // dato corrupto: se ignora y se mantiene la selección por defecto
     }
   }
 
@@ -175,7 +184,6 @@ export class PersonalizarAvatarComponent implements OnInit, OnDestroy {
     return `culturego-avatar-${idUsuario}`;
   }
 
-  /** Supabase (PostgrestError) no es instancia de Error, por eso se usa duck typing. */
   private traducirErrorAvatar(error: unknown): string {
     const mensaje =
       typeof error === 'object' && error !== null && 'message' in error

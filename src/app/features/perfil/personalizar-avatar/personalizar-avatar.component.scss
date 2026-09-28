@@ -16,7 +16,6 @@
 .avatar-preview {
   width: clamp(140px, 44vw, 200px);
   flex-shrink: 0;
-  // Mismo lienzo que las piezas exportadas (2013x2762) para que todas las capas calcen.
   aspect-ratio: 2013 / 2762;
   border-radius: 20px;
   background: var(--app-superficie-tenue);

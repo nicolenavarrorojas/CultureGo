@@ -9,7 +9,6 @@
 
 <ion-content [fullscreen]="true" class="personalizar-content">
 
-  <!-- Vista previa con las flechas de cada parte a los costados -->
   <div class="fila-personalizacion">
 
     <div class="columna-flechas">
@@ -17,18 +16,13 @@
         *ngFor="let parte of partes"
         class="flecha"
         [attr.aria-label]="'Anterior: ' + parte.etiqueta"
-        (mousedown)="iniciarCambioContinuo(parte.clave, -1)"
-        (mouseup)="detenerCambioContinuo()"
-        (mouseleave)="detenerCambioContinuo()"
-        (touchstart)="iniciarCambioContinuo(parte.clave, -1)"
-        (touchend)="detenerCambioContinuo()"
-        (touchcancel)="detenerCambioContinuo()"
+        (click)="cambiarPaso(parte.clave, -1)"
       >
         <ion-icon name="chevron-back-outline"></ion-icon>
       </button>
     </div>
 
-    <!-- Vista previa compuesta (base + cuerpo/cabeza/ojos/boca) -->
+    <!-- Vista previa avatar (base + cuerpo/cabeza/ojos/boca) -->
     <div class="avatar-preview">
       <app-avatar-preview [indices]="indices" ajuste="contain"></app-avatar-preview>
     </div>
@@ -38,12 +32,7 @@
         *ngFor="let parte of partes"
         class="flecha"
         [attr.aria-label]="'Siguiente: ' + parte.etiqueta"
-        (mousedown)="iniciarCambioContinuo(parte.clave, 1)"
-        (mouseup)="detenerCambioContinuo()"
-        (mouseleave)="detenerCambioContinuo()"
-        (touchstart)="iniciarCambioContinuo(parte.clave, 1)"
-        (touchend)="detenerCambioContinuo()"
-        (touchcancel)="detenerCambioContinuo()"
+        (click)="cambiarPaso(parte.clave, 1)"
       >
         <ion-icon name="chevron-forward-outline"></ion-icon>
       </button>
@@ -65,7 +54,7 @@
   <button class="boton-guardar" [disabled]="guardando" (click)="guardar()">
     {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
   </button>
-  <button class="boton-restablecer" (click)="restablecer()">Restablecer valores originales</button>
+  <button class="boton-restablecer" (click)="restablecer()">Restablecer avatar</button>
 
   <ion-toast
     [isOpen]="mostrarToast"
