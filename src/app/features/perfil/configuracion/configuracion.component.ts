@@ -35,6 +35,7 @@ import {
 import { Auth } from 'src/app/core/services/auth';
 import { traducirErrorAuth } from 'src/app/core/utils/traducir-error-auth';
 import { Usuario } from 'src/app/core/models';
+import { TerminosCondicionesComponent } from 'src/app/shared/components/terminos-condiciones/terminos-condiciones.component';
 
 const VERSION_APP = '0.8';
 const LARGO_MINIMO_PASSWORD = 6;
@@ -58,6 +59,7 @@ type EstadoPermisoUbicacion = 'granted' | 'denied' | 'prompt' | 'no_disponible';
     IonIcon,
     IonModal,
     IonToast,
+    TerminosCondicionesComponent,
   ],
   templateUrl: './configuracion.component.html',
   styleUrls: ['./configuracion.component.scss'],
@@ -75,8 +77,10 @@ export class ConfiguracionComponent implements OnInit {
   nombreEditado = '';
   guardandoPerfil = false;
 
+  passwordActual = '';
   passwordNueva = '';
   passwordConfirmar = '';
+  mostrarPasswordActual = false;
   mostrarPasswordNueva = false;
   mostrarPasswordConfirmar = false;
   cambiandoPassword = false;
@@ -125,6 +129,7 @@ export class ConfiguracionComponent implements OnInit {
   }
 
   abrirModalPassword() {
+    this.passwordActual = '';
     this.passwordNueva = '';
     this.passwordConfirmar = '';
     this.mostrarModalPassword = true;
@@ -176,7 +181,30 @@ export class ConfiguracionComponent implements OnInit {
     return this.nombreEditado.trim().length > 0;
   }
 
-  async guardarPerfil() {
+  get nombreCambio(): boolean {
+    return this.nombreValido && this.nombreEditado.trim() !== (this.usuario?.nombre ?? '');
+  }
+
+  async confirmarGuardarPerfil() {
+    if (!this.nombreCambio || this.guardandoPerfil) return;
+
+    const actual = this.usuario?.nombre;
+    const nuevo = this.nombreEditado.trim();
+
+    const alerta = await this.alertController.create({
+      header: 'Cambiar nombre',
+      message: actual
+        ? `Tu nombre pasará de "${actual}" a "${nuevo}". ¿Quieres continuar?`
+        : `Vas a guardar "${nuevo}" como tu nombre. ¿Quieres continuar?`,
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Confirmar', handler: () => this.guardarPerfil() },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async guardarPerfil() {
     if (!this.nombreValido || this.guardandoPerfil) return;
 
     this.guardandoPerfil = true;
@@ -200,6 +228,9 @@ export class ConfiguracionComponent implements OnInit {
     if (this.passwordNueva && this.passwordNueva.length < LARGO_MINIMO_PASSWORD) {
       return `La contraseña debe tener al menos ${LARGO_MINIMO_PASSWORD} caracteres.`;
     }
+    if (this.passwordActual && this.passwordNueva && this.passwordNueva === this.passwordActual) {
+      return 'La nueva contraseña debe ser distinta a la actual.';
+    }
     if (this.passwordConfirmar && this.passwordNueva !== this.passwordConfirmar) {
       return 'Las contraseñas no coinciden.';
     }
@@ -208,9 +239,15 @@ export class ConfiguracionComponent implements OnInit {
 
   get passwordValida(): boolean {
     return (
+      this.passwordActual.length > 0 &&
       this.passwordNueva.length >= LARGO_MINIMO_PASSWORD &&
+      this.passwordNueva !== this.passwordActual &&
       this.passwordNueva === this.passwordConfirmar
     );
+  }
+
+  toggleMostrarPasswordActual() {
+    this.mostrarPasswordActual = !this.mostrarPasswordActual;
   }
 
   toggleMostrarPasswordNueva() {
@@ -221,14 +258,48 @@ export class ConfiguracionComponent implements OnInit {
     this.mostrarPasswordConfirmar = !this.mostrarPasswordConfirmar;
   }
 
+  /**
+   * 1: comprobar que la contraseña actual sea correcta (si no, se
+   * avisa de inmediato y no se pregunta nada más). 2: pedir
+   * confirmación. 3 (aplicarCambioPassword): cambiarla.
+   */
   async cambiarPassword() {
     if (!this.passwordValida || this.cambiandoPassword) return;
 
+    this.cambiandoPassword = true;
+    let actualCorrecta = false;
+    try {
+      actualCorrecta = await this.authService.verificarPasswordActual(this.passwordActual);
+    } catch (error) {
+      this.cambiandoPassword = false;
+      this.mostrarAviso(traducirErrorAuth(error), 'danger');
+      return;
+    }
+    this.cambiandoPassword = false;
+
+    if (!actualCorrecta) {
+      this.mostrarAviso('La contraseña actual no es correcta.', 'danger');
+      return;
+    }
+
+    const alerta = await this.alertController.create({
+      header: 'Cambiar contraseña',
+      message: 'Vas a cambiar la contraseña de tu cuenta. ¿Quieres continuar?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        { text: 'Confirmar', handler: () => this.aplicarCambioPassword() },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async aplicarCambioPassword() {
     this.cambiandoPassword = true;
     try {
       await this.authService.actualizarPassword(this.passwordNueva);
       this.mostrarModalPassword = false;
       this.mostrarAviso('Contraseña actualizada.', 'success');
+      this.passwordActual = '';
       this.passwordNueva = '';
       this.passwordConfirmar = '';
     } catch (error) {

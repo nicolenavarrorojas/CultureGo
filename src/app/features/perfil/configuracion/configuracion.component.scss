@@ -276,27 +276,3 @@
     }
   }
 }
-
-.bloque-terminos {
-  margin-top: 10px;
-  padding: 14px;
-  border-radius: 12px;
-  background: var(--ion-color-light);
-
-  p {
-    margin: 0 0 10px;
-    font-size: 0.82rem;
-    line-height: 1.5;
-    color: var(--ion-color-dark);
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  .texto-nota {
-    font-size: 0.74rem;
-    color: var(--ion-color-medium);
-    font-style: italic;
-  }
-}

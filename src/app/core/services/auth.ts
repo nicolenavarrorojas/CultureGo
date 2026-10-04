@@ -19,11 +19,20 @@ export class Auth {
     });
   }
 
-  async registrarse(email: string, password: string, nombre: string) {
+  /**
+   * Crea la cuenta. La aceptación de los Términos y condiciones viaja en
+   * los metadatos del signUp y un trigger en la base la
+   * guarda en usuario.terminos_aceptados_en con la hora.
+   */
+  async registrarse(email: string, password: string, nombre: string, aceptaTerminos: boolean) {
+    if (!aceptaTerminos) {
+      throw new Error('Debes aceptar los términos y condiciones para crear tu cuenta.');
+    }
+
     const { data, error } = await this.supabase.auth.signUp({
       email,
       password,
-      options: { data: { nombre } },
+      options: { data: { nombre, terminos_aceptados: true } },
     });
     if (error) throw error;
     return data;
@@ -69,6 +78,22 @@ export class Auth {
   async actualizarPassword(nuevaPassword: string) {
     const { error } = await this.supabase.auth.updateUser({ password: nuevaPassword });
     if (error) throw error;
+  }
+
+  /**
+   * Comprueba que la contraseña ingresada sea la actual de la cuenta
+   * Devuelve false si la contraseña es incorrecta.
+   */
+  async verificarPasswordActual(password: string): Promise<boolean> {
+    const { data: sesion } = await this.supabase.auth.getUser();
+    const email = sesion.user?.email;
+    if (!email) throw new Error('No hay sesión activa.');
+
+    const { error } = await this.supabase.auth.signInWithPassword({ email, password });
+    if (!error) return true;
+
+    if (error.status === 400 || /invalid login credentials/i.test(error.message)) return false;
+    throw error;
   }
 
   /** Edición de perfil */

@@ -33,4 +33,17 @@ describe('RegistroComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
+  it('no deja registrarse sin aceptar los términos y condiciones', () => {
+    component.nombre = 'Nicole';
+    component.email = 'nicole@example.com';
+    component.password = '123456';
+    component.confirmarPassword = '123456';
+
+    component.aceptaTerminos = false;
+    expect(component.formularioValido).toBeFalse();
+
+    component.aceptaTerminos = true;
+    expect(component.formularioValido).toBeTrue();
+  });
 });

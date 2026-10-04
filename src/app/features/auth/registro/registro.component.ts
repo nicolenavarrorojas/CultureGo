@@ -6,19 +6,49 @@ import {
   IonContent,
   IonIcon,
   IonToast,
+  IonCheckbox,
+  IonModal,
+  IonHeader,
+  IonToolbar,
+  IonTitle,
+  IonButtons,
+  IonButton,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { mailOutline, lockClosedOutline, personOutline, eyeOutline, eyeOffOutline } from 'ionicons/icons';
+import {
+  mailOutline,
+  lockClosedOutline,
+  personOutline,
+  eyeOutline,
+  eyeOffOutline,
+  closeOutline,
+} from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { traducirErrorAuth } from 'src/app/core/utils/traducir-error-auth';
+import { TerminosCondicionesComponent } from 'src/app/shared/components/terminos-condiciones/terminos-condiciones.component';
 
 const LARGO_MINIMO_PASSWORD = 6; 
 
 @Component({
   selector: 'app-registro',
   standalone: true,
-  imports: [CommonModule, FormsModule, RouterLink, IonContent, IonIcon, IonToast],
+  imports: [
+    CommonModule,
+    FormsModule,
+    RouterLink,
+    IonContent,
+    IonIcon,
+    IonToast,
+    IonCheckbox,
+    IonModal,
+    IonHeader,
+    IonToolbar,
+    IonTitle,
+    IonButtons,
+    IonButton,
+    TerminosCondicionesComponent,
+  ],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
@@ -30,13 +60,23 @@ export class RegistroComponent {
   mostrarPassword = false;
   mostrarConfirmarPassword = false;
 
+  aceptaTerminos = false;
+  mostrarTerminos = false;
+
   cargando = false;
   toastMensaje = '';
   toastColor: 'success' | 'danger' | 'warning' = 'danger';
   mostrarToast = false;
 
   constructor(private authService: Auth, private router: Router) {
-    addIcons({ mailOutline, lockClosedOutline, personOutline, eyeOutline, eyeOffOutline });
+    addIcons({
+      mailOutline,
+      lockClosedOutline,
+      personOutline,
+      eyeOutline,
+      eyeOffOutline,
+      closeOutline,
+    });
   }
 
   get formularioValido(): boolean {
@@ -44,7 +84,8 @@ export class RegistroComponent {
       this.nombre.trim().length > 0 &&
       this.email.trim().length > 0 &&
       this.password.length >= LARGO_MINIMO_PASSWORD &&
-      this.password === this.confirmarPassword
+      this.password === this.confirmarPassword &&
+      this.aceptaTerminos
     );
   }
 
@@ -66,7 +107,8 @@ export class RegistroComponent {
       const resultado = await this.authService.registrarse(
         this.email.trim(),
         this.password,
-        this.nombre.trim()
+        this.nombre.trim(),
+        this.aceptaTerminos
       );
 
 
@@ -98,5 +140,13 @@ export class RegistroComponent {
 
   toggleMostrarConfirmarPassword() {
     this.mostrarConfirmarPassword = !this.mostrarConfirmarPassword;
+  }
+
+  toggleAceptaTerminos() {
+    this.aceptaTerminos = !this.aceptaTerminos;
+  }
+
+  abrirTerminos() {
+    this.mostrarTerminos = true;
   }
 }
