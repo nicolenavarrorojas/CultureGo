@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import {
@@ -72,7 +72,7 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
 })
-export class PaginaPerfilComponent implements OnInit {
+export class PaginaPerfilComponent {
   usuario: Usuario | null = null;
   configuracionAvatar: ConfiguracionAvatar | null = null;
   cargando = true;
@@ -115,21 +115,45 @@ export class PaginaPerfilComponent implements OnInit {
     });
   }
 
-  async ngOnInit() {
+
+  async ionViewWillEnter() {
+    const usuario = await this.authService.obtenerUsuarioActual();
+
+    if (usuario?.id_usuario !== this.usuario?.id_usuario) {
+      this.reiniciarEstado();
+    }
+
+    this.usuario = usuario;
+    if (!usuario) {
+      this.cargando = false;
+      return;
+    }
+
+    await this.cargarEstadisticas(usuario);
+    this.cargarConfiguracionAvatar();
+  }
+
+  private reiniciarEstado() {
     this.cargando = true;
+    this.configuracionAvatar = null;
+    this.totalLugaresVisitados = null;
+    this.totalCategoriasVisitadas = null;
+    this.totalMedallas = 0;
+    this.medallasRecientes = [];
+  }
+
+  private async cargarEstadisticas(usuario: Usuario) {
     try {
-
-      this.usuario = await this.authService.obtenerUsuarioActual();
-      if (!this.usuario) return;
-
       const [totalLugares, totalCategorias, medallasObtenidas, categorias] = await Promise.all([
-        this.gamificacionService.contarLugaresVisitados(this.usuario.id_usuario),
-        this.gamificacionService.contarCategoriasVisitadas(this.usuario.id_usuario),
-        this.gamificacionService.listarMedallasDeUsuario(this.usuario.id_usuario) as Promise<
+        this.gamificacionService.contarLugaresVisitados(usuario.id_usuario),
+        this.gamificacionService.contarCategoriasVisitadas(usuario.id_usuario),
+        this.gamificacionService.listarMedallasDeUsuario(usuario.id_usuario) as Promise<
           MedallaObtenida[]
         >,
         this.categoriasService.listar(),
       ]);
+
+      if (this.usuario?.id_usuario !== usuario.id_usuario) return;
 
       this.totalLugaresVisitados = totalLugares;
       this.totalCategoriasVisitadas = totalCategorias;
@@ -154,16 +178,21 @@ export class PaginaPerfilComponent implements OnInit {
         };
       });
     } finally {
-      this.cargando = false;
+      if (this.usuario?.id_usuario === usuario.id_usuario) {
+        this.cargando = false;
+      }
     }
-
-    this.cargarConfiguracionAvatar();
   }
 
   private async cargarConfiguracionAvatar() {
-    if (!this.usuario) return;
+    const idUsuario = this.usuario?.id_usuario;
+    if (!idUsuario) return;
     try {
-      this.configuracionAvatar = await this.avatarService.obtenerConfiguracion(this.usuario.id_usuario);
+      const configuracion = await this.avatarService.obtenerConfiguracion(idUsuario);
+      // Si se cambió de cuenta mientras cargaba, no se pisa con el avatar de la anterior.
+      if (this.usuario?.id_usuario === idUsuario) {
+        this.configuracionAvatar = configuracion;
+      }
     } catch {
       // Si falla, se muestra el círculo con la inicial del nombre como respaldo.
     }

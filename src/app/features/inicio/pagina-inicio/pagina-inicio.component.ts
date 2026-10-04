@@ -57,12 +57,14 @@ export class PaginaInicioComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.cargarUsuario();
     await this.cargarRecomendados();
   }
 
+  async ionViewWillEnter() {
+    await this.cargarUsuario();
+  }
+
   private async cargarUsuario() {
-    // TODO: ajustar según la forma real del objeto que devuelve Auth.obtenerUsuarioActual()
     const usuario = await this.auth.obtenerUsuarioActual();
     this.nombreUsuario = usuario?.nombre?.split(' ')[0] ?? '';
   }
@@ -70,7 +72,6 @@ export class PaginaInicioComponent implements OnInit {
   private async cargarRecomendados() {
     this.cargando = true;
     try {
-      // TODO: ajustar según la implementación real de Lugares.listar(filtros)
       const filtros = this.filtroActivo === 'gratis' ? { soloGratuitos: true } : {};
       const resultado = await this.lugares.listar(filtros);
       this.lugaresRecomendados = resultado.slice(0, this.LIMITE_RECOMENDADOS);
@@ -97,7 +98,6 @@ export class PaginaInicioComponent implements OnInit {
     if (!this.terminoBusqueda.trim()) {
       return;
     }
-    // La búsqueda completa se resuelve en el catálogo (/lugares).
     this.router.navigate(['/lugares'], {
       queryParams: { q: this.terminoBusqueda.trim() },
     });
