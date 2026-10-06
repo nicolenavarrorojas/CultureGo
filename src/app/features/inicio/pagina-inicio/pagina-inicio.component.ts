@@ -60,10 +60,6 @@ export class PaginaInicioComponent implements OnInit {
     await this.cargarRecomendados();
   }
 
-  async ionViewWillEnter() {
-    await this.cargarUsuario();
-  }
-
   private async cargarUsuario() {
     const usuario = await this.auth.obtenerUsuarioActual();
     this.nombreUsuario = usuario?.nombre?.split(' ')[0] ?? '';
@@ -117,5 +113,41 @@ export class PaginaInicioComponent implements OnInit {
 
   irAVerTodos() {
     this.router.navigate(['/lugares']);
+  }
+
+  saludo = 'Hola';
+  fraseDelDia = '';
+
+  private readonly FRASES = [
+  'Santiago tiene mucho por mostrarte',
+  'Hoy es buen día para un museo',
+  '¿Un parque nuevo esta semana?',
+  'Descubre algo distinto cerca de ti',
+  '¿Y si hoy sales a explorar?',
+  'Hay panoramas gratis esperándote',
+  '¿Ya conoces todos los cerros de Santiago?',
+  'Tu próxima aventura está cerca',
+  'Explora, descubre y vuelve por más',
+  'Santiago se disfruta caminando',
+  'Encuentra un rincón nuevo hoy',
+  '¿Museo, parque o teatro? Tú eliges',
+  ];
+
+  private actualizarSaludo() {
+  const hora = new Date().getHours();
+  this.saludo =
+    hora < 12 ? 'Buenos días' :
+    hora < 20 ? 'Buenas tardes' : 'Buenas noches';
+
+  let nueva: string;
+  do {
+    nueva = this.FRASES[Math.floor(Math.random() * this.FRASES.length)];
+  } while (nueva === this.fraseDelDia && this.FRASES.length > 1);
+  this.fraseDelDia = nueva;
+  }
+
+  async ionViewWillEnter() {
+    this.actualizarSaludo();
+    await this.cargarUsuario();
   }
 }

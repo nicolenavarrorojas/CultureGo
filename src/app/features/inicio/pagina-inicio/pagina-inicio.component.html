@@ -1,18 +1,19 @@
 <ion-content [fullscreen]="true" class="inicio-content">
 
   <div class="header-hero">
-    <div class="header-saludo">
-      <div class="saludo-texto">
-        <p class="subtitulo">Hola</p>
-        <h1>{{ nombreUsuario || 'Explorador anónimo' }}!</h1>
-      </div>
-      <div class="avatar-wrapper">
-        <img src="/assets/icon/icon-culturego.png" alt="Mascota de CultureGo" class="mascota-imagen" />
-      </div>
+  <div class="header-saludo">
+    <div class="saludo-texto">
+      <p class="subtitulo">{{ saludo }},</p>
+      <h1>{{ nombreUsuario || 'Explorador anónimo' }}!</h1>
+      <p class="frase">{{ fraseDelDia }}</p>
+    </div>
+    <div class="avatar-wrapper">
+      <img src="/assets/icon/icon-culturego.png" alt="Mascota de CultureGo" class="mascota-imagen" />
     </div>
   </div>
+</div>
 
-  <p class="pregunta-descubrir">¿Qué quieres descubrir hoy en Santiago?</p>
+<p class="pregunta-descubrir">¿Qué quieres descubrir hoy en Santiago?</p>
 
   <ion-searchbar
     class="buscador"
