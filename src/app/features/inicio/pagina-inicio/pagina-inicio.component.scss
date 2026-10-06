@@ -9,7 +9,7 @@
 
 .header-hero {
   background: var(--ion-color-primary);
-  padding: 20px 20px 16px; 
+  padding: calc(var(--ion-safe-area-top, 0px) + 36px) 25px 25px;
   border-bottom-left-radius: 50% 24px;
   border-bottom-right-radius: 50% 24px;
   position: relative;
@@ -17,7 +17,7 @@
 
 .header-saludo {
   display: flex;
-  align-items: flex-start;
+  align-items: center;
   justify-content: space-between;
 
   .saludo-texto {
@@ -43,8 +43,7 @@
   position: absolute;
   top: -14px;
   left: 50%;
-  transform: translateX(-50%) scale(0.85); 
-  width: 105px;
+ transform: translateX(-50%) scale(0.65);
   height: 58px;
   z-index: 2;
   pointer-events: none;
