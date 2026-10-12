@@ -9,15 +9,15 @@ import { ReportarProblemaComponent } from './reportar-problema.component';
 describe('ReportarProblemaComponent', () => {
   let component: ReportarProblemaComponent;
   let fixture: ComponentFixture<ReportarProblemaComponent>;
+  let reportesMock: { crear: jasmine.Spy };
 
   beforeEach(waitForAsync(() => {
+    reportesMock = { crear: jasmine.createSpy().and.resolveTo({}) };
+
     TestBed.configureTestingModule({
       imports: [ReportarProblemaComponent],
       providers: [
-        {
-          provide: Reportes,
-          useValue: { crear: async () => ({}) },
-        },
+        { provide: Reportes, useValue: reportesMock },
         {
           provide: Auth,
           useValue: {
@@ -34,5 +34,15 @@ describe('ReportarProblemaComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('UT-CMP-01 con descripción vacía o corta, el formulario es inválido y no llama al servicio', async () => {
+    component.tipo = 'error_app';
+    component.descripcion = 'muy corta';
+    expect(component.formularioValido).toBeFalse();
+
+    await component.enviar();
+
+    expect(reportesMock.crear).not.toHaveBeenCalled();
   });
 });

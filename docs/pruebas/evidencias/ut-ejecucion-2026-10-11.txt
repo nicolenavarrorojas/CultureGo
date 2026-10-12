@@ -1,0 +1,330 @@
+- Generating browser application bundles (phase: setup)...
+✔ Browser application bundle generation complete.
+[32m11 10 2026 22:31:53.064:INFO [karma-server]: [39mKarma v6.4.4 server started at http://localhost:9876/
+[32m11 10 2026 22:31:53.066:INFO [launcher]: [39mLaunching browsers ChromeHeadless with concurrency unlimited
+[32m11 10 2026 22:31:53.069:INFO [launcher]: [39mStarting browser ChromeHeadless
+[32m11 10 2026 22:31:53.428:INFO [Chrome Headless 155.0.0.0 (Windows 10)]: [39mConnected on socket L2VF6VPOyvL-zc6gAAAB with id 90675685
+Chrome Headless 155.0.0.0 (Windows 10): Executed 0 of 110[32m SUCCESS[39m (0 secs / 0 secs)
+[1A[2KWARN: [36m'GoTrueClient@sb-sbshpmjithrewfeclwqf-auth-token:1 (2.112.3) 2026-10-12T01:31:54.660Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key.'[39m
+Chrome Headless 155.0.0.0 (Windows 10): Executed 0 of 110[32m SUCCESS[39m (0 secs / 0 secs)
+WARN: 'GoTrueClient@sb-sbshpmjithrewfeclwqf-auth-token:1 (2.112.3) 2026-10-12T01:31:54.660Z Multiple GoTrueClient instances detected in the same browser context. It is not an error, but this should be avoided as it may produce undefined behavior when used concurrently under the same storage key.'
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 1 of 110[32m SUCCESS[39m (0 secs / 0.01 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 2 of 110[32m SUCCESS[39m (0 secs / 0.012 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 3 of 110[32m SUCCESS[39m (0 secs / 0.013 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 4 of 110[32m SUCCESS[39m (0 secs / 0.014 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 5 of 110[32m SUCCESS[39m (0 secs / 0.014 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 6 of 110[32m SUCCESS[39m (0 secs / 0.016 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 7 of 110[32m SUCCESS[39m (0 secs / 0.018 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 8 of 110[32m SUCCESS[39m (0 secs / 0.019 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 9 of 110[32m SUCCESS[39m (0 secs / 0.019 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 10 of 110[32m SUCCESS[39m (0 secs / 0.02 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) authGuard UT-GRD-04 un error de red en obtenerUsuarioActual no debería tumbar el guard FAILED[39m
+	Expected true to be false.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/guards/auth-guard.spec.ts:68:19)
+	    at Generator.throw (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _throw (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:20:1)
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/guards/auth-guard.spec.ts:69:42)
+	    at Generator.throw (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _throw (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:20:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 11 of 110[31m (1 FAILED)[39m (0 secs / 0.021 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 12 of 110[31m (1 FAILED)[39m (0 secs / 0.022 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 13 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 14 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 15 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 16 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 17 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 18 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 19 of 110[31m (1 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) traducirErrorAuth UT-ERR-06 TypeError Failed to fetch -> debería dar mensaje de conexión FAILED[39m
+	Expected 'Ocurrió un error. Intenta de nuevo.' to be 'No hay conexión a internet. Revisa tu red e intenta de nuevo.'.
+	    at <Jasmine>
+	    at UserContext.apply (src/app/core/utils/traducir-error-auth.spec.ts:35:65)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 20 of 110[31m (2 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 21 of 110[31m (2 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) traducirErrorAuth UT-ERR-07 duck typing: objeto plano con message da la misma traducción que un Error FAILED[39m
+	Expected 'Ocurrió un error. Intenta de nuevo.' to be 'Correo o contraseña incorrectos.'.
+	    at <Jasmine>
+	    at UserContext.apply (src/app/core/utils/traducir-error-auth.spec.ts:43:28)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2132:39)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:397:34)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 22 of 110[31m (3 FAILED)[39m (0 secs / 2.594 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) ConfiguracionComponent el nombre sin cambios no se puede guardar FAILED[39m
+	Failed: Cannot read properties of undefined (reading 'subscribe')
+	    at new NavController (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:438:27)
+	    at Object.factory (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:620:35)
+	    at callback (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2194:47)
+	    at runInInjectorProfilerContext (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:749:9)
+	    at R3Injector.hydrate (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2192:21)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2040:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 23 of 110[31m (4 FAILED)[39m (0 secs / 2.617 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) ConfiguracionComponent la contraseña exige la actual y que la nueva sea distinta FAILED[39m
+	Failed: Cannot read properties of undefined (reading 'subscribe')
+	    at new NavController (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:438:27)
+	    at Object.factory (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:620:35)
+	    at callback (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2194:47)
+	    at runInInjectorProfilerContext (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:749:9)
+	    at R3Injector.hydrate (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2192:21)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2040:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 24 of 110[31m (5 FAILED)[39m (0 secs / 2.618 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) ConfiguracionComponent should create FAILED[39m
+	Failed: Cannot read properties of undefined (reading 'subscribe')
+	    at new NavController (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:438:27)
+	    at Object.factory (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:620:35)
+	    at callback (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2194:47)
+	    at runInInjectorProfilerContext (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:749:9)
+	    at R3Injector.hydrate (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2192:21)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2040:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 25 of 110[31m (6 FAILED)[39m (0 secs / 2.62 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 26 of 110[31m (6 FAILED)[39m (0 secs / 2.624 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 27 of 110[31m (6 FAILED)[39m (0 secs / 2.627 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 28 of 110[31m (6 FAILED)[39m (0 secs / 2.63 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) RecuperarPasswordComponent should create FAILED[39m
+	Failed: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RecuperarPasswordComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `ActivatedRoute`.', ngTokenPath: [ 'ActivatedRoute' ] })
+	ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RecuperarPasswordComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:924:19)
+	    at NullInjector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:1494:27)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+	    at Module.ɵɵdirectiveInject (node_modules/@angular/core/fesm2022/debug_node.mjs:13720:19)
+	    at NodeInjectorFactory.RouterLink_Factory [as factory] (node_modules/@angular/router/fesm2022/router_module.mjs:390:97)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 29 of 110[31m (7 FAILED)[39m (0 secs / 2.635 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 30 of 110[31m (7 FAILED)[39m (0 secs / 2.665 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) GestionLugaresComponent UT-CMP-03b coordenadas fuera de rango: por plan no debería llamar a crear (sin validación de rango en el código) FAILED[39m
+	Expected spy unknown not to have been called.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/features/admin/gestion-lugares/gestion-lugares.component.spec.ts:107:38)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 31 of 110[31m (8 FAILED)[39m (0 secs / 2.695 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 32 of 110[31m (8 FAILED)[39m (0 secs / 2.728 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 33 of 110[31m (8 FAILED)[39m (0 secs / 2.729 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 34 of 110[31m (8 FAILED)[39m (0 secs / 2.73 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 35 of 110[31m (8 FAILED)[39m (0 secs / 2.731 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 36 of 110[31m (8 FAILED)[39m (0 secs / 2.737 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 37 of 110[31m (8 FAILED)[39m (0 secs / 2.738 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) RegistroComponent no deja registrarse sin aceptar los términos y condiciones FAILED[39m
+	Failed: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RegistroComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `ActivatedRoute`.', ngTokenPath: [ 'ActivatedRoute' ] })
+	ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RegistroComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:924:19)
+	    at NullInjector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:1494:27)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+	    at Module.ɵɵdirectiveInject (node_modules/@angular/core/fesm2022/debug_node.mjs:13720:19)
+	    at NodeInjectorFactory.RouterLink_Factory [as factory] (node_modules/@angular/router/fesm2022/router_module.mjs:390:97)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 38 of 110[31m (9 FAILED)[39m (0 secs / 2.746 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) RegistroComponent should create FAILED[39m
+	Failed: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RegistroComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `ActivatedRoute`.', ngTokenPath: [ 'ActivatedRoute' ] })
+	ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[RegistroComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:924:19)
+	    at NullInjector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:1494:27)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+	    at Module.ɵɵdirectiveInject (node_modules/@angular/core/fesm2022/debug_node.mjs:13720:19)
+	    at NodeInjectorFactory.RouterLink_Factory [as factory] (node_modules/@angular/router/fesm2022/router_module.mjs:390:97)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 39 of 110[31m (10 FAILED)[39m (0 secs / 2.748 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) LoginComponent should create FAILED[39m
+	Failed: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[LoginComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	error properties: Object({ code: -201, ngErrorCode: -201, ngErrorMessage: 'No provider found for `ActivatedRoute`.', ngTokenPath: [ 'ActivatedRoute' ] })
+	ɵNotFound: NG0201: No provider found for `ActivatedRoute`. Source: Standalone[LoginComponent]. Find more at https://v20.angular.dev/errors/NG0201
+	    at createRuntimeError (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:924:19)
+	    at NullInjector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:1494:27)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+	    at ɵɵdirectiveInject (node_modules/@angular/core/fesm2022/debug_node.mjs:13720:19)
+	    at NodeInjectorFactory.LoginComponent_Factory [as factory] (ng:///LoginComponent/ɵfac.js:5:45)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 40 of 110[31m (11 FAILED)[39m (0 secs / 2.752 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 41 of 110[31m (11 FAILED)[39m (0 secs / 2.753 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 42 of 110[31m (11 FAILED)[39m (0 secs / 2.753 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 43 of 110[31m (11 FAILED)[39m (0 secs / 2.754 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) TabsComponent should create FAILED[39m
+	Failed: Unexpected "TabsComponent" found in the "declarations" array of the "TestBed.configureTestingModule" call, "TabsComponent" is marked as standalone and can't be declared in any NgModule - did you intend to import it instead (by adding it to the "imports" array)?
+	    at forEach (node_modules/@angular/core/fesm2022/testing.mjs:774:23)
+	    at Array.forEach (<anonymous>)
+	    at assertNoStandaloneComponents (node_modules/@angular/core/fesm2022/testing.mjs:770:11)
+	    at TestBedCompiler.configureTestingModule (node_modules/@angular/core/fesm2022/testing.mjs:850:13)
+	    at TestBedImpl.configureTestingModule (node_modules/@angular/core/fesm2022/testing.mjs:1993:23)
+	    at TestBedImpl.configureTestingModule (node_modules/@angular/core/fesm2022/testing.mjs:1805:37)
+	    at UserContext.apply (src/app/shared/components/tabs/tabs.component.spec.ts:11:13)
+	    at _ZoneDelegate.invoke (node_modules/zone.js/fesm2015/zone.js:398:28)
+	    at AsyncTestZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:897:39)
+	    at ProxyZoneSpec.onInvoke (node_modules/zone.js/fesm2015/zone-testing.js:2129:39)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 44 of 110[31m (12 FAILED)[39m (0 secs / 2.755 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 45 of 110[31m (12 FAILED)[39m (0 secs / 2.756 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 46 of 110[31m (12 FAILED)[39m (0 secs / 2.756 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 47 of 110[31m (12 FAILED)[39m (0 secs / 2.757 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 48 of 110[31m (12 FAILED)[39m (0 secs / 2.757 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 49 of 110[31m (12 FAILED)[39m (0 secs / 2.757 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 50 of 110[31m (12 FAILED)[39m (0 secs / 2.757 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 51 of 110[31m (12 FAILED)[39m (0 secs / 2.788 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) Auth UT-AUTH-05 un error al leer el perfil no debería quedar en caché FAILED[39m
+	Expected null not to be null.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/services/auth.spec.ts:133:25)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+	Expected spy select to have been called 2 times. It was called 1 times.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/services/auth.spec.ts:134:23)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 52 of 110[31m (13 FAILED)[39m (0 secs / 2.789 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 53 of 110[31m (13 FAILED)[39m (0 secs / 2.789 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 54 of 110[31m (13 FAILED)[39m (0 secs / 2.789 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 55 of 110[31m (13 FAILED)[39m (0 secs / 2.789 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) Auth UT-AUTH-03 dos llamadas simultáneas deberían resultar en una sola consulta FAILED[39m
+	Expected spy getUser to have been called once. It was called 2 times.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/services/auth.spec.ts:113:24)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 56 of 110[31m (14 FAILED)[39m (0 secs / 2.79 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 57 of 110[31m (14 FAILED)[39m (0 secs / 2.79 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 58 of 110[31m (14 FAILED)[39m (0 secs / 2.79 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 59 of 110[31m (14 FAILED)[39m (0 secs / 2.79 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 60 of 110[31m (14 FAILED)[39m (0 secs / 2.791 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 61 of 110[31m (14 FAILED)[39m (0 secs / 2.791 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 62 of 110[31m (14 FAILED)[39m (0 secs / 2.792 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 63 of 110[31m (14 FAILED)[39m (0 secs / 2.792 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 64 of 110[31m (14 FAILED)[39m (0 secs / 2.793 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 65 of 110[31m (14 FAILED)[39m (0 secs / 2.819 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 66 of 110[31m (14 FAILED)[39m (0 secs / 2.852 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 67 of 110[31m (14 FAILED)[39m (0 secs / 2.885 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) ListaLugaresComponent should create FAILED[39m
+	Failed: Cannot read properties of undefined (reading 'subscribe')
+	    at new NavController (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:438:27)
+	    at Object.factory (node_modules/@ionic/angular/fesm2022/ionic-angular-common.mjs:620:35)
+	    at callback (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2194:47)
+	    at runInInjectorProfilerContext (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:749:9)
+	    at R3Injector.hydrate (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2192:21)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2040:33)
+	    at R3Injector.get (node_modules/@angular/core/fesm2022/root_effect_scheduler.mjs:2052:33)
+	    at ChainedInjector.get (node_modules/@angular/core/fesm2022/debug_node.mjs:13669:36)
+	    at lookupTokenUsingModuleInjector (node_modules/@angular/core/fesm2022/debug_node.mjs:1718:39)
+	    at getOrCreateInjectable (node_modules/@angular/core/fesm2022/debug_node.mjs:1766:12)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 68 of 110[31m (15 FAILED)[39m (0 secs / 2.891 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 69 of 110[31m (15 FAILED)[39m (0 secs / 3.217 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 70 of 110[31m (15 FAILED)[39m (0 secs / 3.535 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 71 of 110[31m (15 FAILED)[39m (0 secs / 3.553 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 72 of 110[31m (15 FAILED)[39m (0 secs / 3.568 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 73 of 110[31m (15 FAILED)[39m (0 secs / 3.586 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 74 of 110[31m (15 FAILED)[39m (0 secs / 3.603 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) MedallasComponent UT-MED-07 cantidad_requerida en 0 no debería producir NaN/Infinity FAILED[39m
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/features/gamificacion/medallas/medallas.component.spec.ts:141:41)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 75 of 110[31m (16 FAILED)[39m (0 secs / 3.619 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 76 of 110[31m (16 FAILED)[39m (0 secs / 3.637 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 77 of 110[31m (16 FAILED)[39m (0 secs / 3.652 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 78 of 110[31m (16 FAILED)[39m (0 secs / 3.668 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 79 of 110[31m (16 FAILED)[39m (0 secs / 3.684 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 80 of 110[31m (16 FAILED)[39m (0 secs / 3.702 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) MedallasComponent UT-MED-09 empate en % entre dos no obtenidas: por plan desempata por cantidad_requerida ascendente FAILED[39m
+	Expected $[0] = 'ma' to equal 'mb'.
+	Expected $[1] = 'mb' to equal 'ma'.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/features/gamificacion/medallas/medallas.component.spec.ts:167:19)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 81 of 110[31m (17 FAILED)[39m (0 secs / 3.719 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) MedallasComponent UT-MED-06 1 de 3: el ratio usado para la barra no debería tener decimales largos FAILED[39m
+	Expected false to be true.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/features/gamificacion/medallas/medallas.component.spec.ts:130:42)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 82 of 110[31m (18 FAILED)[39m (0 secs / 3.736 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 83 of 110[31m (18 FAILED)[39m (0 secs / 3.737 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 84 of 110[31m (18 FAILED)[39m (0 secs / 3.737 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 85 of 110[31m (18 FAILED)[39m (0 secs / 3.738 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 86 of 110[31m (18 FAILED)[39m (0 secs / 3.738 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 87 of 110[31m (18 FAILED)[39m (0 secs / 3.739 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 88 of 110[31m (18 FAILED)[39m (0 secs / 3.739 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 89 of 110[31m (18 FAILED)[39m (0 secs / 3.74 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 90 of 110[31m (18 FAILED)[39m (0 secs / 3.74 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 91 of 110[31m (18 FAILED)[39m (0 secs / 3.741 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 92 of 110[31m (18 FAILED)[39m (0 secs / 3.741 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 93 of 110[31m (18 FAILED)[39m (0 secs / 3.741 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 94 of 110[31m (18 FAILED)[39m (0 secs / 3.742 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 95 of 110[31m (18 FAILED)[39m (0 secs / 3.743 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 96 of 110[31m (18 FAILED)[39m (0 secs / 3.743 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 97 of 110[31m (18 FAILED)[39m (0 secs / 3.743 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 98 of 110[31m (18 FAILED)[39m (0 secs / 3.744 secs)
+[1A[2K[31mChrome Headless 155.0.0.0 (Windows 10) Lugares UT-LUG-03 texto vacío o solo espacios no debería llamar ilike FAILED[39m
+	Expected spy ilike not to have been called.
+	    at <Jasmine>
+	    at UserContext.<anonymous> (src/app/core/services/lugares.spec.ts:60:26)
+	    at Generator.next (<anonymous>)
+	    at asyncGeneratorStep (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:3:1)
+	    at _next (node_modules/@babel/runtime/helpers/esm/asyncToGenerator.js:17:1)
+Chrome Headless 155.0.0.0 (Windows 10): Executed 99 of 110[31m (19 FAILED)[39m (0 secs / 3.744 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 100 of 110[31m (19 FAILED)[39m (0 secs / 3.745 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 101 of 110[31m (19 FAILED)[39m (0 secs / 3.763 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 102 of 110[31m (19 FAILED)[39m (0 secs / 3.795 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 103 of 110[31m (19 FAILED)[39m (0 secs / 3.83 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 104 of 110[31m (19 FAILED)[39m (0 secs / 3.863 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 105 of 110[31m (19 FAILED)[39m (0 secs / 3.897 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 106 of 110[31m (19 FAILED)[39m (0 secs / 3.929 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 107 of 110[31m (19 FAILED)[39m (0 secs / 3.962 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 108 of 110[31m (19 FAILED)[39m (0 secs / 3.996 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 109 of 110[31m (19 FAILED)[39m (0 secs / 4.029 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 110 of 110[31m (19 FAILED)[39m (0 secs / 4.063 secs)
+[1A[2KChrome Headless 155.0.0.0 (Windows 10): Executed 110 of 110[31m (19 FAILED)[39m (4.099 secs / 4.063 secs)
+[31mTOTAL: 19 FAILED, 91 SUCCESS[39m
+✔ Browser application bundle generation complete.
+
+=============================== Coverage summary ===============================
+Statements   : 47.36% ( 648/1368 )
+Branches     : 28.57% ( 118/413 )
+Functions    : 34.59% ( 110/318 )
+Lines        : 48.54% ( 600/1236 )
+================================================================================
+✔ Browser application bundle generation complete.
