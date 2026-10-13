@@ -27,6 +27,16 @@ interface OpcionTipo {
   etiqueta: string;
 }
 
+const OPCIONES_LUGAR: OpcionTipo[] = [
+  { valor: 'error_lugar', etiqueta: 'Algo está mal en este lugar' },
+  { valor: 'sugerencia', etiqueta: 'Sugerencia' },
+];
+
+const OPCIONES_APP: OpcionTipo[] = [
+  { valor: 'error_app', etiqueta: 'Algo no funciona en la app' },
+  { valor: 'sugerencia', etiqueta: 'Sugerencia' },
+];
+
 @Component({
   selector: 'app-reportar-problema',
   standalone: true,
@@ -71,15 +81,11 @@ export class ReportarProblemaComponent {
   }
 
   get opcionesTipo(): OpcionTipo[] {
-    return this.lugar
-      ? [
-          { valor: 'error_lugar', etiqueta: 'Algo está mal en este lugar' },
-          { valor: 'sugerencia', etiqueta: 'Sugerencia' },
-        ]
-      : [
-          { valor: 'error_app', etiqueta: 'Algo no funciona en la app' },
-          { valor: 'sugerencia', etiqueta: 'Sugerencia' },
-        ];
+    return this.lugar ? OPCIONES_LUGAR : OPCIONES_APP;
+  }
+
+  trackByValor(_: number, opcion: OpcionTipo) {
+    return opcion.valor;
   }
 
   get formularioValido(): boolean {
@@ -109,9 +115,9 @@ export class ReportarProblemaComponent {
       this.tipo = null;
       setTimeout(() => this.cerrar(), 1200);
     } catch (error) {
-  console.error('Error al crear reporte:', error);
-  this.mostrarAviso('No se pudo enviar el reporte. Intenta de nuevo.');
-  } finally {
+      console.error('Error al crear reporte:', error);
+      this.mostrarAviso('No se pudo enviar el reporte. Intenta de nuevo.');
+    } finally {
       this.enviando = false;
     }
   }

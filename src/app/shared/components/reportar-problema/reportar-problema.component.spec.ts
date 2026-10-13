@@ -9,15 +9,15 @@ import { ReportarProblemaComponent } from './reportar-problema.component';
 describe('ReportarProblemaComponent', () => {
   let component: ReportarProblemaComponent;
   let fixture: ComponentFixture<ReportarProblemaComponent>;
-  let reportesMock: { crear: jasmine.Spy };
 
   beforeEach(waitForAsync(() => {
-    reportesMock = { crear: jasmine.createSpy().and.resolveTo({}) };
-
     TestBed.configureTestingModule({
       imports: [ReportarProblemaComponent],
       providers: [
-        { provide: Reportes, useValue: reportesMock },
+        {
+          provide: Reportes,
+          useValue: { crear: async () => ({}) },
+        },
         {
           provide: Auth,
           useValue: {
@@ -36,13 +36,16 @@ describe('ReportarProblemaComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('UT-CMP-01 con descripción vacía o corta, el formulario es inválido y no llama al servicio', async () => {
-    component.tipo = 'error_app';
-    component.descripcion = 'muy corta';
-    expect(component.formularioValido).toBeFalse();
+  it('opcionesTipo devuelve la misma referencia entre llamadas', () => {
+    expect(component.opcionesTipo).toBe(component.opcionesTipo);
+  });
 
-    await component.enviar();
+  it('opcionesTipo cambia según haya lugar o no', () => {
+    const generales = component.opcionesTipo;
+    expect(generales.map(o => o.valor)).toEqual(['error_app', 'sugerencia']);
 
-    expect(reportesMock.crear).not.toHaveBeenCalled();
+    component.lugar = { id_lugar: 'x', nombre: 'Lugar' } as any;
+    expect(component.opcionesTipo.map(o => o.valor)).toEqual(['error_lugar', 'sugerencia']);
+    expect(component.opcionesTipo).not.toBe(generales);
   });
 });

@@ -24,7 +24,7 @@
           cancelText="Cerrar"
           placeholder="Selecciona una opción"
         >
-          <ion-select-option *ngFor="let opcion of opcionesTipo" [value]="opcion.valor">
+          <ion-select-option *ngFor="let opcion of opcionesTipo; trackBy: trackByValor" [value]="opcion.valor">
             {{ opcion.etiqueta }}
           </ion-select-option>
         </ion-select>
