@@ -96,8 +96,7 @@
   }
 }
 
-// Pin custom del mini-mapa (mismo patrón que pagina-mapa: ::ng-deep porque
-// Leaflet renderiza los marcadores fuera del árbol de Angular)
+// Pin custom del mini-mapa 
 ::ng-deep .pin-sugerido {
   .pin-punto {
     display: block;
