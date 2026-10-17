@@ -16,6 +16,7 @@ import { chevronBackOutline, chevronForwardOutline, giftOutline } from 'ionicons
 
 import { Auth } from 'src/app/core/services/auth';
 import { AvatarService } from 'src/app/core/services/avatar';
+import { AvatarEventos } from 'src/app/core/services/avatar-eventos';
 import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
 import { ConfiguracionAvatar, ParteAvatar } from 'src/app/core/models';
 
@@ -82,6 +83,7 @@ export class PersonalizarAvatarComponent implements OnInit {
   constructor(
     private authService: Auth,
     private avatarService: AvatarService,
+    private avatarEventos: AvatarEventos,
     private location: Location,
     private alertController: AlertController
   ) {
@@ -131,6 +133,8 @@ export class PersonalizarAvatarComponent implements OnInit {
     try {
       await this.avatarService.guardarConfiguracion(this.idUsuario, this.indices);
       this.guardarCacheLocal();
+      // Avisa al resto de la app (Perfil) para que muestre el avatar nuevo al instante.
+      this.avatarEventos.notificarAvatarActualizado(this.idUsuario, this.indices);
       this.mostrarAviso('Avatar guardado');
     } catch (error) {
       this.mostrarAviso(this.traducirErrorAvatar(error));

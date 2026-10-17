@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, DestroyRef, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
+import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import {
   IonHeader,
   IonToolbar,
@@ -37,6 +38,7 @@ import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Categorias } from 'src/app/core/services/categorias';
 import { AvatarService } from 'src/app/core/services/avatar';
+import { AvatarEventos } from 'src/app/core/services/avatar-eventos';
 import { Theme } from 'src/app/core/services/theme';
 import { ConfiguracionAvatar, Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
@@ -86,11 +88,14 @@ export class PaginaPerfilComponent {
   mostrarToast = false;
   mostrarReporte = false;
 
+  private destroyRef = inject(DestroyRef);
+
   constructor(
     private authService: Auth,
     private gamificacionService: Gamificacion,
     private categoriasService: Categorias,
     private avatarService: AvatarService,
+    private avatarEventos: AvatarEventos,
     private themeService: Theme,
     private router: Router
   ) {
@@ -113,6 +118,16 @@ export class PaginaPerfilComponent {
       filmOutline,
       imagesOutline,
     });
+
+    // Al guardar en Personalizar avatar, se actualiza el círculo al instante,
+    // sin esperar a ionViewWillEnter (que no siempre se dispara al volver atrás).
+    this.avatarEventos.avatarActualizado$
+      .pipe(takeUntilDestroyed(this.destroyRef))
+      .subscribe(({ idUsuario, configuracion }) => {
+        if (idUsuario === this.usuario?.id_usuario) {
+          this.configuracionAvatar = configuracion;
+        }
+      });
   }
 
 
