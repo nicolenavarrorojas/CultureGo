@@ -1,0 +1,99 @@
+<ion-content [fullscreen]="true" class="inicio-content">
+
+  <div class="header-hero">
+  <div class="header-saludo">
+    <div class="saludo-texto">
+      <p class="subtitulo">{{ saludo }},</p>
+      <h1>{{ nombreUsuario || 'Explorador anónimo' }}!</h1>
+      <p class="frase">{{ fraseDelDia }}</p>
+    </div>
+    <div class="avatar-wrapper">
+      <img src="/assets/icon/icon-culturego.png" alt="Mascota de CultureGo" class="mascota-imagen" />
+    </div>
+  </div>
+</div>
+
+<p class="pregunta-descubrir">¿Qué quieres descubrir hoy en Santiago?</p>
+
+  <ion-searchbar
+    class="buscador"
+    placeholder="Busca museos, parques, etc."
+    [(ngModel)]="terminoBusqueda"
+    (ionChange)="onBuscar()"
+    (keyup.enter)="onBuscar()"
+    inputmode="search"
+  ></ion-searchbar>
+
+  <div class="contenido-inicio">
+    <!-- filtro rápido -->
+    <div class="chips-filtro" role="group" aria-label="Filtros rápidos">
+      <ion-chip
+        [class.activo]="filtroActivo === 'todos'"
+        (click)="onFiltroSeleccionado('todos')"
+      >
+        <ion-label>Todos</ion-label>
+      </ion-chip>
+      <ion-chip
+        [class.activo]="filtroActivo === 'gratis'"
+        (click)="onFiltroSeleccionado('gratis')"
+      >
+        <ion-label>Gratis</ion-label>
+      </ion-chip>
+      <ion-chip
+        [class.activo]="filtroActivo === 'cerca'"
+        (click)="onFiltroSeleccionado('cerca')"
+      >
+        <ion-icon name="location-outline"></ion-icon>
+        <ion-label>Cerca de mí</ion-label>
+      </ion-chip>
+    </div>
+
+    <!-- Recomendados para ti -->
+    <div class="seccion-recomendados">
+      <div class="seccion-header">
+        <h2><ion-icon name="sparkles-outline"></ion-icon> Recomendados para ti</h2>
+        <button class="ver-todos" (click)="irAVerTodos()">Ver todos</button>
+      </div>
+
+      <!-- Estado cargando -->
+      <div class="lista-recomendados" *ngIf="cargando">
+        <div class="tarjeta-lugar tarjeta-skeleton" *ngFor="let i of [1,2,3]">
+          <ion-skeleton-text [animated]="true" class="skeleton-imagen"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" class="skeleton-linea"></ion-skeleton-text>
+          <ion-skeleton-text [animated]="true" class="skeleton-linea corta"></ion-skeleton-text>
+        </div>
+      </div>
+
+      <!-- Lista -->
+      <div class="lista-recomendados" *ngIf="!cargando && lugaresRecomendados.length">
+        <button
+          class="tarjeta-lugar"
+          *ngFor="let lugar of lugaresRecomendados; trackBy: trackPorId"
+          (click)="irADetalle(lugar)"
+        >
+          <div
+            class="tarjeta-imagen"
+            [style.backgroundImage]="'url(' + lugar.url_imagen_principal + ')'"
+          ></div>
+          <div class="tarjeta-info">
+            <span class="tarjeta-nombre">{{ lugar.nombre }}</span>
+            <span class="tarjeta-comuna">{{ lugar.comuna?.nombre }}</span>
+            <span class="tarjeta-badge" *ngIf="lugar.es_gratuito">Gratis</span>
+          </div>
+        </button>
+      </div>
+
+      <!-- Estado vacio -->
+      <div class="estado-vacio" *ngIf="!cargando && !lugaresRecomendados.length">
+        <p>No encontramos lugares para este filtro. Prueba con otro.</p>
+      </div>
+    </div>
+
+    <!-- Botón de ver mapa -->
+    <ion-button expand="block" class="boton-ver-mapa" (click)="irAVerMapa()">
+      <ion-icon name="map-outline" slot="start"></ion-icon>
+      Ver mapa
+    </ion-button>
+  </div>
+
+</ion-content>

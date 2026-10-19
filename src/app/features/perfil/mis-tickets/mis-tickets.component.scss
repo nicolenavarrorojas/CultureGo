@@ -1,0 +1,106 @@
+.tickets-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 16px;
+  --padding-bottom: 24px;
+}
+
+.lista-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .skeleton-fila {
+    height: 70px;
+    border-radius: 14px;
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 40px 12px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.lista-tickets {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.fila-ticket {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--ion-color-light);
+
+  .fila-ticket-cabecera {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin-bottom: 6px;
+  }
+
+  .fila-ticket-tipo {
+    font-size: 0.7rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+    color: var(--ion-color-secondary);
+  }
+
+  .fila-ticket-desc {
+    margin: 0 0 4px;
+    font-size: 0.88rem;
+    color: var(--ion-color-dark);
+  }
+
+  .fila-ticket-nombre {
+    font-weight: 700;
+  }
+
+  .fila-ticket-lugar {
+    display: block;
+    font-size: 0.78rem;
+    color: var(--ion-color-primary);
+    font-weight: 600;
+    margin-bottom: 4px;
+  }
+
+  .fila-ticket-fecha {
+    font-size: 0.74rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.badge-estado {
+  flex-shrink: 0;
+  font-size: 0.68rem;
+  font-weight: 700;
+  padding: 2px 9px;
+  border-radius: 999px;
+
+  &.badge-estado-pendiente,
+  &.badge-estado-sugerencia-pendiente {
+    background: var(--ion-color-warning-tint);
+    color: var(--ion-color-dark);
+  }
+
+  &.badge-estado-en_revision {
+    background: var(--ion-color-primary-tint);
+    color: var(--ion-color-primary-contrast);
+  }
+
+  &.badge-estado-resuelto,
+  &.badge-estado-sugerencia-aprobado {
+    background: var(--ion-color-success-tint);
+    color: var(--ion-color-success-contrast);
+  }
+
+  &.badge-estado-rechazado,
+  &.badge-estado-sugerencia-rechazado {
+    background: var(--ion-color-danger);
+    color: #fff;
+  }
+}

@@ -1,0 +1,199 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/lugares" text=""></ion-back-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="detalle-content">
+
+  <!-- Estado cargando -->
+  <div class="estado-cargando" *ngIf="cargando">
+    <ion-skeleton-text [animated]="true" class="skeleton-imagen"></ion-skeleton-text>
+    <div class="skeleton-cuerpo">
+      <ion-skeleton-text [animated]="true" class="skeleton-linea ancha"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea media"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea completa"></ion-skeleton-text>
+      <ion-skeleton-text [animated]="true" class="skeleton-linea completa"></ion-skeleton-text>
+    </div>
+  </div>
+
+  <!-- Estado error / no encontrado -->
+  <div class="estado-error" *ngIf="!cargando && errorCarga">
+    <p>No pudimos cargar este lugar.</p>
+    <button class="boton-volver" (click)="volver()">Volver</button>
+  </div>
+
+  <!-- Contenido -->
+  <div class="detalle-lugar" *ngIf="!cargando && !errorCarga && lugar">
+
+    <!-- Imagen principal -->
+    <div
+      class="imagen-principal"
+      [style.backgroundImage]="lugar.url_imagen_principal ? 'url(' + lugar.url_imagen_principal + ')' : null"
+    ></div>
+
+    <!-- Nombre + categoría -->
+    <div class="bloque-titulo">
+      <h1>{{ lugar.nombre }}</h1>
+      <span class="categoria">{{ lugar.categoria?.nombre }}</span>
+    </div>
+
+    <!-- Información del lugar -->
+    <div class="bloque-info">
+      <h2>Información del lugar</h2>
+
+      <div class="fila-info" *ngIf="lugar.direccion">
+        <ion-icon name="location-outline"></ion-icon>
+        <span>{{ lugar.direccion }}{{ lugar.comuna?.nombre ? ', ' + lugar.comuna?.nombre : '' }}</span>
+      </div>
+
+      <div class="fila-info">
+        <ion-icon name="pricetag-outline"></ion-icon>
+        <span>{{ lugar.es_gratuito ? 'Gratis' : 'Pagado' }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.horario">
+        <ion-icon name="time-outline"></ion-icon>
+        <span>{{ lugar.horario }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.telefono">
+        <ion-icon name="call-outline"></ion-icon>
+        <span>{{ lugar.telefono }}</span>
+      </div>
+
+      <div class="fila-info" *ngIf="lugar.email_contacto">
+        <ion-icon name="mail-outline"></ion-icon>
+        <span>{{ lugar.email_contacto }}</span>
+      </div>
+
+      <p class="descripcion" *ngIf="lugar.descripcion">{{ lugar.descripcion }}</p>
+    </div>
+
+    <!-- Registrar visita -->
+    <button
+      class="boton-registrar-visita"
+      [disabled]="registrandoVisita"
+      (click)="registrarVisita()"
+    >
+      <ion-icon name="checkmark-circle-outline"></ion-icon>
+      {{ registrandoVisita ? 'Verificando ubicación...' : 'Registrar visita' }}
+    </button>
+
+    <!-- Reportar un problema con este lugar -->
+    <button class="boton-reportar" (click)="mostrarReporte = true">
+      <ion-icon name="flag-outline"></ion-icon>
+      Reportar un problema con este lugar
+    </button>
+
+    <!-- RESEÑAS -->
+    <div class="bloque-resenas">
+      <div class="resenas-cabecera">
+        <h2>Reseñas</h2>
+        <div class="resenas-promedio" *ngIf="promedioCalificacion != null">
+          <ion-icon name="star"></ion-icon>
+          <span>{{ promedioCalificacion.toFixed(1) }}</span>
+          <span class="resenas-total">({{ resenas.length }} {{ resenas.length === 1 ? 'reseña' : 'reseñas' }})</span>
+        </div>
+      </div>
+
+      <div class="formulario-resena">
+        <span class="formulario-resena-label">
+          {{ yaTengoResena ? 'Tu reseña' : 'Deja tu reseña' }}
+        </span>
+
+        <div class="selector-estrellas">
+          <button
+            *ngFor="let estrella of [1,2,3,4,5]"
+            class="boton-estrella"
+            (click)="seleccionarEstrella(estrella)"
+            [attr.aria-label]="'Calificar con ' + estrella + ' estrellas'"
+          >
+            <ion-icon [name]="estrella <= calificacionSeleccionada ? 'star' : 'star-outline'"></ion-icon>
+          </button>
+        </div>
+
+        <textarea
+          class="textarea-resena"
+          [(ngModel)]="comentarioResena"
+          rows="3"
+          placeholder="Cuéntanos tu experiencia (opcional)"
+        ></textarea>
+
+        <button
+          class="boton-guardar-resena"
+          [disabled]="!formularioResenaValido || guardandoResena"
+          (click)="guardarResena()"
+        >
+          {{ guardandoResena ? 'Guardando...' : (yaTengoResena ? 'Actualizar reseña' : 'Publicar reseña') }}
+        </button>
+      </div>
+
+      <div class="lista-skeleton" *ngIf="cargandoResenas">
+        <ion-skeleton-text [animated]="true" class="skeleton-resena"></ion-skeleton-text>
+        <ion-skeleton-text [animated]="true" class="skeleton-resena"></ion-skeleton-text>
+      </div>
+
+      <div class="lista-resenas" *ngIf="!cargandoResenas && resenas.length">
+        <div class="fila-resena" *ngFor="let resena of resenas; trackBy: trackPorIdResena">
+          <div class="fila-resena-cabecera">
+            <div class="fila-resena-persona">
+              <div class="fila-resena-avatar">
+                <app-avatar-preview
+                  *ngIf="resena.usuario?.avatar; else inicialResena"
+                  [indices]="resena.usuario?.avatar ?? null"
+                  ajuste="cover"
+                ></app-avatar-preview>
+                <ng-template #inicialResena>
+                  {{ (resena.usuario?.nombre || 'U').charAt(0).toUpperCase() }}
+                </ng-template>
+              </div>
+              <div class="fila-resena-persona-info">
+                <span class="fila-resena-autor">{{ resena.usuario?.nombre || 'Usuario' }}</span>
+                <div class="fila-resena-estrellas">
+                  <ion-icon
+                    *ngFor="let estrella of [1,2,3,4,5]"
+                    [name]="estrella <= resena.calificacion ? 'star' : 'star-outline'"
+                  ></ion-icon>
+                </div>
+              </div>
+            </div>
+            <button
+              class="boton-eliminar-resena"
+              *ngIf="esAdmin"
+              (click)="eliminarResena(resena)"
+              aria-label="Eliminar reseña"
+            >
+              <ion-icon name="trash-outline"></ion-icon>
+            </button>
+          </div>
+          <p class="fila-resena-comentario" *ngIf="resena.comentario">{{ resena.comentario }}</p>
+          <span class="fila-resena-fecha">{{ resena.fecha_creacion | date: 'd MMM yyyy' }}</span>
+        </div>
+      </div>
+
+      <p class="estado-vacio-resenas" *ngIf="!cargandoResenas && !resenas.length">
+        Todavía no hay reseñas. ¡Sé el primero en dejar una!
+      </p>
+    </div>
+
+  </div>
+
+  <app-reportar-problema
+    [abierto]="mostrarReporte"
+    [lugar]="lugar"
+    (cerrado)="mostrarReporte = false"
+  ></app-reportar-problema>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="2500"
+    [color]="toastColor"
+    position="top"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>

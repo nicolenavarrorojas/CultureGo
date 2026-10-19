@@ -1,0 +1,7 @@
+{
+  "name": "culturego-temp",
+  "integrations": {
+    "capacitor": {}
+  },
+  "type": "angular-standalone"
+}

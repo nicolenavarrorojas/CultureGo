@@ -1,0 +1,122 @@
+.personalizar-content {
+  --padding-start: 20px;
+  --padding-end: 20px;
+  --padding-top: 8px;
+  --padding-bottom: 32px;
+}
+
+.fila-personalizacion {
+  display: flex;
+  align-items: stretch;
+  justify-content: center;
+  gap: clamp(8px, 3vw, 14px);
+  margin: 8px 0 24px;
+}
+
+.avatar-preview {
+  width: clamp(140px, 44vw, 200px);
+  flex-shrink: 0;
+  aspect-ratio: 2013 / 2762;
+  border-radius: 20px;
+  background: var(--app-superficie-tenue);
+  overflow: hidden;
+}
+
+.columna-flechas {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.flecha {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: clamp(32px, 9vw, 40px);
+  height: clamp(32px, 9vw, 40px);
+  border: none;
+  border-radius: 50%;
+  background: var(--app-superficie);
+  color: var(--ion-color-primary);
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08);
+  flex-shrink: 0;
+
+  ion-icon {
+    font-size: 1.1rem;
+  }
+
+  &:active {
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+  }
+}
+
+.tarjeta-recompensas {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--ion-color-light);
+  margin-bottom: 20px;
+
+  .icono-recompensas {
+    flex-shrink: 0;
+    width: 56px;
+    height: 56px;
+    border-radius: 12px;
+    background: var(--app-superficie-tenue);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    ion-icon {
+      font-size: 1.6rem;
+      color: var(--ion-color-primary);
+    }
+  }
+
+  .texto-recompensas {
+    min-width: 0;
+
+    h2 {
+      margin: 0 0 4px;
+      font-size: 0.92rem;
+      font-weight: 600;
+      color: var(--ion-color-dark);
+    }
+
+    p {
+      margin: 0;
+      font-size: 0.78rem;
+      color: var(--ion-color-medium);
+      line-height: 1.35;
+    }
+  }
+}
+
+.boton-guardar {
+  display: block;
+  width: 100%;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 600;
+}
+
+.boton-restablecer {
+  display: block;
+  width: 100%;
+  background: none;
+  border: none;
+  color: var(--ion-color-primary);
+  font-size: 0.85rem;
+  font-weight: 600;
+  padding: 14px;
+  margin-top: 2px;
+}

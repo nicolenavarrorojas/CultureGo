@@ -1,0 +1,81 @@
+<ion-modal
+  [isOpen]="abierto"
+  (didPresent)="onModalPresentado()"
+  (didDismiss)="cerrar()"
+  (willDismiss)="onModalOcultado()"
+>
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>Sugerir un lugar</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrar()">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="sugerir-contenido">
+      <p class="instruccion">Toca el mapa para marcar dónde está el lugar.</p>
+
+      <div #mapaContenedor class="mini-mapa"></div>
+
+      <p class="coords-seleccionadas" *ngIf="latitudSeleccionada != null">
+        📍 {{ latitudSeleccionada.toFixed(5) }}, {{ longitudSeleccionada?.toFixed(5) }}
+      </p>
+      <p class="coords-seleccionadas coords-vacias" *ngIf="latitudSeleccionada == null">
+        Todavía no has marcado un punto.
+      </p>
+
+      <label class="campo-form">
+        <span>Nombre del lugar *</span>
+        <input type="text" [(ngModel)]="nombre" placeholder="Ej: Feria artesanal de Los Dominicos" />
+      </label>
+
+      <label class="campo-form">
+        <span>Categoría *</span>
+        <ion-select
+          [(ngModel)]="idCategoria"
+          interface="action-sheet"
+          cancelText="Cerrar"
+          placeholder="Selecciona una categoría"
+        >
+          <ion-select-option *ngFor="let categoria of categorias" [value]="categoria.id_categoria">
+            {{ categoria.nombre }}
+          </ion-select-option>
+        </ion-select>
+      </label>
+
+      <label class="campo-form">
+        <span>Descripción</span>
+        <textarea
+          [(ngModel)]="descripcion"
+          rows="3"
+          placeholder="Cuéntanos por qué vale la pena agregarlo"
+        ></textarea>
+      </label>
+    </ion-content>
+
+    <ion-footer class="ion-no-border">
+      <div class="footer-enviar">
+        <button
+          class="boton-enviar"
+          [disabled]="!formularioValido || enviando"
+          (click)="enviar()"
+        >
+          <ion-icon name="paper-plane-outline" *ngIf="!enviando"></ion-icon>
+          {{ enviando ? 'Enviando...' : 'Enviar sugerencia' }}
+        </button>
+      </div>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-toast
+  [isOpen]="mostrarToast"
+  [message]="toastMensaje"
+  [duration]="2500"
+  position="top"
+  (didDismiss)="mostrarToast = false"
+></ion-toast>

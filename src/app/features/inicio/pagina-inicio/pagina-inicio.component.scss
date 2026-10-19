@@ -1,0 +1,237 @@
+.inicio-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  * {
+    font-family: 'Work Sans', sans-serif !important;
+  }
+}
+
+.header-hero {
+  background: var(--ion-color-primary);
+  padding: calc(var(--ion-safe-area-top, 0px) + 23px) 25px 25px;
+  border-bottom-left-radius: 50% 24px;
+  border-bottom-right-radius: 50% 24px;
+  position: relative;
+}
+
+.header-saludo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+
+  .saludo-texto {
+    .subtitulo {
+      margin: 0;
+      font-size: 0.8rem;
+      letter-spacing: 0.04em;
+      color: rgba(255, 255, 255, 0.75);
+    }
+
+    h1 {
+      margin: 2px 0 0;
+      font-family: 'Fraunces', serif;
+      font-size: 1.6rem;
+      font-weight: 600;
+      line-height: 1.2;
+      color: #ffffff;
+    }
+  }
+}
+.saludo-texto .frase {
+  margin: 6px 0 0;
+  font-size: 0.85rem;
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.arco-culturego {
+  position: absolute;
+  top: -14px;
+  left: 50%;
+ transform: translateX(-50%) scale(0.65);
+  height: 58px;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.avatar-wrapper {
+  flex-shrink: 0;
+  width: 75px;
+  height: 75px;
+}
+
+.mascota-imagen {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  display: block;
+  filter: drop-shadow(0 2px 6px rgba(43, 36, 54, 0.25));
+}
+
+.pregunta-descubrir {
+  font-family: 'Fraunces', serif;
+  font-weight: 600;
+  font-size: 1rem;
+  color: var(--ion-color-dark);
+  margin: 14px 20px 12px;
+}
+
+.buscador {
+  padding: 0 20px;
+  --background: var(--app-superficie);
+  --border-radius: 14px;
+  --box-shadow: 0 3px 6px rgba(43, 36, 54, 0.15);
+  margin-bottom: 15px;
+}
+
+.contenido-inicio {
+  padding: 0 20px 12px;
+}
+
+.chips-filtro {
+  display: flex;
+  gap: 8px;
+  overflow-x: auto;
+  padding-bottom: 4px;
+  margin-bottom: 20px;
+
+  ion-chip {
+    flex-shrink: 0;
+    --background: var(--ion-color-light);
+    margin: 0;
+
+    &.activo {
+      --background: var(--ion-color-primary);
+      color: var(--ion-color-primary-contrast);
+
+      ion-icon {
+        color: var(--ion-color-primary-contrast);
+      }
+    }
+  }
+}
+
+.seccion-recomendados {
+  margin-bottom: 24px;
+
+  .seccion-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+
+    h2 {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-family: 'Fraunces', serif;
+      font-size: 1.1rem;
+      font-weight: 600;
+      margin: 0;
+
+      ion-icon {
+        color: var(--ion-color-primary);
+      }
+    }
+
+    .ver-todos {
+      background: none;
+      border: none;
+      color: var(--ion-color-primary);
+      font-size: 0.85rem;
+      font-weight: 600;
+      padding: 4px;
+    }
+  }
+}
+
+.lista-recomendados {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.tarjeta-lugar {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 16px;
+  background: var(--app-superficie-tenue);
+  text-align: left;
+  color: var(--ion-color-dark);
+
+  .tarjeta-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+    background-size: cover;
+    background-position: center;
+    background-color: var(--ion-color-primary-tint);
+    flex-shrink: 0;
+  }
+
+  .tarjeta-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+
+    .tarjeta-nombre {
+      color: var(--ion-color-dark);
+      font-weight: 600;
+      font-size: 0.95rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+
+    .tarjeta-comuna {
+      font-size: 0.8rem;
+      color: var(--ion-color-medium);
+    }
+
+    .tarjeta-badge {
+      align-self: flex-start;
+      margin-top: 2px;
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 2px 8px;
+      border-radius: 999px;
+      background: var(--ion-color-success-tint);
+      color: var(--ion-color-success-contrast);
+    }
+  }
+}
+
+.tarjeta-skeleton {
+  .skeleton-imagen {
+    width: 64px;
+    height: 64px;
+    border-radius: 12px;
+  }
+
+  .skeleton-linea {
+    height: 12px;
+    width: 70%;
+
+    &.corta {
+      width: 40%;
+    }
+  }
+}
+
+.estado-vacio {
+  text-align: center;
+  padding: 24px 12px;
+  color: var(--ion-color-medium);
+  font-size: 0.9rem;
+}
+
+.boton-ver-mapa {
+  margin-top: 4px;
+  margin-bottom: 12px;
+  --border-radius: 14px;
+}

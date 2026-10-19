@@ -1,0 +1,375 @@
+.detalle-content {
+  --padding-start: 0;
+  --padding-end: 0;
+  --padding-top: 0;
+  --padding-bottom: 24px;
+}
+
+// Estado cargando
+.estado-cargando {
+  .skeleton-imagen {
+    width: 100%;
+    height: 220px;
+    margin: 0;
+  }
+
+  .skeleton-cuerpo {
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+
+  .skeleton-linea {
+    height: 14px;
+
+    &.ancha {
+      width: 70%;
+      height: 22px;
+    }
+
+    &.media {
+      width: 40%;
+    }
+
+    &.completa {
+      width: 100%;
+    }
+  }
+}
+
+// Estado error
+.estado-error {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--ion-color-medium);
+
+  .boton-volver {
+    margin-top: 14px;
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    border: none;
+    border-radius: 999px;
+    padding: 10px 24px;
+    font-size: 0.9rem;
+    font-weight: 700;
+  }
+}
+
+.imagen-principal {
+  width: 100%;
+  height: 220px;
+  background-size: cover;
+  background-position: center;
+  background-color: var(--app-superficie-tenue);
+}
+
+.bloque-titulo {
+  padding: 20px 20px 0;
+
+  h1 {
+    margin: 0 0 4px;
+    font-family: 'Fraunces', serif;
+    font-size: 1.4rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .categoria {
+    font-size: 0.85rem;
+    color: var(--ion-color-primary);
+    font-weight: 600;
+  }
+}
+
+.bloque-info {
+  margin: 18px 20px 0;
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--ion-color-light);
+
+  h2 {
+    margin: 0 0 12px;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .fila-info {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    margin-bottom: 10px;
+    font-size: 0.9rem;
+    color: var(--ion-color-dark);
+
+    ion-icon {
+      flex-shrink: 0;
+      margin-top: 2px;
+      color: var(--ion-color-primary);
+      font-size: 1.1rem;
+    }
+  }
+
+  .descripcion {
+    margin: 12px 0 0;
+    font-size: 0.88rem;
+    line-height: 1.5;
+    color: var(--ion-color-medium);
+  }
+}
+
+.boton-registrar-visita {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  width: calc(100% - 40px);
+  margin: 20px 20px 0;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 14px;
+  padding: 14px;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  &[disabled] {
+    opacity: 0.6;
+  }
+
+  ion-icon {
+    font-size: 1.2rem;
+  }
+}
+
+.boton-reportar {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: calc(100% - 40px);
+  margin: 10px 20px 0;
+  background: none;
+  border: none;
+  color: var(--ion-color-medium);
+  font-size: 0.82rem;
+  padding: 10px;
+
+  ion-icon {
+    font-size: 1rem;
+  }
+}
+
+.bloque-resenas {
+  margin: 24px 20px 0;
+}
+
+.resenas-cabecera {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 14px;
+
+  h2 {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .resenas-promedio {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.9rem;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+
+    ion-icon {
+      color: var(--ion-color-warning);
+      font-size: 1rem;
+    }
+
+    .resenas-total {
+      font-weight: 500;
+      font-size: 0.78rem;
+      color: var(--ion-color-medium);
+      margin-left: 2px;
+    }
+  }
+}
+
+.formulario-resena {
+  padding: 16px;
+  border-radius: 16px;
+  background: var(--ion-color-light);
+  margin-bottom: 16px;
+
+  .formulario-resena-label {
+    display: block;
+    font-size: 0.85rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+    margin-bottom: 10px;
+  }
+
+  .selector-estrellas {
+    display: flex;
+    gap: 4px;
+    margin-bottom: 10px;
+
+    .boton-estrella {
+      background: none;
+      border: none;
+      padding: 2px;
+
+      ion-icon {
+        font-size: 1.6rem;
+        color: var(--ion-color-warning);
+      }
+    }
+  }
+
+  .textarea-resena {
+    width: 100%;
+    box-sizing: border-box;
+    background: var(--app-superficie);
+    border: none;
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-size: 0.85rem;
+    color: var(--ion-color-dark);
+    font-family: inherit;
+    resize: vertical;
+    margin-bottom: 10px;
+
+    &::placeholder {
+      color: var(--ion-color-medium);
+    }
+  }
+
+  .boton-guardar-resena {
+    width: 100%;
+    background: var(--ion-color-primary);
+    color: var(--ion-color-primary-contrast);
+    border: none;
+    border-radius: 12px;
+    padding: 12px;
+    font-size: 0.88rem;
+    font-weight: 700;
+
+    &[disabled] {
+      opacity: 0.6;
+    }
+  }
+}
+
+.lista-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+
+  .skeleton-resena {
+    height: 70px;
+    border-radius: 14px;
+  }
+}
+
+.lista-resenas {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.fila-resena {
+  padding: 14px;
+  border-radius: 14px;
+  background: var(--ion-color-light);
+
+  .fila-resena-cabecera {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 10px;
+    margin-bottom: 8px;
+  }
+
+  .fila-resena-persona {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    min-width: 0;
+  }
+
+  .fila-resena-avatar {
+    width: 56px;
+    height: 56px;
+    border-radius: 50%;
+    flex-shrink: 0;
+    overflow: hidden;
+    background: #e3deed;
+    border: 2px solid var(--ion-color-primary-tint);
+    color: var(--ion-color-primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.2rem;
+    font-weight: 600;
+  }
+
+  .fila-resena-persona-info {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+  }
+
+  .fila-resena-estrellas {
+    display: flex;
+    gap: 2px;
+
+    ion-icon {
+      font-size: 0.9rem;
+      color: var(--ion-color-warning);
+    }
+  }
+
+  .boton-eliminar-resena {
+    background: none;
+    border: none;
+    color: var(--ion-color-danger);
+    font-size: 1rem;
+    padding: 2px;
+    flex-shrink: 0;
+  }
+
+  .fila-resena-autor {
+    display: block;
+    font-size: 0.82rem;
+    font-weight: 700;
+    color: var(--ion-color-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .fila-resena-comentario {
+    margin: 0 0 6px;
+    font-size: 0.85rem;
+    color: var(--ion-color-dark);
+    line-height: 1.4;
+  }
+
+  .fila-resena-fecha {
+    font-size: 0.72rem;
+    color: var(--ion-color-medium);
+  }
+}
+
+.estado-vacio-resenas {
+  text-align: center;
+  padding: 20px 12px;
+  font-size: 0.85rem;
+  color: var(--ion-color-medium);
+}

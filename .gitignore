@@ -77,3 +77,14 @@ desktop.ini
 .sass-cache/
 connect.lock
 typings/
+/src/environments
+
+# Pruebas E2E (Playwright) y archivos temporales de Office
+.env.e2e
+e2e/.auth/
+e2e/.seed-info.json
+test-results/
+playwright-report/
+~$*
+e2e/fixtures/*.png
+e2e/fixtures/*.pdf

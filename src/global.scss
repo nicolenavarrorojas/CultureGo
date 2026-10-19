@@ -1,0 +1,66 @@
+/*
+ * App Global CSS
+ * ----------------------------------------------------------------------------
+ * Put style rules here that you want to apply globally. These styles are for
+ * the entire app and not just one component. Additionally, this file can be
+ * used as an entry point to import other CSS/Sass files to be included in the
+ * output CSS.
+ * For more information on global stylesheets, visit the documentation:
+ * https://ionicframework.com/docs/layout/global-stylesheets
+ */
+
+ // Fraunces font
+@import url('https://fonts.googleapis.com/css2?family=Fraunces:wght@600;700&family=Work+Sans:wght@400;500;600&display=swap');
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils that can be commented out */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/**
+ * Ionic Dark Mode
+ * -----------------------------------------------------
+ * For more info, please see:
+ * https://ionicframework.com/docs/theming/dark-mode
+ */
+
+/* @import "@ionic/angular/css/palettes/dark.always.css"; */
+/* @import "@ionic/angular/css/palettes/dark.class.css"; */
+/* @import '@ionic/angular/css/palettes/dark.system.css'; */
+
+
+@import "leaflet/dist/leaflet.css";
+
+
+.action-sheet-cancel {
+  color: var(--ion-color-danger) !important;
+  font-weight: 700 !important;
+}
+
+.boton-alerta-eliminar {
+  color: var(--ion-color-danger) !important;
+  font-weight: 700 !important;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  button:not(:disabled) {
+    transition: transform 0.15s ease, box-shadow 0.15s ease;
+
+    &:active {
+      transform: scale(0.96);
+      box-shadow: inset 0 0 0 999px rgba(var(--ion-color-primary-rgb), 0.22);
+    }
+  }
+}
+

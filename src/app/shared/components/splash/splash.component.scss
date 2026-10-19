@@ -1,0 +1,111 @@
+.splash {
+  position: fixed;
+  inset: 0;
+  z-index: 100000; 
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background:
+    radial-gradient(circle at 50% 38%, rgba(255, 255, 255, 0.14) 0%, transparent 55%),
+    var(--ion-color-primary);
+  transition:
+    opacity 450ms ease,
+    transform 450ms ease;
+
+  &.saliendo {
+    opacity: 0;
+    transform: scale(1.04);
+    pointer-events: none;
+  }
+}
+
+.splash-contenido {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  padding: 0 24px;
+}
+
+/* Logo */
+.splash-logo {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  filter: drop-shadow(0 6px 14px rgba(0, 0, 0, 0.25));
+  opacity: 0;
+  animation:
+    logo-entrada 700ms cubic-bezier(0.34, 1.56, 0.64, 1) forwards,
+    logo-flotar 2.4s ease-in-out 700ms infinite;
+}
+
+/* Nombre */
+.splash-nombre {
+  margin: 4px 0 0;
+  font-family: 'Fraunces', serif;
+  font-size: 2.3rem;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+  line-height: 1;
+  color: #ffffff;
+  opacity: 0;
+  animation: subir 550ms ease-out 400ms forwards;
+
+  .parte-go {
+    color: #f3c86a; 
+  }
+}
+
+/* Lema */
+.splash-lema {
+  margin: 0;
+  font-family: 'Work Sans', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.8);
+  opacity: 0;
+  animation: subir 500ms ease-out 750ms forwards;
+}
+
+@keyframes logo-entrada {
+  0% {
+    opacity: 0;
+    transform: scale(0.4) rotate(-8deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(0);
+  }
+}
+
+@keyframes logo-flotar {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-6px);
+  }
+}
+
+@keyframes subir {
+  0% {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Accesibilidad: sin animaciones si el usuario pidió reducir movimiento */
+@media (prefers-reduced-motion: reduce) {
+  .splash-logo,
+  .splash-nombre,
+  .splash-lema {
+    animation: none;
+    opacity: 1;
+  }
+}

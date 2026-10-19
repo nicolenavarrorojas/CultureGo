@@ -1,0 +1,67 @@
+<ion-header class="ion-no-border">
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/tabs/perfil" text=""></ion-back-button>
+    </ion-buttons>
+    <ion-title>Personalizar avatar</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="personalizar-content">
+
+  <div class="fila-personalizacion">
+
+    <div class="columna-flechas">
+      <button
+        *ngFor="let parte of partes"
+        class="flecha"
+        [attr.aria-label]="'Anterior: ' + parte.etiqueta"
+        (click)="cambiarPaso(parte.clave, -1)"
+      >
+        <ion-icon name="chevron-back-outline"></ion-icon>
+      </button>
+    </div>
+
+    <!-- Vista previa avatar (base + cuerpo/cabeza/ojos/boca) -->
+    <div class="avatar-preview">
+      <app-avatar-preview [indices]="indices" ajuste="contain"></app-avatar-preview>
+    </div>
+
+    <div class="columna-flechas">
+      <button
+        *ngFor="let parte of partes"
+        class="flecha"
+        [attr.aria-label]="'Siguiente: ' + parte.etiqueta"
+        (click)="cambiarPaso(parte.clave, 1)"
+      >
+        <ion-icon name="chevron-forward-outline"></ion-icon>
+      </button>
+    </div>
+
+  </div>
+
+  <!-- Aviso de futuros accesorios desbloqueables -->
+  <div class="tarjeta-recompensas">
+    <div class="icono-recompensas">
+      <ion-icon name="gift-outline"></ion-icon>
+    </div>
+    <div class="texto-recompensas">
+      <h2>Desbloquea recompensas</h2>
+      <p>Aún no has desbloqueado ninguna recompensa. ¡Empieza a visitar lugares!</p>
+    </div>
+  </div>
+
+  <button class="boton-guardar" [disabled]="guardando" (click)="guardar()">
+    {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
+  </button>
+  <button class="boton-restablecer" (click)="restablecer()">Restablecer avatar</button>
+
+  <ion-toast
+    [isOpen]="mostrarToast"
+    [message]="toastMensaje"
+    [duration]="1800"
+    position="bottom"
+    (didDismiss)="mostrarToast = false"
+  ></ion-toast>
+
+</ion-content>
