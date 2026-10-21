@@ -1,12 +1,12 @@
 # Pruebas de CultureGo
 
-Guía para ejecutar las pruebas del proyecto. Los casos, criterios y resultados esperados están en el Plan de Pruebas (`docs/pruebas/Plan_de_Pruebas_CultureGo_v2.1.docx`); los resultados se registran en `docs/pruebas/Registro_Ejecucion_Pruebas_CultureGo.xlsx`.
+Guía para ejecutar las pruebas del proyecto. Los casos, criterios y resultados esperados están en el Plan de Pruebas (`FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/Plan_de_Pruebas_CultureGo_v2.1.docx`); los resultados se registran en `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/Registro_Ejecucion_Pruebas_CultureGo.xlsx`.
 
 | Tipo | Casos | Herramienta | Comando | Evidencia |
 |---|---|---|---|---|
-| Unitarias | UT-* | Karma + Jasmine | `npm test` | `docs/pruebas/evidencias/ut-ejecucion-AAAA-MM-DD.txt` |
-| E2E (QA automatizados) | QA-01 a QA-29 | Playwright Test | `npm run e2e` | `docs/pruebas/evidencias/e2e-AAAA-MM-DD/` |
-| Manuales | QA-01 a QA-29 | A mano, según el plan | — | `docs/pruebas/evidencias/manual-AAAA-MM-DD/` |
+| Unitarias | UT-* | Karma + Jasmine | `npm test` | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/ut-ejecucion-AAAA-MM-DD.txt` |
+| E2E (QA automatizados) | QA-01 a QA-29 | Playwright Test | `npm run e2e` | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-AAAA-MM-DD/` |
+| Manuales | QA-01 a QA-29 | A mano, según el plan | — | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/manual-AAAA-MM-DD/` |
 
 ## Requisitos previos
 
@@ -32,7 +32,7 @@ La cobertura queda en `coverage/app/index.html` (no se versiona).
 Para dejar el log de una ejecución como evidencia:
 
 ```bash
-npx ng test --watch=false --browsers=ChromeHeadless --code-coverage > docs/pruebas/evidencias/ut-ejecucion-AAAA-MM-DD.txt 2>&1
+npx ng test --watch=false --browsers=ChromeHeadless --code-coverage > "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/ut-ejecucion-AAAA-MM-DD.txt" 2>&1
 ```
 
 ---
@@ -73,7 +73,7 @@ Si el seed no puede asignar el rol de administrador (trigger `fn_proteger_es_adm
 npm run e2e                            # todas; levanta ionic serve si no está corriendo
 npx playwright test -g "QA-13"         # un caso
 npx playwright test e2e/admin.e2e.ts   # un archivo
-npx playwright show-report docs/pruebas/evidencias/e2e-report   # abre el último reporte
+npx playwright show-report "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-report" # abre el último reporte
 ```
 
 - **QA-01 envía un correo real** de confirmación al buzón del equipo (`culturego.contacto+e2e-<timestamp>@gmail.com`). El SMTP incluido en Supabase limita los envíos por hora, así que evita más de una corrida completa por hora. Para repetir casos puntuales, filtra con `-g` y deja fuera a QA-01 y QA-07.
@@ -84,7 +84,7 @@ npx playwright show-report docs/pruebas/evidencias/e2e-report   # abre el últim
 1. Renombra el reporte con la fecha:
 
    ```bash
-   mv docs/pruebas/evidencias/e2e-report docs/pruebas/evidencias/e2e-AAAA-MM-DD
+   mv "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-report" "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-AAAA-MM-DD"
    ```
 
 2. Deja el catálogo limpio: `npm run e2e:seed -- --solo-limpiar`. Si prefieres conservar el set base para la próxima corrida, usa `npm run e2e:seed`.
@@ -129,6 +129,6 @@ Las pruebas usan el sufijo `.e2e.ts` para que Karma, que toma `**/*.spec.ts`, no
 
 ## 3. Pruebas manuales
 
-Se ejecutan siguiendo los pasos de la sección 4 del Plan de Pruebas, cada caso a partir de su precondición. Los resultados van al Registro de ejecución (`.xlsx`) y las capturas o videos a `docs/pruebas/evidencias/manual-AAAA-MM-DD/`. Para un Fail, registra una incidencia con lo esperado frente a lo obtenido.
+Se ejecutan siguiendo los pasos de la sección 4 del Plan de Pruebas, cada caso a partir de su precondición. Los resultados van al Registro de ejecución (`.xlsx`) y las capturas o videos a `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/manual-AAAA-MM-DD/`. Para un Fail, registra una incidencia con lo esperado frente a lo obtenido.
 
 Los casos QA-01 a QA-29 también están automatizados (sección 2). Siguen siendo manuales QA-05 y las partes anotadas como `manual` en el reporte de Playwright.

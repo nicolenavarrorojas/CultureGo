@@ -4,7 +4,7 @@ import dotenv from 'dotenv';
 dotenv.config({ path: '.env.e2e', quiet: true });
 process.env['PLAYWRIGHT_NO_COPY_PROMPT'] = '1';
 
-const RUTA_REPORTE = 'docs/pruebas/evidencias/e2e-report';
+const RUTA_REPORTE = 'FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-report';
 
 export default defineConfig({
   testDir: 'e2e',
