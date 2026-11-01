@@ -6,6 +6,7 @@ import { Router } from '@angular/router';
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { Reportes } from 'src/app/core/services/reportes';
+import { CalificacionesApp } from 'src/app/core/services/calificaciones-app';
 import { Categorias } from 'src/app/core/services/categorias';
 import { AvatarService } from 'src/app/core/services/avatar';
 import { PaginaPerfilComponent } from './pagina-perfil.component';
@@ -46,6 +47,10 @@ describe('PaginaPerfilComponent', () => {
         {
           provide: Reportes,
           useValue: { crear: async () => ({}) },
+        },
+        {
+          provide: CalificacionesApp,
+          useValue: { obtenerMia: async () => null, guardar: async () => ({}) },
         },
         {
           provide: Categorias,

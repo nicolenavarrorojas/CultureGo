@@ -114,6 +114,11 @@
         <span>Mis tickets</span>
         <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
       </button>
+      <button class="opcion" (click)="abrirCalificacion()">
+        <ion-icon name="star-outline"></ion-icon>
+        <span>Califica la app</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
       <button class="opcion opcion-salir" (click)="cerrarSesion()">
         <ion-icon name="log-out-outline"></ion-icon>
         <span>Cerrar sesión</span>
@@ -128,6 +133,11 @@
     [lugar]="null"
     (cerrado)="mostrarReporte = false"
   ></app-reportar-problema>
+
+  <app-calificar-app
+    [abierto]="mostrarCalificacion"
+    (cerrado)="mostrarCalificacion = false"
+  ></app-calificar-app>
 
   <ion-toast
     [isOpen]="mostrarToast"

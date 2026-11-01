@@ -32,6 +32,7 @@ import {
   filmOutline,
   imagesOutline,
   moonOutline,
+  starOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
@@ -43,6 +44,7 @@ import { Theme } from 'src/app/core/services/theme';
 import { ConfiguracionAvatar, Usuario, Medalla, UsuarioMedalla } from 'src/app/core/models';
 import { ReportarProblemaComponent } from 'src/app/shared/components/reportar-problema/reportar-problema.component';
 import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
+import { CalificarAppComponent } from 'src/app/shared/components/calificar-app/calificar-app.component';
 import { ColorTema, obtenerColorCategoria, obtenerIconoCategoria } from 'src/app/core/utils/tema-categoria';
 
 type MedallaObtenida = UsuarioMedalla & { medalla: Medalla };
@@ -70,6 +72,7 @@ const LIMITE_MEDALLAS_RECIENTES = 4;
     IonToast,
     ReportarProblemaComponent,
     AvatarPreviewComponent,
+    CalificarAppComponent,
   ],
   templateUrl: './pagina-perfil.component.html',
   styleUrls: ['./pagina-perfil.component.scss'],
@@ -87,6 +90,7 @@ export class PaginaPerfilComponent {
   toastMensaje = '';
   mostrarToast = false;
   mostrarReporte = false;
+  mostrarCalificacion = false;
 
   private destroyRef = inject(DestroyRef);
 
@@ -117,6 +121,7 @@ export class PaginaPerfilComponent {
       bookOutline,
       filmOutline,
       imagesOutline,
+      starOutline,
     });
 
     // Al guardar en Personalizar avatar, se actualiza el círculo al instante,
@@ -243,6 +248,10 @@ export class PaginaPerfilComponent {
 
   irAAyuda() {
     this.mostrarReporte = true;
+  }
+
+  abrirCalificacion() {
+    this.mostrarCalificacion = true;
   }
 
   async cerrarSesion() {
