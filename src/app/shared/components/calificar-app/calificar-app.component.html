@@ -1,0 +1,66 @@
+<ion-modal [isOpen]="abierto" (didDismiss)="cerrar()">
+  <ng-template>
+    <ion-header class="ion-no-border">
+      <ion-toolbar>
+        <ion-title>Califica la app</ion-title>
+        <ion-buttons slot="end">
+          <ion-button (click)="cerrar()">
+            <ion-icon name="close-outline" slot="icon-only"></ion-icon>
+          </ion-button>
+        </ion-buttons>
+      </ion-toolbar>
+    </ion-header>
+
+    <ion-content class="calificar-contenido">
+      <p class="pregunta">¿Qué te parece CultureGo?</p>
+      <p class="aclaracion">Tu opinión sobre la app nos ayuda a mejorarla.</p>
+
+      <div class="selector-estrellas" role="radiogroup" aria-label="Calificación de la app">
+        <button
+          *ngFor="let estrella of estrellas"
+          class="boton-estrella"
+          role="radio"
+          [attr.aria-checked]="estrella === calificacion"
+          [attr.aria-label]="'Calificar con ' + estrella + (estrella === 1 ? ' estrella' : ' estrellas')"
+          [disabled]="cargando"
+          (click)="seleccionarEstrella(estrella)"
+        >
+          <ion-icon [name]="estrella <= calificacion ? 'star' : 'star-outline'"></ion-icon>
+        </button>
+      </div>
+
+      <label class="campo-form">
+        <span>Cuéntanos tu experiencia usando la app (opcional)</span>
+        <textarea
+          [(ngModel)]="comentario"
+          rows="5"
+          [maxlength]="largoMaximo"
+          [disabled]="cargando"
+          placeholder="¿Qué te gusta? ¿Qué mejorarías?"
+        ></textarea>
+        <small class="contador">{{ comentario.length }}/{{ largoMaximo }}</small>
+      </label>
+    </ion-content>
+
+    <ion-footer class="ion-no-border">
+      <div class="footer-enviar">
+        <button
+          class="boton-enviar"
+          [disabled]="!formularioValido || enviando || cargando"
+          (click)="enviar()"
+        >
+          <ion-icon name="paper-plane-outline" *ngIf="!enviando"></ion-icon>
+          {{ enviando ? 'Enviando...' : (yaCalifico ? 'Actualizar opinión' : 'Enviar opinión') }}
+        </button>
+      </div>
+    </ion-footer>
+  </ng-template>
+</ion-modal>
+
+<ion-toast
+  [isOpen]="mostrarToast"
+  [message]="toastMensaje"
+  [duration]="2500"
+  position="top"
+  (didDismiss)="mostrarToast = false"
+></ion-toast>

@@ -8,3 +8,4 @@ export * from './visita.model';
 export * from './resena.model';
 export * from './reporte.model';
 export * from './lugar-sugerido.model';
+export * from './calificacion-app.model';
