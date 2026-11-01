@@ -36,18 +36,19 @@ describe('adminGuard', () => {
     expect(resultado).toBeTrue();
   });
 
-  it('UT-GRD-06 autenticado con es_admin false redirige a /admin/login-admin', async () => {
+  it('UT-GRD-06 autenticado con es_admin false redirige a Inicio', async () => {
     usuarioActual = { id_usuario: 'user-1', es_admin: false };
-    const resultado = (await executeGuard({} as any, {} as any)) as UrlTree;
+    const resultado = (await executeGuard({} as any, { url: '/admin/gestion-lugares' } as any)) as UrlTree;
     expect(resultado instanceof UrlTree).toBeTrue();
-    expect(resultado.toString()).toContain('/admin/login-admin');
+    expect(resultado.toString()).toBe('/tabs/inicio');
   });
 
-  it('UT-GRD-07 sin sesión redirige a /admin/login-admin', async () => {
+  it('UT-GRD-07 sin sesión redirige a /auth/login con redirectTo', async () => {
     usuarioActual = null;
-    const resultado = (await executeGuard({} as any, {} as any)) as UrlTree;
+    const resultado = (await executeGuard({} as any, { url: '/admin/gestion-lugares' } as any)) as UrlTree;
     expect(resultado instanceof UrlTree).toBeTrue();
-    expect(resultado.toString()).toContain('/admin/login-admin');
+    expect(resultado.toString()).toContain('/auth/login');
+    expect(resultado.queryParams['redirectTo']).toBe('/admin/gestion-lugares');
   });
 
   it('UT-GRD-08 es_admin null o ausente se trata como no admin', async () => {

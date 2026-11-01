@@ -1,6 +1,6 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import {
-  anotarDiferencia,
   anotarManual,
   anotarTiempo,
   elegirEnHojaDeAcciones,
@@ -121,8 +121,8 @@ test('QA-08 catálogo: carga, datos de cada lugar, filtros y sin resultados', as
     await elegirEnHojaDeAcciones(page, catalogo.locator('ion-select.select-comuna'), comunaVacia);
     await expect(contador).toHaveText(textoContador(0));
     await expect(catalogo.locator('.estado-vacio')).toBeVisible();
-    await expect.soft(catalogo.getByText(/sin resultados/i), 'Debe mostrarse «sin resultados»').toBeVisible({ timeout: 1000 });
-    anotarDiferencia(`Sin coincidencias la app muestra: "${(await catalogo.locator('.estado-vacio p').textContent())?.trim()}".`);
+    // D-11: se usa el texto real de la app.
+    await expect(catalogo.locator('.estado-vacio')).toContainText('No encontramos lugares con estos filtros.');
   });
 
   await test.step('Ficha de un lugar desde Inicio en ≤ 3 clics', async () => {

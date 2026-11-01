@@ -86,6 +86,8 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   lugares: Lugar[] = [];
   lugarSeleccionado: Lugar | null = null;
   sinResultadosCerca = false;
+  // Los filtros elegidos no dejan ningún lugar en el mapa (RF-09).
+  sinResultadosFiltros = false;
   mostrarSugerirLugar = false;
 
   idCategoriaSeleccionada: string | null = null;
@@ -265,6 +267,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       this.lugares = await this.lugaresService.listar(filtros);
       this.pintarMarcadores();
+      this.sinResultadosFiltros = this.hayFiltrosActivos && !this.lugares.some(tieneCoordenadas);
     } finally {
       this.cargando = false;
     }
@@ -273,6 +276,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   private async buscarCercaDeMi() {
     this.cargando = true;
     this.sinResultadosCerca = false;
+    this.sinResultadosFiltros = false;
     try {
       const posicion = await this.obtenerPosicionActual();
       this.mapa?.setView([posicion.lat, posicion.lng], 12); 
@@ -313,7 +317,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.capaMarcadores.clearLayers();
 
     for (const lugar of this.lugares) {
-      if (lugar.latitud == null || lugar.longitud == null) {
+      if (!tieneCoordenadas(lugar)) {
         continue; 
       }
 
@@ -387,5 +391,20 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.cargarLugares();
   }
 
+  get hayFiltrosActivos(): boolean {
+    return !!this.idCategoriaSeleccionada || !!this.idComunaSeleccionada || this.soloGratuitos;
+  }
+
+  async quitarFiltros() {
+    this.idCategoriaSeleccionada = null;
+    this.idComunaSeleccionada = null;
+    this.soloGratuitos = false;
+    await this.cargarLugares();
+  }
+
   
+}
+
+function tieneCoordenadas(lugar: Lugar): lugar is Lugar & { latitud: number; longitud: number } {
+  return lugar.latitud != null && lugar.longitud != null;
 }

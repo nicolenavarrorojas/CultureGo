@@ -35,17 +35,17 @@ describe('CalificarAppComponent', () => {
     fixture.detectChanges();
   }));
 
-  it('should create', () => {
+  it('UT-CAL-01 el modal se crea', () => {
     expect(component).toBeTruthy();
   });
 
-  it('sin estrellas el formulario no es válido', () => {
+  it('UT-CAL-02 sin estrellas el formulario no es válido', () => {
     expect(component.formularioValido).toBeFalse();
     component.seleccionarEstrella(4);
     expect(component.formularioValido).toBeTrue();
   });
 
-  it('al abrir precarga la calificación previa del usuario', async () => {
+  it('UT-CAL-03 al abrir precarga la calificación previa del usuario', async () => {
     servicio.obtenerMia.and.resolveTo({
       calificacion: 3,
       comentario: 'Buena app',
@@ -61,7 +61,7 @@ describe('CalificarAppComponent', () => {
     expect(component.yaCalifico).toBeTrue();
   });
 
-  it('enviar guarda la calificación con el comentario recortado', async () => {
+  it('UT-CAL-04 enviar guarda la calificación con el comentario recortado', async () => {
     component.seleccionarEstrella(5);
     component.comentario = '  Me encanta  ';
 
@@ -74,7 +74,7 @@ describe('CalificarAppComponent', () => {
     });
   });
 
-  it('comentario vacío se guarda como null', async () => {
+  it('UT-CAL-05 comentario vacío se guarda como null', async () => {
     component.seleccionarEstrella(2);
     component.comentario = '   ';
 

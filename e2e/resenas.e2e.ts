@@ -1,4 +1,5 @@
-import { Locator, expect, test } from '@playwright/test';
+import { Locator } from '@playwright/test';
+import { expect, test } from './support/test';
 import { rutaEstado } from './support/entorno';
 import { nuevoContexto, capturar, toast } from './support/app';
 import { admin, idL1, idU1 } from './support/datos';
@@ -12,7 +13,7 @@ const estrellasLlenas = (fila: Locator) =>
 test.describe('Reseñas en L1', () => {
   test.use({ storageState: rutaEstado('u1') });
 
-  test('QA-17 reseña incompleta se rechaza, la válida se publica y U2 no puede editarla', async ({ page, browser }) => {
+  test('QA-17 sin estrellas no se publica, la reseña válida se publica y U2 no puede editarla', async ({ page, browser }) => {
     const COMENTARIO = `E2E- reseña de prueba QA-17 ${Date.now()}`;
     await page.goto(`/lugares/${idL1()}`);
     const detalle = page.locator('app-detalle-lugar');
@@ -23,9 +24,11 @@ test.describe('Reseñas en L1', () => {
     await formulario.locator('textarea').fill(COMENTARIO);
     await expect(publicar, 'Sin calificación no debe poder publicarse').toBeDisabled();
 
+    // D-09: el comentario es opcional; con estrellas y sin comentario ya se puede publicar.
     await formulario.locator('textarea').fill('');
     await formulario.getByRole('button', { name: 'Calificar con 4 estrellas' }).click();
-    await expect.soft(publicar, 'Con el comentario vacío no debe poder publicarse').toBeDisabled({ timeout: 1000 });
+    await expect(formulario.getByPlaceholder('Cuéntanos tu experiencia (opcional)')).toBeVisible();
+    await expect(publicar, 'Con estrellas y sin comentario debe poder publicarse').toBeEnabled();
 
     await formulario.locator('textarea').fill(COMENTARIO);
     await publicar.click();

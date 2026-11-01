@@ -20,7 +20,7 @@ describe('DetalleLugarComponent', () => {
   let usuarioActual: { id_usuario: string; es_admin?: boolean } | null;
   let lugarActual: any;
   let resenasActuales: any[];
-  let gamificacionMock: { registrarVisita: jasmine.Spy };
+  let gamificacionMock: { registrarVisita: jasmine.Spy; listarMedallasDeUsuario: jasmine.Spy };
   let lugaresMock: { obtenerPorId: jasmine.Spy };
   let routerMock: { navigate: jasmine.Spy; url: string; events: ReturnType<typeof of> };
 
@@ -54,7 +54,10 @@ describe('DetalleLugarComponent', () => {
       },
     ];
 
-    gamificacionMock = { registrarVisita: jasmine.createSpy().and.resolveTo(undefined) };
+    gamificacionMock = {
+      registrarVisita: jasmine.createSpy().and.resolveTo(undefined),
+      listarMedallasDeUsuario: jasmine.createSpy().and.resolveTo([]),
+    };
     lugaresMock = { obtenerPorId: jasmine.createSpy().and.callFake(() => Promise.resolve(lugarActual)) };
     routerMock = { navigate: jasmine.createSpy(), url: '/lugares/abc-123', events: of() };
 
@@ -171,5 +174,31 @@ describe('DetalleLugarComponent', () => {
       await expectAsync(component.registrarVisita()).toBeResolved();
       expect(component.toastMensaje).toBe('No se pudo registrar la visita. Intenta de nuevo.');
     }
+  });
+
+  it('UT-NOT-01 si la visita otorga una medalla nueva, el aviso la nombra', async () => {
+    spyOn(component as any, 'obtenerPosicionActual').and.resolveTo({ lat: -33.4489, lng: -70.6693 });
+    gamificacionMock.listarMedallasDeUsuario.and.returnValues(
+      Promise.resolve([{ id_medalla: 'm-vieja', medalla: { nombre: 'Es cine' } }]),
+      Promise.resolve([
+        { id_medalla: 'm-vieja', medalla: { nombre: 'Es cine' } },
+        { id_medalla: 'm-nueva', medalla: { nombre: 'Primer paso' } },
+      ])
+    );
+
+    await component.registrarVisita();
+
+    expect(component.toastMensaje).toBe('¡Visita registrada! Obtuviste la medalla «Primer paso»');
+  });
+
+  it('UT-NOT-02 sin medallas nuevas, o si falla su lectura, el aviso es el de siempre', async () => {
+    spyOn(component as any, 'obtenerPosicionActual').and.resolveTo({ lat: -33.4489, lng: -70.6693 });
+
+    await component.registrarVisita();
+    expect(component.toastMensaje).toBe('¡Visita registrada!');
+
+    gamificacionMock.listarMedallasDeUsuario.and.rejectWith(new Error('sin red'));
+    await component.registrarVisita();
+    expect(component.toastMensaje).toBe('¡Visita registrada!');
   });
 });

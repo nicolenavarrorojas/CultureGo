@@ -245,8 +245,20 @@ export class GestionLugaresComponent implements OnInit {
     return (
       this.formulario.nombre.trim().length > 0 &&
       !!this.formulario.id_categoria &&
-      !!this.formulario.id_comuna
+      !!this.formulario.id_comuna &&
+      !this.errorLatitud &&
+      !this.errorLongitud
     );
+  }
+
+  /** Mensaje si la latitud escrita está fuera de -90 a 90 (vacía es válida). */
+  get errorLatitud(): string | null {
+    return fueraDeRango(this.formulario.latitud, 90) ? 'La latitud debe estar entre -90 y 90.' : null;
+  }
+
+  /** Mensaje si la longitud escrita está fuera de -180 a 180 (vacía es válida). */
+  get errorLongitud(): string | null {
+    return fueraDeRango(this.formulario.longitud, 180) ? 'La longitud debe estar entre -180 y 180.' : null;
   }
 
   // Mini-mapa de ubicación dentro del formulario
@@ -320,6 +332,7 @@ export class GestionLugaresComponent implements OnInit {
    * mapa, el marcador y la vista del mini-mapa se actualizan igual. */
   onCoordenadaEditadaManualmente() {
     if (this.formulario.latitud == null || this.formulario.longitud == null) return;
+    if (this.errorLatitud || this.errorLongitud) return;
     this.colocarMiniMarcador(this.formulario.latitud, this.formulario.longitud);
     this.miniMapa?.panTo([this.formulario.latitud, this.formulario.longitud]);
   }
@@ -576,4 +589,8 @@ export class GestionLugaresComponent implements OnInit {
   trackPorIdSugerencia(_indice: number, sugerencia: LugarSugerido): string {
     return sugerencia.id_lugar_sugerido;
   }
+}
+
+function fueraDeRango(valor: number | null, limite: number): boolean {
+  return valor != null && (!Number.isFinite(valor) || valor < -limite || valor > limite);
 }

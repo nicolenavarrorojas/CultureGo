@@ -237,7 +237,9 @@
                 (ngModelChange)="onCoordenadaEditadaManualmente()"
                 name="latitud"
                 step="0.000001"
+                [attr.aria-invalid]="!!errorLatitud"
               />
+              <small class="error-campo" *ngIf="errorLatitud">{{ errorLatitud }}</small>
             </label>
             <label class="campo-form">
               <span>Longitud</span>
@@ -247,7 +249,9 @@
                 (ngModelChange)="onCoordenadaEditadaManualmente()"
                 name="longitud"
                 step="0.000001"
+                [attr.aria-invalid]="!!errorLongitud"
               />
+              <small class="error-campo" *ngIf="errorLongitud">{{ errorLongitud }}</small>
             </label>
           </div>
 

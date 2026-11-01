@@ -12,10 +12,16 @@ export class Auth {
   private supabase = inject(Supabase).client;
 
   private usuarioCache: Usuario | null | undefined = undefined;
+  // Consulta en curso: si dos llamadas llegan a la vez, comparten la misma.
+  private consultaEnCurso: Promise<Usuario | null> | null = null;
+  // Aumenta con cada cambio de sesión; una consulta iniciada antes no se guarda en caché.
+  private versionSesion = 0;
 
   constructor() {
     this.supabase.auth.onAuthStateChange(() => {
       this.usuarioCache = undefined;
+      this.consultaEnCurso = null;
+      this.versionSesion++;
     });
   }
 
@@ -51,10 +57,24 @@ export class Auth {
 
   async obtenerUsuarioActual(): Promise<Usuario | null> {
     if (this.usuarioCache !== undefined) return this.usuarioCache;
+    if (this.consultaEnCurso) return this.consultaEnCurso;
+
+    const consulta = this.consultarUsuarioActual();
+    this.consultaEnCurso = consulta;
+    try {
+      return await consulta;
+    } finally {
+      // Si hubo un cambio de sesión mientras tanto, ya se limpió en onAuthStateChange.
+      if (this.consultaEnCurso === consulta) this.consultaEnCurso = null;
+    }
+  }
+
+  private async consultarUsuarioActual(): Promise<Usuario | null> {
+    const version = this.versionSesion;
 
     const { data } = await this.supabase.auth.getUser();
     if (!data.user) {
-      this.usuarioCache = null;
+      this.guardarEnCache(version, null);
       return null;
     }
 
@@ -64,8 +84,16 @@ export class Auth {
       .eq('id_usuario', data.user.id)
       .single();
 
-    this.usuarioCache = error ? null : (perfil as Usuario);
-    return this.usuarioCache;
+    // Un error al leer el perfil no se guarda en caché: la siguiente llamada vuelve a consultar.
+    if (error) return null;
+
+    this.guardarEnCache(version, perfil as Usuario);
+    return perfil as Usuario;
+  }
+
+  /** Solo guarda si no hubo un cambio de sesión mientras se consultaba. */
+  private guardarEnCache(version: number, usuario: Usuario | null) {
+    if (version === this.versionSesion) this.usuarioCache = usuario;
   }
 
   async recuperarPassword(email: string) {

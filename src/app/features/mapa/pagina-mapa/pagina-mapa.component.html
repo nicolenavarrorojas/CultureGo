@@ -85,6 +85,14 @@
     </button>
   </div>
 
+  <!-- Filtros sin coincidencias -->
+  <div class="overlay-sin-resultados" *ngIf="sinResultadosFiltros && !cargando" role="status">
+    <p>No hay lugares que coincidan con estos filtros.</p>
+    <button class="boton-ver-catalogo" (click)="quitarFiltros()">
+      Quitar filtros
+    </button>
+  </div>
+
   <!-- Tarjeta detalle del lugar seleccionado -->
   <div class="tarjeta-lugar-mapa" *ngIf="lugarSeleccionado">
     <button class="cerrar-tarjeta" (click)="cerrarTarjeta()" aria-label="Cerrar">

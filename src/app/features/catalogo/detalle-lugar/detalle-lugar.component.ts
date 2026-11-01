@@ -249,7 +249,11 @@ export class DetalleLugarComponent implements OnInit {
         return;
       }
 
-      const validacion = await this.validarProximidad();
+      // Las medallas de antes se leen en paralelo a la validación para no sumar espera.
+      const [validacion, medallasAntes] = await Promise.all([
+        this.validarProximidad(),
+        this.leerIdsMedallas(usuarioActual.id_usuario),
+      ]);
       if (!validacion.ok) {
         this.mostrarAviso(validacion.mensaje, 'warning');
         return;
@@ -259,7 +263,19 @@ export class DetalleLugarComponent implements OnInit {
         usuarioActual.id_usuario,
         this.lugar.id_lugar
       );
-      this.mostrarAviso('¡Visita registrada!', 'success');
+
+      // La base otorga las medallas al insertar la visita; se avisan las nuevas (RF-15).
+      const nuevas = medallasAntes
+        ? await this.leerMedallasNuevas(usuarioActual.id_usuario, medallasAntes)
+        : [];
+      this.mostrarAviso(
+        nuevas.length
+          ? `¡Visita registrada! Obtuviste ${nuevas.length === 1 ? 'la medalla' : 'las medallas'} ${nuevas
+              .map((nombre) => `«${nombre}»`)
+              .join(', ')}`
+          : '¡Visita registrada!',
+        'success'
+      );
     } catch (error) {
       this.mostrarAviso(this.traducirErrorVisita(error), 'warning');
     } finally {
@@ -371,6 +387,26 @@ export class DetalleLugarComponent implements OnInit {
     const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
     return RADIO_TIERRA_METROS * c;
+  }
+
+  /** IDs de las medallas que ya tiene el usuario, o null si no se pudieron leer. */
+  private async leerIdsMedallas(idUsuario: string): Promise<Set<string> | null> {
+    try {
+      const medallas = await this.gamificacionService.listarMedallasDeUsuario(idUsuario);
+      return new Set(medallas.map((um) => um.id_medalla));
+    } catch {
+      return null;
+    }
+  }
+
+  /** Nombres de las medallas obtenidas que no estaban antes. Si falla la lectura, no avisa ninguna. */
+  private async leerMedallasNuevas(idUsuario: string, antes: Set<string>): Promise<string[]> {
+    try {
+      const medallas = await this.gamificacionService.listarMedallasDeUsuario(idUsuario);
+      return medallas.filter((um) => !antes.has(um.id_medalla)).map((um) => um.medalla.nombre);
+    } catch {
+      return [];
+    }
   }
 
   private mostrarAviso(mensaje: string, color: 'success' | 'warning') {

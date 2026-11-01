@@ -1,4 +1,5 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import { credenciales, leerSeedInfo, rutaEstado } from './support/entorno';
 import { anotarTiempo, iniciarSesionUI, medir, toast } from './support/app';
 import { contarVisitas, coordenadasL1, idL1, idU1, medallasDe } from './support/datos';

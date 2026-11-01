@@ -2,7 +2,9 @@
  * Funcion para traducir mensajes de error de autenticación de Supabase a español.
  */
 export function traducirErrorAuth(error: unknown): string {
-  const mensajeOriginal = error instanceof Error ? error.message : '';
+  // Duck typing: Supabase a veces entrega objetos planos con message, no instancias de Error.
+  const mensaje = (error as { message?: unknown } | null)?.message;
+  const mensajeOriginal = typeof mensaje === 'string' ? mensaje : '';
 
   const traducciones: Array<[string, string]> = [
     ['Invalid login credentials', 'Correo o contraseña incorrectos.'],
@@ -12,6 +14,7 @@ export function traducirErrorAuth(error: unknown): string {
     ['Password should be at least', 'La contraseña es muy corta.'],
     ['Email rate limit exceeded', 'Se enviaron demasiados correos seguidos. Espera un momento e intenta de nuevo.'],
     ['Network request failed', 'No hay conexión a internet. Revisa tu red e intenta de nuevo.'],
+    ['Failed to fetch', 'No hay conexión a internet. Revisa tu red e intenta de nuevo.'],
   ];
 
   const coincidencia = traducciones.find(([clave]) =>

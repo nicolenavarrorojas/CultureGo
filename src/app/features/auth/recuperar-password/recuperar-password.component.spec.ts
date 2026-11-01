@@ -1,6 +1,7 @@
 /// <reference types="jasmine" />
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { provideRouter } from '@angular/router';
 
 import { Auth } from 'src/app/core/services/auth';
 import { RecuperarPasswordComponent } from './recuperar-password.component';
@@ -12,7 +13,7 @@ describe('RecuperarPasswordComponent', () => {
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
       imports: [RecuperarPasswordComponent],
-      providers: [{ provide: Auth, useValue: { recuperarPassword: async () => undefined } }],
+      providers: [provideRouter([]), { provide: Auth, useValue: { recuperarPassword: async () => undefined } }],
     }).compileComponents();
 
     fixture = TestBed.createComponent(RecuperarPasswordComponent);
