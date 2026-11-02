@@ -73,12 +73,8 @@ test.describe('Avatar de U1', () => {
       guardarEnCadena('qa19', guardado);
 
       await page.goto('/tabs/perfil');
+      // Plan v2.1: por diseño, el avatar se ve en Perfil y no en el encabezado de Inicio (H-14 descartada).
       expect(await leerAvatar(previewPerfil(page))).toEqual(guardado);
-      await page.goto('/tabs/inicio');
-      await expect(page.locator('app-pagina-inicio h1')).toBeVisible();
-      const previewInicio = page.locator('app-pagina-inicio app-avatar-preview');
-      await expect.soft(previewInicio, 'El avatar actualizado debe verse en Inicio').toBeVisible({ timeout: 2000 });
-      if (await previewInicio.isVisible()) expect.soft(await leerAvatar(previewInicio)).toEqual(guardado);
     });
 
     test('QA-20 el avatar persiste al borrar localStorage y en otro navegador', async ({ page, browser }) => {
