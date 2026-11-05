@@ -92,7 +92,7 @@ describe('GestionLugaresComponent', () => {
     expect(adminMock.editarLugar).not.toHaveBeenCalled();
   });
 
-  it('UT-CMP-03b coordenadas fuera de rango: por plan no debería llamar a crear (sin validación de rango en el código)', async () => {
+  it('UT-CMP-03b coordenadas fuera de rango no deberían llamar a crear e indican el dato a corregir', async () => {
     component.formulario = {
       ...component.formulario,
       nombre: 'Lugar con coordenadas inválidas',
@@ -101,6 +101,9 @@ describe('GestionLugaresComponent', () => {
       latitud: 999,
       longitud: -999,
     };
+
+    expect(component.errorLatitud).toBe('La latitud debe estar entre -90 y 90.');
+    expect(component.errorLongitud).toBe('La longitud debe estar entre -180 y 180.');
 
     await component.guardarLugar();
 

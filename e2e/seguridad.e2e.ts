@@ -1,4 +1,4 @@
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { credenciales, rutaEstado, variable } from './support/entorno';
 import { capturar } from './support/app';
 import { admin, asegurarRoles, borrarLugaresDePrueba, idCategoria, idComuna, idU1, lugaresPorNombre } from './support/datos';
@@ -15,7 +15,7 @@ test.describe('QA-29', () => {
     expect(roles, 'U1 y U2 deben quedar sin rol y ADM con rol').toEqual({ u1: false, u2: false, adm: true });
   });
 
-  test('QA-29 U1 no puede darse rol ni crear lugares por la API y ADM gestiona el rol de U2', async ({ page, request }) => {
+  test('QA-29 U1 no puede darse rol ni crear lugares por la API y ADM accede al panel', async ({ page, request }) => {
     const u1 = credenciales('u1');
     const { session } = await iniciarSesionApi(u1.email, u1.password);
     const cabeceras = {
@@ -60,21 +60,12 @@ test.describe('QA-29', () => {
       expect(await lugaresPorNombre(NOMBRE_POST), 'El lugar no debe existir').toHaveLength(0);
     });
 
-    await test.step('ADM asigna y quita el rol a U2 desde la gestión de usuarios', async () => {
+    // D-05: el rol se asigna desde Supabase (no hay pantalla de usuarios); se verifica que ADM sí accede al panel.
+    await test.step('ADM accede al panel de administración', async () => {
       await page.goto('/admin/gestion-lugares');
       const gestion = page.locator('app-gestion-lugares');
       await expect(gestion.locator('.fila-lugar-admin').first()).toBeVisible({ timeout: 15_000 });
       await capturar(page, 'QA-29 panel de ADM');
-      const accesoUsuarios = gestion
-        .locator('ion-segment-button')
-        .filter({ hasText: /usuarios/i })
-        .or(page.getByRole('button', { name: /usuarios/i }));
-      await expect(
-        accesoUsuarios,
-        'No existe una pantalla de gestión de usuarios en el panel de administración'
-      ).toBeVisible({ timeout: 3000 });
-      await accesoUsuarios.first().click();
-      await expect(page.getByText(credenciales('u2').email)).toBeVisible();
     });
   });
 });

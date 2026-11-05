@@ -1,7 +1,7 @@
 /// <reference types="jasmine" />
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { Router } from '@angular/router';
+import { Router, provideRouter } from '@angular/router';
 
 import { Auth } from 'src/app/core/services/auth';
 import { ConfiguracionComponent } from './configuracion.component';
@@ -24,12 +24,11 @@ describe('ConfiguracionComponent', () => {
             eliminarCuenta: async () => undefined,
           },
         },
-        {
-          provide: Router,
-          useValue: { navigateByUrl: () => Promise.resolve(true) },
-        },
+        // Router real (Ionic lo necesita para sus eventos); la navegación se simula abajo.
+        provideRouter([]),
       ],
     }).compileComponents();
+    spyOn(TestBed.inject(Router), 'navigateByUrl').and.resolveTo(true);
 
     fixture = TestBed.createComponent(ConfiguracionComponent);
     component = fixture.componentInstance;

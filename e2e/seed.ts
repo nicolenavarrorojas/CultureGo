@@ -24,7 +24,7 @@ interface DefinicionLugar {
 
 const NOMBRES: Record<Rol, string> = { u1: 'E2E Usuario Uno', u2: 'E2E Usuario Dos', adm: 'E2E Admin' };
 const AVATAR_POR_DEFECTO = { avatar_cabeza: 0, avatar_ojos: 2, avatar_boca: 6, avatar_cuerpo: 0, id_avatar: null };
-const TABLAS_ACTIVIDAD = ['visita', 'resena', 'reporte', 'lugar_sugerido', 'usuario_medalla'];
+const TABLAS_ACTIVIDAD = ['visita', 'resena', 'reporte', 'lugar_sugerido', 'usuario_medalla', 'calificacion_app'];
 
 const L1: DefinicionLugar = {
   nombre: 'E2E-L1',

@@ -7,7 +7,8 @@ export const authGuard: CanActivateFn = async (route, state) => {
   const auth = inject(Auth);
   const router = inject(Router);
 
-  const usuario = await auth.obtenerUsuarioActual();
+  // Si falla la consulta (por ejemplo, sin red), se trata como sin sesión.
+  const usuario = await auth.obtenerUsuarioActual().catch(() => null);
   if (usuario) return true;
 
   return router.createUrlTree(['/auth/login'], { queryParams: { redirectTo: state.url } });

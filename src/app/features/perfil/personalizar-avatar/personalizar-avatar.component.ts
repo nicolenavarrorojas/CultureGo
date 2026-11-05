@@ -12,13 +12,20 @@ import {
   AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { chevronBackOutline, chevronForwardOutline, giftOutline } from 'ionicons/icons';
+import { chevronBackOutline, chevronForwardOutline, giftOutline, lockClosed } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { AvatarService } from 'src/app/core/services/avatar';
 import { AvatarEventos } from 'src/app/core/services/avatar-eventos';
+import { Gamificacion } from 'src/app/core/services/gamificacion';
 import { AvatarPreviewComponent } from 'src/app/shared/components/avatar-preview/avatar-preview.component';
 import { ConfiguracionAvatar, ParteAvatar } from 'src/app/core/models';
+import {
+  RECOMPENSAS_AVATAR,
+  RecompensaAvatar,
+  obtenerRecompensaBloqueada,
+  quitarPiezasBloqueadas,
+} from 'src/app/core/utils/recompensas-avatar';
 
 // Orden de arriba hacia abajo de los controles.
 const PARTES: { clave: ParteAvatar; etiqueta: string }[] = [
@@ -77,6 +84,12 @@ export class PersonalizarAvatarComponent implements OnInit {
   toastMensaje = '';
   mostrarToast = false;
   guardando = false;
+  // Mientras se lee la configuración guardada, los controles quedan deshabilitados
+  // para que la carga no pise los cambios del usuario.
+  cargando = true;
+
+  // Nombres de las medallas que tiene el usuario (para las piezas desbloqueables).
+  medallasObtenidas = new Set<string>();
 
   private idUsuario: string | null = null;
 
@@ -84,27 +97,61 @@ export class PersonalizarAvatarComponent implements OnInit {
     private authService: Auth,
     private avatarService: AvatarService,
     private avatarEventos: AvatarEventos,
+    private gamificacionService: Gamificacion,
     private location: Location,
     private alertController: AlertController
   ) {
-    addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline });
+    addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline, lockClosed });
   }
 
   async ngOnInit() {
     const usuario = await this.authService.obtenerUsuarioActual();
     this.idUsuario = usuario?.id_usuario ?? null;
-    if (!this.idUsuario) return;
+    if (!this.idUsuario) {
+      this.cargando = false;
+      return;
+    }
 
     this.cargarCacheLocal();
     this.normalizarIndices();
 
     try {
-      this.indices = await this.avatarService.obtenerConfiguracion(this.idUsuario);
+      const [configuracion, medallas] = await Promise.all([
+        this.avatarService.obtenerConfiguracion(this.idUsuario),
+        this.gamificacionService.listarMedallasDeUsuario(this.idUsuario),
+      ]);
+      this.medallasObtenidas = new Set(medallas.map((um) => um.medalla.nombre));
+      this.indices = configuracion;
       this.normalizarIndices();
+      // Quien tenía puesta una pieza bloqueada sin la medalla vuelve a la pieza por defecto.
+      this.indices = quitarPiezasBloqueadas(this.indices, this.medallasObtenidas, INDICES_INICIALES);
       this.guardarCacheLocal();
     } catch {
-      // Sin conexión o error de lectura: se mantiene lo que había en caché local.
+      // Sin conexión o error de lectura: se mantiene lo que había en caché local,
+      // sin piezas desbloqueables (no se sabe qué medallas tiene).
+      this.indices = quitarPiezasBloqueadas(this.indices, this.medallasObtenidas, INDICES_INICIALES);
+    } finally {
+      this.cargando = false;
     }
+  }
+
+  /** Recompensas que el usuario ya desbloqueó. */
+  get recompensasDesbloqueadas(): RecompensaAvatar[] {
+    return RECOMPENSAS_AVATAR.filter((r) => this.medallasObtenidas.has(r.nombreMedalla));
+  }
+
+  /** Recompensas que aún le faltan. */
+  get recompensasPendientes(): RecompensaAvatar[] {
+    return RECOMPENSAS_AVATAR.filter((r) => !this.medallasObtenidas.has(r.nombreMedalla));
+  }
+
+  /** Primera pieza bloqueada de la vista previa actual, o null si todo se puede aplicar. */
+  get piezaBloqueada(): RecompensaAvatar | null {
+    for (const { clave } of PARTES) {
+      const recompensa = obtenerRecompensaBloqueada(clave, this.indices[clave], this.medallasObtenidas);
+      if (recompensa) return recompensa;
+    }
+    return null;
   }
 
   /** si ojos/boca quedaron en 0, los sube a la primera opción real (1) para que nadie se
@@ -128,6 +175,12 @@ export class PersonalizarAvatarComponent implements OnInit {
 
   async guardar() {
     if (!this.idUsuario || this.guardando) return;
+
+    const bloqueada = this.piezaBloqueada;
+    if (bloqueada) {
+      this.mostrarAviso(`Esa pieza se desbloquea con la medalla «${bloqueada.nombreMedalla}».`);
+      return;
+    }
 
     this.guardando = true;
     try {

@@ -48,8 +48,20 @@ interface ProgresoMedalla {
   fechaObtencion: string | null;
   actual: number;
   requerido: number;
+  porcentaje: number; // 0 a 100, entero (ancho de la barra)
   icono: string;
   color: ColorTema;
+}
+
+/** Avance entre 0 y 1. Con cantidad requerida 0 (o menor) la medalla se da por completa. */
+function proporcion(actual: number, requerido: number): number {
+  if (requerido <= 0) return 1;
+  return Math.min(1, Math.max(0, actual / requerido));
+}
+
+/** Progreso entero entre 0 y 100 para el ancho de la barra. */
+function calcularPorcentaje(actual: number, requerido: number): number {
+  return Math.round(proporcion(actual, requerido) * 100);
 }
 
 interface ConteoCategoria {
@@ -147,6 +159,7 @@ export class MedallasComponent implements OnInit {
             fechaObtencion: idsGanadas.get(medalla.id_medalla) ?? null,
             actual: Math.min(actualSinTope, medalla.cantidad_requerida),
             requerido: medalla.cantidad_requerida,
+            porcentaje: calcularPorcentaje(actualSinTope, medalla.cantidad_requerida),
             icono: obtenerIconoCategoria(nombreCategoria),
             color: obtenerColorCategoria(nombreCategoria, medalla.id_categoria),
           };
@@ -157,7 +170,7 @@ export class MedallasComponent implements OnInit {
           if (aGeneral !== bGeneral) return aGeneral ? -1 : 1;
 
           if (a.obtenida !== b.obtenida) return a.obtenida ? -1 : 1;
-          return b.actual / b.requerido - a.actual / a.requerido;
+          return proporcion(b.actual, b.requerido) - proporcion(a.actual, a.requerido);
         });
 
       this.categoriasConteo = (categorias as any[])

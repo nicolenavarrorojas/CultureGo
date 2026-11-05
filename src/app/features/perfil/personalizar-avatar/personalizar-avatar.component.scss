@@ -20,6 +20,39 @@
   border-radius: 20px;
   background: var(--app-superficie-tenue);
   overflow: hidden;
+  position: relative;
+
+  &.con-bloqueo app-avatar-preview {
+    filter: grayscale(1);
+    opacity: 0.55;
+  }
+}
+
+.sello-bloqueo {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ion-color-dark);
+  color: var(--ion-color-light);
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+.aviso-bloqueo {
+  margin: -12px 0 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-medium);
 }
 
 .columna-flechas {
@@ -119,4 +152,7 @@
   font-weight: 600;
   padding: 14px;
   margin-top: 2px;
+}
+.flecha[disabled] {
+  opacity: 0.4;
 }

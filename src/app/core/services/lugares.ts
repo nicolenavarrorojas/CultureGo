@@ -29,7 +29,8 @@ export class Lugares {
     if (filtros.id_categoria) query = query.eq('id_categoria', filtros.id_categoria);
     if (filtros.id_comuna) query = query.eq('id_comuna', filtros.id_comuna);
     if (filtros.soloGratuitos) query = query.eq('es_gratuito', true);
-    if (filtros.texto) query = query.ilike('nombre', `%${filtros.texto}%`);
+    const texto = filtros.texto?.trim();
+    if (texto) query = query.ilike('nombre', `%${texto}%`);
 
     const { data, error } = await query;
     if (error) throw error;

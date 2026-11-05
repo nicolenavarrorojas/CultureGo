@@ -86,7 +86,7 @@
               <div class="barra-progreso">
                 <div
                   class="barra-progreso-relleno"
-                  [style.width.%]="(progreso.actual / progreso.requerido) * 100"
+                  [style.width.%]="progreso.porcentaje"
                 ></div>
               </div>
               <span class="fila-medalla-progreso-texto">

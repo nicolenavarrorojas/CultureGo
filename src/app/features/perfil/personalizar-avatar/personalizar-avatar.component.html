@@ -16,6 +16,7 @@
         *ngFor="let parte of partes"
         class="flecha"
         [attr.aria-label]="'Anterior: ' + parte.etiqueta"
+        [disabled]="cargando"
         (click)="cambiarPaso(parte.clave, -1)"
       >
         <ion-icon name="chevron-back-outline"></ion-icon>
@@ -23,8 +24,12 @@
     </div>
 
     <!-- Vista previa avatar (base + cuerpo/cabeza/ojos/boca) -->
-    <div class="avatar-preview">
+    <div class="avatar-preview" [class.con-bloqueo]="piezaBloqueada">
       <app-avatar-preview [indices]="indices" ajuste="contain"></app-avatar-preview>
+      <div class="sello-bloqueo" *ngIf="piezaBloqueada as bloqueada" role="status">
+        <ion-icon name="lock-closed"></ion-icon>
+        <span>Bloqueado</span>
+      </div>
     </div>
 
     <div class="columna-flechas">
@@ -32,6 +37,7 @@
         *ngFor="let parte of partes"
         class="flecha"
         [attr.aria-label]="'Siguiente: ' + parte.etiqueta"
+        [disabled]="cargando"
         (click)="cambiarPaso(parte.clave, 1)"
       >
         <ion-icon name="chevron-forward-outline"></ion-icon>
@@ -40,18 +46,27 @@
 
   </div>
 
-  <!-- Aviso de futuros accesorios desbloqueables -->
+  <p class="aviso-bloqueo" *ngIf="piezaBloqueada as bloqueada">
+    Esta pieza se desbloquea con la medalla «{{ bloqueada.nombreMedalla }}».
+  </p>
+
+  <!-- Piezas que se desbloquean con medallas (RF-27) -->
   <div class="tarjeta-recompensas">
     <div class="icono-recompensas">
       <ion-icon name="gift-outline"></ion-icon>
     </div>
     <div class="texto-recompensas">
       <h2>Desbloquea recompensas</h2>
-      <p>Aún no has desbloqueado ninguna recompensa. ¡Empieza a visitar lugares!</p>
+      <p *ngIf="recompensasDesbloqueadas.length && !recompensasPendientes.length">
+        ¡Desbloqueaste un cuerpo nuevo con la medalla «{{ recompensasDesbloqueadas[0].nombreMedalla }}»! Búscalo entre los cuerpos.
+      </p>
+      <p *ngIf="recompensasPendientes.length">
+        Consigue la medalla «{{ recompensasPendientes[0].nombreMedalla }}» registrando tu primera visita y desbloquea un cuerpo nuevo.
+      </p>
     </div>
   </div>
 
-  <button class="boton-guardar" [disabled]="guardando" (click)="guardar()">
+  <button class="boton-guardar" [disabled]="cargando || guardando || !!piezaBloqueada" (click)="guardar()">
     {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
   </button>
   <button class="boton-restablecer" (click)="restablecer()">Restablecer avatar</button>

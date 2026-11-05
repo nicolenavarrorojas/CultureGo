@@ -1,4 +1,5 @@
-import { Page, expect, test } from '@playwright/test';
+import { Page } from '@playwright/test';
+import { expect, test } from './support/test';
 import { rutaEstado } from './support/entorno';
 import { anotarDiferencia, anotarManual } from './support/app';
 import { idL1 } from './support/datos';

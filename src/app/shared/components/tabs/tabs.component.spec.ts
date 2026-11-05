@@ -1,5 +1,5 @@
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { IonicModule } from '@ionic/angular';
+import { provideRouter } from '@angular/router';
 
 import { TabsComponent } from './tabs.component';
 
@@ -9,8 +9,8 @@ describe('TabsComponent', () => {
 
   beforeEach(waitForAsync(() => {
     TestBed.configureTestingModule({
-      declarations: [ TabsComponent ],
-      imports: [IonicModule.forRoot()]
+      imports: [TabsComponent],
+      providers: [provideRouter([])],
     }).compileComponents();
 
     fixture = TestBed.createComponent(TabsComponent);

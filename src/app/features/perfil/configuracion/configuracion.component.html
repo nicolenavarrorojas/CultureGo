@@ -10,7 +10,8 @@
 <ion-content [fullscreen]="true" class="config-content">
 
   <div class="lista-opciones">
-    <button class="opcion" (click)="abrirModalPerfil()">
+    <!-- Deshabilitado hasta cargar el usuario: si no, la carga pisaría el nombre escrito. -->
+    <button class="opcion" [disabled]="!usuario" (click)="abrirModalPerfil()">
       <ion-icon name="person-outline"></ion-icon>
       <span>Editar perfil</span>
       <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
