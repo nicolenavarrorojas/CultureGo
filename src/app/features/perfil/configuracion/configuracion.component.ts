@@ -37,7 +37,7 @@ import { traducirErrorAuth } from 'src/app/core/utils/traducir-error-auth';
 import { Usuario } from 'src/app/core/models';
 import { TerminosCondicionesComponent } from 'src/app/shared/components/terminos-condiciones/terminos-condiciones.component';
 
-const VERSION_APP = '0.8';
+const VERSION_APP = '1.0.0';
 const LARGO_MINIMO_PASSWORD = 6;
 
 type EstadoPermisoUbicacion = 'granted' | 'denied' | 'prompt' | 'no_disponible';

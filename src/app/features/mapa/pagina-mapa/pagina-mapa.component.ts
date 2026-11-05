@@ -30,20 +30,26 @@ const ZOOM_DEFECTO = 14;
 // RADIO, de cuanto esta cerca en metros.
 const RADIO_CERCA_METROS = 2000;
 
+const ZOOM_MAX_CERCA = 16;
+
+const MARGEN_ENCUADRE_ARRIBA = 190;
+const MARGEN_ENCUADRE_ABAJO = 150;
+// Cuánto dura visible el aviso temporal 
+const DURACION_AVISO_MS = 4000;
+
 // Colores con sentido semántico para las categorías conocidas
 const COLORES_POR_NOMBRE: Record<string, { solido: string; tenue: string; texto: string }> = {
-  'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, // morado (cultura)
-  'teatro':               { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' }, // adobe
-  'parque':               { solido: '#3E9142', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde (naturaleza)
-  'cerro':                { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' }, // verde cerro
-  'edificio patrimonial': { solido: '#9B5B3F', tenue: '#EEDDD3', texto: '#5F3421' }, // terracota
-  'iglesia':              { solido: '#8E5A9E', tenue: '#EBDCEF', texto: '#5A3866' }, // violeta
-  'biblioteca':           { solido: '#2E6E8E', tenue: '#D7E7EC', texto: '#1D4658' }, // azul (conocimiento)
-  'cine':                 { solido: '#4A3F73', tenue: '#DDD9EC', texto: '#2E2650' }, // púrpura oscuro (sala oscura)
-  'galería de arte':      { solido: '#C9A227', tenue: '#FBEACB', texto: '#7A5A0F' }, // dorado
+  'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, 
+  'teatro':               { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' },
+  'parque':               { solido: '#3E9142', tenue: '#DCEADF', texto: '#2F4F3A' }, 
+  'cerro':                { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' },
+  'edificio patrimonial': { solido: '#9B5B3F', tenue: '#EEDDD3', texto: '#5F3421' },
+  'iglesia':              { solido: '#8E5A9E', tenue: '#EBDCEF', texto: '#5A3866' },
+  'biblioteca':           { solido: '#2E6E8E', tenue: '#D7E7EC', texto: '#1D4658' }, 
+  'cine':                 { solido: '#4A3F73', tenue: '#DDD9EC', texto: '#2E2650' }, 
+  'galería de arte':      { solido: '#C9A227', tenue: '#FBEACB', texto: '#7A5A0F' }, 
 };
 
-// Respaldo para categorías nuevas que no estén en el diccionario de arriba
 const PALETA_RESPALDO: { solido: string; tenue: string; texto: string }[] = [
   { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' },
   { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' },
@@ -85,10 +91,14 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   cargando = true;
   lugares: Lugar[] = [];
   lugarSeleccionado: Lugar | null = null;
-  sinResultadosCerca = false;
+  avisoTexto = '';
+  avisoVisible = false;
   // Los filtros elegidos no dejan ningún lugar en el mapa (RF-09).
   sinResultadosFiltros = false;
   mostrarSugerirLugar = false;
+  private temporizadorAviso?: ReturnType<typeof setTimeout>;
+  private encuadrePendiente?: L.LatLngBounds;
+  private ultimaPosicion?: { lat: number; lng: number };
 
   idCategoriaSeleccionada: string | null = null;
   idComunaSeleccionada: string | null = null;
@@ -137,11 +147,17 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit() {
     this.inicializarMapa();
+    if (this.ultimaPosicion) {
+      this.mostrarMiUbicacion(this.ultimaPosicion.lat, this.ultimaPosicion.lng);
+    }
     if (this.lugares.length) {
       this.pintarMarcadores();
     }
 
-    requestAnimationFrame(() => this.mapa?.invalidateSize());
+    requestAnimationFrame(() => {
+      this.mapa?.invalidateSize();
+      this.aplicarEncuadrePendiente();
+    });
     setTimeout(() => this.mapa?.invalidateSize(), 300);
 
     this.observadorTamano = new ResizeObserver(() => this.mapa?.invalidateSize());
@@ -152,7 +168,8 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     setTimeout(() => this.mapa?.invalidateSize(), 100);
   }
 
-    ngOnDestroy() {
+  ngOnDestroy() {
+    clearTimeout(this.temporizadorAviso);
     this.observadorTamano?.disconnect();
     this.mapa?.remove();
   }
@@ -275,24 +292,85 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   private async buscarCercaDeMi() {
     this.cargando = true;
-    this.sinResultadosCerca = false;
+    this.ocultarAviso();
     this.sinResultadosFiltros = false;
     try {
       const posicion = await this.obtenerPosicionActual();
-      this.mapa?.setView([posicion.lat, posicion.lng], 12); 
+      this.ultimaPosicion = posicion;
       this.mostrarMiUbicacion(posicion.lat, posicion.lng);
-      this.lugares = await this.lugaresService.listarCercanos(
+
+      const cercanos = await this.lugaresService.listarCercanos(
         posicion.lat,
         posicion.lng,
         RADIO_CERCA_METROS
       );
-      this.pintarMarcadores();
-      this.sinResultadosCerca = this.lugares.length === 0;
+
+      if (cercanos.length) {
+        this.lugares = cercanos;
+        this.pintarMarcadores();
+        this.encuadrar(this.limitesConLugares(posicion, cercanos));
+      } else {
+        this.encuadrar(L.latLng(posicion.lat, posicion.lng).toBounds(RADIO_CERCA_METROS * 2));
+        await this.cargarLugares();
+        this.mostrarAviso(
+          `No hay lugares a ${RADIO_CERCA_METROS / 1000} km de ti. Te mostramos todos.`
+        );
+      }
     } catch {
       await this.cargarLugares();
+      this.mostrarAviso('No pudimos buscar cerca de ti. Revisa el permiso de ubicación.');
     } finally {
       this.cargando = false;
     }
+  }
+
+  private limitesConLugares(
+    posicion: { lat: number; lng: number },
+    lugares: Lugar[]
+  ): L.LatLngBounds {
+    const puntos: L.LatLngTuple[] = [[posicion.lat, posicion.lng]];
+    for (const lugar of lugares) {
+      if (lugar.latitud != null && lugar.longitud != null) {
+        puntos.push([lugar.latitud, lugar.longitud]);
+      }
+    }
+    return L.latLngBounds(puntos);
+  }
+
+  private encuadrar(limites: L.LatLngBounds) {
+    if (!this.mapa) {
+      this.encuadrePendiente = limites;
+      return;
+    }
+    this.mapa.invalidateSize();
+    this.mapa.fitBounds(limites, {
+      paddingTopLeft: [24, MARGEN_ENCUADRE_ARRIBA],
+      paddingBottomRight: [24, MARGEN_ENCUADRE_ABAJO],
+      maxZoom: ZOOM_MAX_CERCA,
+      animate: true,
+    });
+  }
+
+  private aplicarEncuadrePendiente() {
+    if (!this.encuadrePendiente) return;
+    const limites = this.encuadrePendiente;
+    this.encuadrePendiente = undefined;
+    this.encuadrar(limites);
+  }
+
+  /** Aviso temporal */
+  private mostrarAviso(texto: string) {
+    clearTimeout(this.temporizadorAviso);
+    this.avisoTexto = texto;
+    this.avisoVisible = true;
+    this.temporizadorAviso = setTimeout(() => {
+      this.avisoVisible = false;
+    }, DURACION_AVISO_MS);
+  }
+
+  private ocultarAviso() {
+    clearTimeout(this.temporizadorAviso);
+    this.avisoVisible = false;
   }
 
   private obtenerPosicionActual(): Promise<{ lat: number; lng: number }> {
@@ -376,7 +454,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
       this.mapa?.flyTo([posicion.lat, posicion.lng], 15);
       this.mostrarMiUbicacion(posicion.lat, posicion.lng);
     } catch {
-      
+      this.mostrarAviso('No pudimos obtener tu ubicación. Revisa el permiso de ubicación.');
     } finally {
       this.cargando = false;
     }
@@ -384,11 +462,6 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
 
   irADetalle(lugar: Lugar) {
     this.router.navigate(['/lugares', lugar.id_lugar]);
-  }
-
-  async verCatalogoCompleto() {
-    this.sinResultadosCerca = false;
-    await this.cargarLugares();
   }
 
   get hayFiltrosActivos(): boolean {
@@ -402,7 +475,6 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     await this.cargarLugares();
   }
 
-  
 }
 
 function tieneCoordenadas(lugar: Lugar): lugar is Lugar & { latitud: number; longitud: number } {

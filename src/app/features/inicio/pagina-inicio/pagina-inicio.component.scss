@@ -85,15 +85,15 @@
 }
 
 .contenido-inicio {
-  padding: 0 20px 12px;
+  padding: 0 20px 84px;
 }
 
 .chips-filtro {
   display: flex;
   gap: 8px;
   overflow-x: auto;
-  padding-bottom: 4px;
-  margin-bottom: 20px;
+  padding-bottom: 0;
+  margin-bottom: 4px;
 
   ion-chip {
     flex-shrink: 0;
@@ -230,8 +230,18 @@
   font-size: 0.9rem;
 }
 
+.barra-ver-mapa {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  padding: 24px 20px 12px;
+  background: linear-gradient(to top, var(--ion-background-color) 65%, transparent);
+  pointer-events: none;
+}
+
 .boton-ver-mapa {
-  margin-top: 4px;
-  margin-bottom: 12px;
+  margin: 0;
   --border-radius: 14px;
+  pointer-events: auto;
 }
