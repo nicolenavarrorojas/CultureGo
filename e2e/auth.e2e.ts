@@ -1,5 +1,5 @@
 import { randomUUID } from 'node:crypto';
-import { expect, test } from '@playwright/test';
+import { expect, test } from './support/test';
 import { credenciales, esCorreoDePrueba, rutaEstado } from './support/entorno';
 import {
   anotarTiempo,
@@ -14,6 +14,31 @@ import { CuentaQa01, guardarEnCadena, leerDeCadena } from './support/cadena';
 import { guardarEstado } from './support/sesion';
 
 const TEXTO_EN_INGLES = /invalid|credentials|password|error|user|email|failed/i;
+
+async function crearCuentaParaEliminar(): Promise<CuentaQa01> {
+  const email = `culturego.contacto+e2e-${Date.now()}@gmail.com`;
+  const password = `E2e-${randomUUID().slice(0, 12)}`;
+  expect(esCorreoDePrueba(email)).toBe(true);
+  const { data, error } = await admin.auth.admin.createUser({
+    email,
+    password,
+    email_confirm: true,
+    user_metadata: { nombre: 'E2E Cuenta QA07', terminos_aceptados: true },
+  });
+  expect(error).toBeNull();
+  const id = data.user!.id;
+  await expect
+    .poll(async () => (await admin.from('usuario').select('id_usuario').eq('id_usuario', id).maybeSingle()).data, {
+      message: 'La fila en usuario debe existir',
+    })
+    .not.toBeNull();
+  await (await obtenerGuard()).autorizarCuenta(id);
+  const cuenta = { id, email, password } satisfies CuentaQa01;
+  // Se guarda como la de QA-01 para que el teardown la borre si este caso falla antes de eliminarla.
+  guardarEnCadena('qa01', cuenta);
+  test.info().annotations.push({ type: 'nota', description: 'QA-01 no se ejecutó: la cuenta se creó por la API.' });
+  return cuenta;
+}
 
 test.describe('Cuenta creada desde la interfaz', () => {
   test('QA-01 registro con correo nuevo, contraseñas iguales y términos aceptados', async ({ page }) => {
@@ -63,9 +88,10 @@ test.describe('Cuenta creada desde la interfaz', () => {
   });
 
   test('QA-07 eliminar cuenta: cancelar no cambia nada y confirmar la elimina', async ({ page }) => {
-    const cuenta = leerDeCadena<CuentaQa01>('qa01');
-    test.skip(!cuenta, 'QA-01 no dejó creada la cuenta que este caso elimina.');
-    const { id: idCuenta, email, password } = cuenta!;
+    // Usa la cuenta de QA-01; si QA-01 no se ejecutó, crea una cuenta de prueba por la API
+    // (sin enviar correo, para no gastar el límite de correos de Supabase).
+    const cuenta = leerDeCadena<CuentaQa01>('qa01') ?? (await crearCuentaParaEliminar());
+    const { id: idCuenta, email, password } = cuenta;
     await page.goto('/auth/login');
     await iniciarSesionUI(page, email, password);
     await expect(page).toHaveURL(/\/tabs\/inicio/);
@@ -208,6 +234,8 @@ test.describe('Sesión de U1', () => {
       const configuracion = page.locator('app-configuracion');
       await configuracion.getByRole('button', { name: 'Editar perfil' }).click();
       const modal = page.locator('ion-modal').filter({ hasText: 'Editar perfil' });
+      // Se espera a que la pantalla cargue el nombre actual: si no, la carga pisa lo escrito (H-20).
+      await expect(modal.locator('input[name="nombre"]')).not.toHaveValue('');
       await modal.locator('input[name="nombre"]').fill(nuevoNombre);
       await modal.getByRole('button', { name: 'Guardar cambios' }).click();
       const ms = await medir(async () => {

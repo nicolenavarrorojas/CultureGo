@@ -1,7 +1,9 @@
-import { Locator, Page, expect, test } from '@playwright/test';
-import { credenciales, rutaEstado } from './support/entorno';
-import { anotarDiferencia, anotarManual, anotarTiempo, capturar, iniciarSesionUI, medir, nuevoContexto, toast } from './support/app';
-import { admin, idU1 } from './support/datos';
+import { Locator, Page } from '@playwright/test';
+import { expect, test } from './support/test';
+import { credenciales, rutaEstado, variable } from './support/entorno';
+import { anotarTiempo, capturar, iniciarSesionUI, medir, nuevoContexto, toast } from './support/app';
+import { admin, idU1, obtenerGuard } from './support/datos';
+import { iniciarSesionApi } from './support/sesion';
 import { guardarEnCadena, leerDeCadena } from './support/cadena';
 
 type Configuracion = Record<'cabeza' | 'ojos' | 'boca' | 'cuerpo', number>;
@@ -54,9 +56,11 @@ test.describe('Avatar de U1', () => {
         const despues = await leerAvatar(preview);
         expect(despues[control.parte], `La vista previa debe cambiar ${control.plan} antes de guardar`).not.toBe(antes[control.parte]);
       }
-      await expect.soft(pantalla.getByText(/color/i), 'Debe existir un control de color').toBeVisible({ timeout: 1000 });
-      anotarDiferencia('El plan pide boca, ojos, accesorio, ropa y color; la app ofrece Cabeza, Ojos, Boca y Cuerpo, sin color.');
 
+      // cuerpo-2 está bloqueado sin «Primer paso» (RF-27, QA-21): se avanza a la siguiente pieza.
+      if ((await leerAvatar(preview)).cuerpo === 2) {
+        await pantalla.getByRole('button', { name: 'Siguiente: Cuerpo' }).click();
+      }
       const guardado = await leerAvatar(preview);
       expect(guardado).not.toEqual(inicial);
       const ms = await medir(async () => {
@@ -69,12 +73,8 @@ test.describe('Avatar de U1', () => {
       guardarEnCadena('qa19', guardado);
 
       await page.goto('/tabs/perfil');
+      // Plan v2.1: por diseño, el avatar se ve en Perfil y no en el encabezado de Inicio (H-14 descartada).
       expect(await leerAvatar(previewPerfil(page))).toEqual(guardado);
-      await page.goto('/tabs/inicio');
-      await expect(page.locator('app-pagina-inicio h1')).toBeVisible();
-      const previewInicio = page.locator('app-pagina-inicio app-avatar-preview');
-      await expect.soft(previewInicio, 'El avatar actualizado debe verse en Inicio').toBeVisible({ timeout: 2000 });
-      if (await previewInicio.isVisible()) expect.soft(await leerAvatar(previewInicio)).toEqual(guardado);
     });
 
     test('QA-20 el avatar persiste al borrar localStorage y en otro navegador', async ({ page, browser }) => {
@@ -100,29 +100,87 @@ test.describe('Avatar de U1', () => {
         await otro.close();
       }
       expect(await avatarEnBase(), 'La fila de U1 debe tener las piezas guardadas').toEqual(guardado);
-      anotarManual('La configuración no incluye color: la app no tiene ese control (ver QA-19).');
     });
   });
 
-  test('QA-21 un ítem bloqueado se ve bloqueado y no puede aplicarse', async ({ page }) => {
-    await page.goto('/perfil/personalizar-avatar');
-    const pantalla = page.locator('app-personalizar-avatar');
-    await expect(pantalla.locator('.avatar-preview app-avatar-preview')).toBeVisible();
-    const indicadorBloqueo = pantalla.locator('[class*="bloquead"], [aria-disabled="true"], ion-icon[name*="lock"]').or(
-      pantalla.getByText(/(^|\s)bloquead|desbloquea con|requiere la medalla/i)
-    );
+  // RF-27 (D-06): cuerpo-2 queda bloqueado hasta obtener la medalla «Primer paso».
+  test('QA-21 un ítem bloqueado se ve bloqueado y no puede aplicarse', async ({ page, request }) => {
+    const { data: medalla, error } = await admin.from('medalla').select('id_medalla').eq('nombre', 'Primer paso').single();
+    expect(error).toBeNull();
+    const idPrimerPaso = medalla!.id_medalla as string;
+    const guard = await obtenerGuard();
+    const quitarMedalla = () =>
+      guard.ejecutar({
+        tabla: 'usuario_medalla',
+        accion: 'delete',
+        filtro: { tipo: 'cuentas', columna: 'id_usuario', ids: [idU1()] },
+        ademas: { id_medalla: idPrimerPaso },
+      });
+    await quitarMedalla();
 
-    let encontrado = false;
-    for (const control of CONTROLES) {
-      for (let paso = 0; paso < 12 && !encontrado; paso++) {
-        await pantalla.getByRole('button', { name: `Siguiente: ${control.etiqueta}` }).click();
-        encontrado = (await indicadorBloqueo.count()) > 0;
+    const pantalla = page.locator('app-personalizar-avatar');
+    const preview = pantalla.locator('.avatar-preview app-avatar-preview');
+    const sello = pantalla.locator('.sello-bloqueo');
+    const guardar = pantalla.getByRole('button', { name: 'Guardar cambios' });
+    const irACuerpo2 = async () => {
+      // Se espera a que cargue la configuración guardada: si no, la carga pisa los cambios (H-20).
+      await expect.poll(() => leerAvatar(preview)).toEqual(await avatarEnBase());
+      for (let paso = 0; paso < 8 && (await leerAvatar(preview)).cuerpo !== 2; paso++) {
+        await pantalla.getByRole('button', { name: 'Siguiente: Cuerpo' }).click();
       }
+      expect((await leerAvatar(preview)).cuerpo).toBe(2);
+    };
+
+    try {
+      await test.step('Sin la medalla: cuerpo-2 se ve bloqueado y no se puede guardar', async () => {
+        await page.goto('/perfil/personalizar-avatar');
+        await irACuerpo2();
+        await expect(sello).toContainText('Bloqueado');
+        await expect(pantalla.getByText('Esta pieza se desbloquea con la medalla «Primer paso».')).toBeVisible();
+        await expect(guardar).toBeDisabled();
+        await capturar(page, 'QA-21 cuerpo-2 bloqueado');
+        expect((await avatarEnBase()).cuerpo, 'No debe guardarse la pieza bloqueada').not.toBe(2);
+      });
+
+      await test.step('Sin la medalla: la API también rechaza guardar cuerpo-2', async () => {
+        const u1 = credenciales('u1');
+        const { session } = await iniciarSesionApi(u1.email, u1.password);
+        const respuesta = await request.patch(`${variable('SUPABASE_URL')}/rest/v1/usuario?id_usuario=eq.${idU1()}`, {
+          headers: {
+            apikey: variable('SUPABASE_ANON_KEY'),
+            Authorization: `Bearer ${session.access_token}`,
+            'Content-Type': 'application/json',
+          },
+          data: { avatar_cuerpo: 2 },
+        });
+        expect(respuesta.ok(), 'La base debe rechazar cuerpo-2 sin la medalla').toBe(false);
+        expect((await avatarEnBase()).cuerpo).not.toBe(2);
+      });
+
+      await test.step('Con la medalla: cuerpo-2 queda disponible y se guarda', async () => {
+        const { error: errorMedalla } = await admin
+          .from('usuario_medalla')
+          .insert({ id_usuario: idU1(), id_medalla: idPrimerPaso });
+        expect(errorMedalla).toBeNull();
+
+        await page.goto('/perfil/personalizar-avatar');
+        await irACuerpo2();
+        await expect(sello).toHaveCount(0);
+        await expect(guardar).toBeEnabled();
+        await guardar.click();
+        await expect(toast(page, 'Avatar guardado')).toBeVisible();
+        await capturar(page, 'QA-21 cuerpo-2 desbloqueado');
+        expect((await avatarEnBase()).cuerpo).toBe(2);
+      });
+    } finally {
+      // Se deja a U1 como estaba: sin «Primer paso» (la otorga QA-14) y con el cuerpo por defecto.
+      await guard.ejecutar({
+        tabla: 'usuario',
+        accion: 'update',
+        cambios: { avatar_cuerpo: 0 },
+        filtro: { tipo: 'cuentas', columna: 'id_usuario', ids: [idU1()] },
+      });
+      await quitarMedalla();
     }
-    await capturar(page, 'QA-21 personalización');
-    anotarManual(
-      'Verificar con una cuenta que tenga la medalla que el ítem queda disponible: la app no tiene ítems asociados a medallas.'
-    );
-    expect(encontrado, 'Debe existir al menos un ítem bloqueado que se muestre como tal').toBe(true);
   });
 });

@@ -42,11 +42,11 @@ export class PaginaInicioComponent implements OnInit {
   terminoBusqueda = '';
   filtroActivo: FiltroRapido = 'todos';
 
-  lugaresRecomendados: Lugar[] = [];
+  lugaresDestacados: Lugar[] = [];
   cargando = true;
 
   // LIMITE DE CUANTOS LUGARES MOSTRAR
-  private readonly LIMITE_RECOMENDADOS = 4;
+  private readonly LIMITE_DESTACADOS = 4;
 
   constructor(
     private auth: Auth,
@@ -57,7 +57,7 @@ export class PaginaInicioComponent implements OnInit {
   }
 
   async ngOnInit() {
-    await this.cargarRecomendados();
+    await this.cargarDestacados();
   }
 
   private async cargarUsuario() {
@@ -65,12 +65,12 @@ export class PaginaInicioComponent implements OnInit {
     this.nombreUsuario = usuario?.nombre?.split(' ')[0] ?? '';
   }
 
-  private async cargarRecomendados() {
+  private async cargarDestacados() {
     this.cargando = true;
     try {
       const filtros = this.filtroActivo === 'gratis' ? { soloGratuitos: true } : {};
       const resultado = await this.lugares.listar(filtros);
-      this.lugaresRecomendados = resultado.slice(0, this.LIMITE_RECOMENDADOS);
+      this.lugaresDestacados = resultado.slice(0, this.LIMITE_DESTACADOS);
     } finally {
       this.cargando = false;
     }
@@ -87,7 +87,7 @@ export class PaginaInicioComponent implements OnInit {
       return;
     }
 
-    await this.cargarRecomendados();
+    await this.cargarDestacados();
   }
 
   onBuscar() {

@@ -93,6 +93,8 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   lugarSeleccionado: Lugar | null = null;
   avisoTexto = '';
   avisoVisible = false;
+  // Los filtros elegidos no dejan ningún lugar en el mapa (RF-09).
+  sinResultadosFiltros = false;
   mostrarSugerirLugar = false;
   private temporizadorAviso?: ReturnType<typeof setTimeout>;
   private encuadrePendiente?: L.LatLngBounds;
@@ -282,6 +284,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
       };
       this.lugares = await this.lugaresService.listar(filtros);
       this.pintarMarcadores();
+      this.sinResultadosFiltros = this.hayFiltrosActivos && !this.lugares.some(tieneCoordenadas);
     } finally {
       this.cargando = false;
     }
@@ -290,6 +293,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   private async buscarCercaDeMi() {
     this.cargando = true;
     this.ocultarAviso();
+    this.sinResultadosFiltros = false;
     try {
       const posicion = await this.obtenerPosicionActual();
       this.ultimaPosicion = posicion;
@@ -391,7 +395,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.capaMarcadores.clearLayers();
 
     for (const lugar of this.lugares) {
-      if (lugar.latitud == null || lugar.longitud == null) {
+      if (!tieneCoordenadas(lugar)) {
         continue; 
       }
 
@@ -460,4 +464,19 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
     this.router.navigate(['/lugares', lugar.id_lugar]);
   }
 
+  get hayFiltrosActivos(): boolean {
+    return !!this.idCategoriaSeleccionada || !!this.idComunaSeleccionada || this.soloGratuitos;
+  }
+
+  async quitarFiltros() {
+    this.idCategoriaSeleccionada = null;
+    this.idComunaSeleccionada = null;
+    this.soloGratuitos = false;
+    await this.cargarLugares();
+  }
+
+}
+
+function tieneCoordenadas(lugar: Lugar): lugar is Lugar & { latitud: number; longitud: number } {
+  return lugar.latitud != null && lugar.longitud != null;
 }

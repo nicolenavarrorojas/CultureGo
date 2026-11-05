@@ -1,8 +1,8 @@
 import { statSync } from 'node:fs';
-import { Browser, Page, Request, expect, test } from '@playwright/test';
+import { Browser, Page, Request } from '@playwright/test';
+import { expect, test } from './support/test';
 import { credenciales, rutaEstado } from './support/entorno';
 import {
-  anotarDiferencia,
   anotarManual,
   anotarTiempo,
   botonAlerta,
@@ -68,12 +68,10 @@ async function buscarEnCatalogo(page: Page, texto: string, soloGratis = false): 
 test('QA-23 U1 no accede al panel y ADM entra en ≤ 2 s', async ({ page, browser }) => {
   await conU1(browser, async (paginaU1) => {
     await paginaU1.goto('/admin/gestion-lugares');
-    await paginaU1.waitForURL((url) => !url.pathname.startsWith('/admin/gestion-lugares'));
+    // D-08: con sesión pero sin rol de administrador, el guard lleva a Inicio.
+    await expect(paginaU1).toHaveURL(/\/tabs\/inicio/);
     await expect(paginaU1.locator('app-gestion-lugares')).toHaveCount(0);
     await capturar(paginaU1, 'QA-23 U1 redirigido');
-    anotarDiferencia(
-      `El guard redirige a /admin/login-admin, que no existe; U1 terminó en ${new URL(paginaU1.url()).pathname}. No hay un acceso de administración.`
-    );
   });
 
   const adm = credenciales('adm');
@@ -361,7 +359,7 @@ test.describe('Panel de ADM', () => {
       const modal = formulario(page);
       await expect(modal.locator('input[name="nombre"]')).toHaveValue(nombres.aprobada);
       await expect(modal.locator('.mini-mapa-admin .leaflet-marker-icon'), 'El mini-mapa debe mostrar la ubicación').toBeVisible();
-      anotarDiferencia('Aprobar una sugerencia exige completar y publicar el formulario de «Nuevo lugar»: la aprobación crea el lugar.');
+      // D-10: aprobar abre «Revisar y publicar»; al publicar, el lugar entra al catálogo.
       await elegirEnHojaDeAcciones(page, modal.locator('ion-select[name="id_comuna"]'), 'Santiago');
       await modal.getByRole('button', { name: 'Crear lugar' }).click();
       await expect(toast(page, 'Lugar creado.')).toBeVisible();
@@ -379,9 +377,12 @@ test.describe('Panel de ADM', () => {
         await expect(tickets.locator('.fila-ticket').filter({ hasText: nombres.aprobada }).locator('.badge-estado')).toHaveText('Aprobado');
         await expect(tickets.locator('.fila-ticket').filter({ hasText: nombres.rechazada }).locator('.badge-estado')).toHaveText('Rechazado');
         await capturar(paginaU1, 'QA-28 mis tickets');
-        expect
-          .soft(await buscarEnCatalogo(paginaU1, nombres.aprobada), 'La aprobación no debe crear un lugar en el catálogo')
-          .toBe(textoContador(0));
+        expect(await buscarEnCatalogo(paginaU1, nombres.aprobada), 'La sugerencia aprobada y publicada debe estar en el catálogo').toBe(
+          textoContador(1)
+        );
+        expect(await buscarEnCatalogo(paginaU1, nombres.rechazada), 'La sugerencia rechazada no debe estar en el catálogo').toBe(
+          textoContador(0)
+        );
       });
     });
   });

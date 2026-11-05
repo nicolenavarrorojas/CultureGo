@@ -126,8 +126,8 @@ describe('MedallasComponent', () => {
     totalVisitas = 1;
     await component.ngOnInit();
     const progreso = component.progresoMedallas[0];
-    const porcentaje = (progreso.actual / progreso.requerido) * 100;
-    expect(Number.isInteger(porcentaje)).toBeTrue();
+    expect(progreso.porcentaje).toBe(33);
+    expect(Number.isInteger(progreso.porcentaje)).toBeTrue();
   });
 
   it('UT-MED-07 cantidad_requerida en 0 no debería producir NaN/Infinity', async () => {
@@ -137,8 +137,8 @@ describe('MedallasComponent', () => {
     totalVisitas = 5;
     await component.ngOnInit();
     const progreso = component.progresoMedallas[0];
-    const porcentaje = (progreso.actual / progreso.requerido) * 100;
-    expect(Number.isFinite(porcentaje)).toBeTrue();
+    expect(Number.isFinite(progreso.porcentaje)).toBeTrue();
+    expect(progreso.porcentaje).toBe(100);
   });
 
   it('UT-MED-08 ordena: generales primero, luego obtenidas, luego por % descendente', async () => {
@@ -153,7 +153,8 @@ describe('MedallasComponent', () => {
     expect(orden).toEqual(['g1', 'c1', 'c2']);
   });
 
-  it('UT-MED-09 empate en % entre dos no obtenidas: por plan desempata por cantidad_requerida ascendente', async () => {
+  // D-02: se acepta el orden actual. Con empate en %, se conserva el orden en que llegan (sort estable).
+  it('UT-MED-09 empate en % entre dos no obtenidas: conservan el orden de llegada', async () => {
     const medallaA = { id_medalla: 'ma', nombre: 'A', descripcion: '', id_categoria: 'cat-a', cantidad_requerida: 20, url_icono: null };
     const medallaB = { id_medalla: 'mb', nombre: 'B', descripcion: '', id_categoria: 'cat-b', cantidad_requerida: 10, url_icono: null };
     medallasTodas = [medallaA, medallaB];
@@ -164,7 +165,7 @@ describe('MedallasComponent', () => {
     ];
     await component.ngOnInit();
     const orden = component.progresoMedallas.map((p) => p.medalla.id_medalla);
-    expect(orden).toEqual(['mb', 'ma']);
+    expect(orden).toEqual(['ma', 'mb']);
   });
 
   it('UT-MED-10 sin medallas configuradas -> lista vacía, sin errores', async () => {

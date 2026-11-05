@@ -1,5 +1,6 @@
 import { Browser, BrowserContext, Locator, Page, devices, expect, test } from '@playwright/test';
 import { BASE_URL, Rol, rutaEstado } from './entorno';
+import { ocultarBienvenida } from './test';
 
 export interface Coordenadas {
   latitude: number;
@@ -29,7 +30,7 @@ export async function nuevoContexto(
   opciones: { rol?: Rol; ubicacion?: Coordenadas } = {}
 ): Promise<BrowserContext> {
   const { defaultBrowserType: _tipo, ...dispositivo } = devices['Pixel 7'];
-  return browser.newContext({
+  const contexto = await browser.newContext({
     ...dispositivo,
     baseURL: BASE_URL,
     locale: 'es-CL',
@@ -37,6 +38,8 @@ export async function nuevoContexto(
     permissions: opciones.ubicacion ? ['geolocation'] : [],
     geolocation: opciones.ubicacion,
   });
+  await ocultarBienvenida(contexto);
+  return contexto;
 }
 
 export async function capturar(page: Page, nombre: string): Promise<void> {

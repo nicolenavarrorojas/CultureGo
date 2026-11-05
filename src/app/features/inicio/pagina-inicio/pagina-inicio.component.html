@@ -48,15 +48,15 @@
       </ion-chip>
     </div>
 
-    <!-- Recomendados para ti -->
-    <div class="seccion-recomendados">
+    <!-- Destacados -->
+    <div class="seccion-destacados">
       <div class="seccion-header">
-        <h2><ion-icon name="sparkles-outline"></ion-icon> Recomendados para ti</h2>
+        <h2><ion-icon name="sparkles-outline"></ion-icon> Destacados</h2>
         <button class="ver-todos" (click)="irAVerTodos()">Ver todos</button>
       </div>
 
       <!-- Estado cargando -->
-      <div class="lista-recomendados" *ngIf="cargando">
+      <div class="lista-destacados" *ngIf="cargando">
         <div class="tarjeta-lugar tarjeta-skeleton" *ngFor="let i of [1,2,3]">
           <ion-skeleton-text [animated]="true" class="skeleton-imagen"></ion-skeleton-text>
           <ion-skeleton-text [animated]="true" class="skeleton-linea"></ion-skeleton-text>
@@ -65,10 +65,10 @@
       </div>
 
       <!-- Lista -->
-      <div class="lista-recomendados" *ngIf="!cargando && lugaresRecomendados.length">
+      <div class="lista-destacados" *ngIf="!cargando && lugaresDestacados.length">
         <button
           class="tarjeta-lugar"
-          *ngFor="let lugar of lugaresRecomendados; trackBy: trackPorId"
+          *ngFor="let lugar of lugaresDestacados; trackBy: trackPorId"
           (click)="irADetalle(lugar)"
         >
           <div
@@ -84,7 +84,7 @@
       </div>
 
       <!-- Estado vacio -->
-      <div class="estado-vacio" *ngIf="!cargando && !lugaresRecomendados.length">
+      <div class="estado-vacio" *ngIf="!cargando && !lugaresDestacados.length">
         <p>No encontramos lugares para este filtro. Prueba con otro.</p>
       </div>
     </div>

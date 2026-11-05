@@ -39,23 +39,6 @@
     logo-flotar 2.4s ease-in-out 700ms infinite;
 }
 
-/* Nombre */
-.splash-nombre {
-  margin: 4px 0 0;
-  font-family: 'Fraunces', serif;
-  font-size: 2.3rem;
-  font-weight: 600;
-  letter-spacing: 0.01em;
-  line-height: 1;
-  color: #ffffff;
-  opacity: 0;
-  animation: subir 550ms ease-out 400ms forwards;
-
-  .parte-go {
-    color: #f3c86a; 
-  }
-}
-
 /* Lema */
 .splash-lema {
   margin: 0;

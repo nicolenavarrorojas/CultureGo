@@ -1,7 +1,7 @@
 /// <reference types="jasmine" />
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
-import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
+import { ActivatedRoute, Router, provideRouter, convertToParamMap } from '@angular/router';
 
 import { Lugares } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
@@ -28,10 +28,8 @@ describe('ListaLugaresComponent', () => {
           provide: Comunas,
           useValue: { listar: async () => [] },
         },
-        {
-          provide: Router,
-          useValue: { navigate: () => Promise.resolve(true) },
-        },
+        // Router real (Ionic lo necesita para sus eventos); la navegación se simula abajo.
+        provideRouter([]),
         {
           provide: ActivatedRoute,
           useValue: {
@@ -40,6 +38,7 @@ describe('ListaLugaresComponent', () => {
         },
       ],
     }).compileComponents();
+    spyOn(TestBed.inject(Router), 'navigate').and.resolveTo(true);
 
     fixture = TestBed.createComponent(ListaLugaresComponent);
     component = fixture.componentInstance;
