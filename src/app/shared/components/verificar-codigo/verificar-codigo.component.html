@@ -1,0 +1,37 @@
+<div class="encabezado">
+  <h1>{{ titulo }}</h1>
+  <p>Enviamos un código de {{ largo }} dígitos a <strong>{{ email }}</strong>.</p>
+</div>
+
+<form class="formulario" (submit)="enviar($event)">
+  <label class="campo-codigo">
+    <input
+      type="text"
+      inputmode="numeric"
+      pattern="[0-9]*"
+      autocomplete="one-time-code"
+      [attr.maxlength]="largo"
+      placeholder="······"
+      [value]="codigo"
+      (input)="onInput($event)"
+      aria-label="Código de verificación"
+    />
+  </label>
+
+  <button type="submit" class="boton-principal" [disabled]="!codigoValido || cargando">
+    {{ cargando ? 'Verificando...' : textoBoton }}
+  </button>
+</form>
+
+<div class="enlaces">
+  <button
+    type="button"
+    class="boton-enlace"
+    [disabled]="segundosRestantes > 0"
+    (click)="pedirReenvio()"
+  >
+    {{ segundosRestantes > 0 ? 'Reenviar código en ' + segundosRestantes + ' s' : 'Reenviar código' }}
+  </button>
+  <button type="button" class="boton-texto" (click)="volver.emit()">{{ textoVolver }}</button>
+  <p class="ayuda">Si no lo ves, revisa la carpeta de spam.</p>
+</div>

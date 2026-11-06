@@ -1,5 +1,6 @@
 <ion-content [fullscreen]="true" class="registro-content">
 
+  <ng-container *ngIf="paso === 'formulario'">
   <div class="encabezado">
     <h1>Crea tu cuenta</h1>
     <p>Registra tus visitas y gana medallas explorando Santiago.</p>
@@ -99,6 +100,20 @@
   <div class="enlaces">
     <a routerLink="/auth/login">¿Ya tienes cuenta? Inicia sesión</a>
   </div>
+  </ng-container>
+
+  <!-- Paso 2: código que llegó al correo -->
+  <app-verificar-codigo
+    *ngIf="paso === 'codigo'"
+    [email]="email.trim()"
+    titulo="Confirma tu correo"
+    textoBoton="Confirmar cuenta"
+    textoVolver="Cambiar mis datos"
+    [cargando]="verificando"
+    (verificar)="verificarCodigo($event)"
+    (reenviar)="reenviarCodigo()"
+    (volver)="volverAlFormulario()"
+  ></app-verificar-codigo>
 
   <!-- Modal: Términos y condiciones -->
   <ion-modal [isOpen]="mostrarTerminos" (didDismiss)="mostrarTerminos = false">

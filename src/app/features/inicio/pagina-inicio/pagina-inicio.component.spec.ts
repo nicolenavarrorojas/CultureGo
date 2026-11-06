@@ -2,6 +2,7 @@
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Lugares } from 'src/app/core/services/lugares';
@@ -11,16 +12,21 @@ describe('PaginaInicioComponent', () => {
   let component: PaginaInicioComponent;
   let fixture: ComponentFixture<PaginaInicioComponent>;
   let usuarioActual: { nombre: string } | null;
+  let cambioSesion: Subject<void>;
 
   beforeEach(waitForAsync(() => {
     usuarioActual = null;
+    cambioSesion = new Subject<void>();
 
     TestBed.configureTestingModule({
       imports: [PaginaInicioComponent],
       providers: [
         {
           provide: Auth,
-          useValue: { obtenerUsuarioActual: async () => usuarioActual },
+          useValue: {
+            obtenerUsuarioActual: async () => usuarioActual,
+            cambioSesion$: cambioSesion.asObservable(),
+          },
         },
         {
           provide: Lugares,
@@ -56,5 +62,12 @@ describe('PaginaInicioComponent', () => {
     usuarioActual = null;
     await component.ionViewWillEnter();
     expect(component.nombreUsuario).toBe('');
+  });
+
+  it('actualiza el saludo cuando cambia la sesión, aunque no se vuelva a entrar a la pantalla', async () => {
+    usuarioActual = { nombre: 'Nicole Navarro' };
+    cambioSesion.next();
+    await fixture.whenStable();
+    expect(component.nombreUsuario).toBe('Nicole');
   });
 });

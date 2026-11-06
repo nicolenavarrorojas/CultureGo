@@ -1,7 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
-import { Router, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import {
   IonContent,
   IonIcon,
@@ -26,7 +26,9 @@ import {
 
 import { Auth } from 'src/app/core/services/auth';
 import { traducirErrorAuth } from 'src/app/core/utils/traducir-error-auth';
+import { traducirErrorCodigo } from 'src/app/core/utils/traducir-error-codigo';
 import { TerminosCondicionesComponent } from 'src/app/shared/components/terminos-condiciones/terminos-condiciones.component';
+import { VerificarCodigoComponent } from 'src/app/shared/components/verificar-codigo/verificar-codigo.component';
 
 const LARGO_MINIMO_PASSWORD = 6; 
 
@@ -48,11 +50,12 @@ const LARGO_MINIMO_PASSWORD = 6;
     IonButtons,
     IonButton,
     TerminosCondicionesComponent,
+    VerificarCodigoComponent,
   ],
   templateUrl: './registro.component.html',
   styleUrls: ['./registro.component.scss'],
 })
-export class RegistroComponent {
+export class RegistroComponent implements OnInit {
   nombre = '';
   email = '';
   password = '';
@@ -63,12 +66,19 @@ export class RegistroComponent {
   aceptaTerminos = false;
   mostrarTerminos = false;
 
+  // 'formulario': datos de la cuenta · 'codigo': ingresar el código que llegó al correo
+  paso: 'formulario' | 'codigo' = 'formulario';
   cargando = false;
+  verificando = false;
   toastMensaje = '';
   toastColor: 'success' | 'danger' | 'warning' = 'danger';
   mostrarToast = false;
 
-  constructor(private authService: Auth, private router: Router) {
+  constructor(
+    private authService: Auth,
+    private router: Router,
+    private route: ActivatedRoute
+  ) {
     addIcons({
       mailOutline,
       lockClosedOutline,
@@ -77,6 +87,15 @@ export class RegistroComponent {
       eyeOffOutline,
       closeOutline,
     });
+  }
+
+  ngOnInit() {
+    const correoPendiente = this.route.snapshot.queryParamMap.get('confirmar');
+    if (correoPendiente) {
+      this.email = correoPendiente;
+      this.paso = 'codigo';
+      this.reenviarCodigo();
+    }
   }
 
   get formularioValido(): boolean {
@@ -114,18 +133,47 @@ export class RegistroComponent {
 
       if (resultado.session) {
         this.router.navigateByUrl('/tabs/inicio');
-      } else {
-        this.mostrarAviso(
-          'Te enviamos un correo para confirmar tu cuenta. Revisa tu bandeja de entrada.',
-          'success'
-        );
-        setTimeout(() => this.router.navigateByUrl('/auth/login'), 2500);
+        return;
       }
+
+      if (resultado.user?.identities?.length === 0) {
+        this.mostrarAviso('Este correo ya está registrado. Inicia sesión.', 'warning');
+        return;
+      }
+
+      this.paso = 'codigo';
     } catch (error) {
       this.mostrarAviso(traducirErrorAuth(error), 'danger');
     } finally {
       this.cargando = false;
     }
+  }
+
+  async verificarCodigo(codigo: string) {
+    if (this.verificando) return;
+
+    this.verificando = true;
+    try {
+      await this.authService.verificarCodigoRegistro(this.email.trim(), codigo);
+      await this.router.navigateByUrl('/tabs/inicio');
+    } catch (error) {
+      this.mostrarAviso(traducirErrorCodigo(error), 'danger');
+    } finally {
+      this.verificando = false;
+    }
+  }
+
+  async reenviarCodigo() {
+    try {
+      await this.authService.reenviarCodigoRegistro(this.email.trim());
+      this.mostrarAviso('Te enviamos un código nuevo.', 'success');
+    } catch (error) {
+      this.mostrarAviso(traducirErrorCodigo(error), 'danger');
+    }
+  }
+
+  volverAlFormulario() {
+    this.paso = 'formulario';
   }
 
   private mostrarAviso(mensaje: string, color: 'success' | 'danger' | 'warning') {
