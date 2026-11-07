@@ -10,14 +10,14 @@
 <ion-content [fullscreen]="true" class="config-content">
 
   <div class="lista-opciones">
-    <!-- Deshabilitado hasta cargar el usuario: si no, la carga pisaría el nombre escrito. -->
-    <button class="opcion" [disabled]="!usuario" (click)="abrirModalPerfil()">
+    <!-- Opciones de cuenta: solo con sesión iniciada. -->
+    <button class="opcion" *ngIf="usuario" (click)="abrirModalPerfil()">
       <ion-icon name="person-outline"></ion-icon>
       <span>Editar perfil</span>
       <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
     </button>
 
-    <button class="opcion" (click)="abrirModalPassword()">
+    <button class="opcion" *ngIf="usuario" (click)="abrirModalPassword()">
       <ion-icon name="lock-closed-outline"></ion-icon>
       <span>Cambiar contraseña</span>
       <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
@@ -41,14 +41,14 @@
       <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
     </button>
 
-    <button class="opcion opcion-peligro" [disabled]="eliminandoCuenta" (click)="confirmarEliminarCuenta()">
+    <button class="opcion opcion-peligro" *ngIf="usuario" [disabled]="eliminandoCuenta" (click)="confirmarEliminarCuenta()">
       <ion-icon name="trash-outline"></ion-icon>
       <span>{{ eliminandoCuenta ? 'Eliminando...' : 'Eliminar cuenta' }}</span>
       <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
     </button>
   </div>
 
-  <!-- Modal: Editar perfil -->
+  <!-- Modal Editar perfil -->
   <ion-modal [isOpen]="mostrarModalPerfil" (didDismiss)="mostrarModalPerfil = false">
     <ng-template>
       <ion-header class="ion-no-border">
@@ -83,7 +83,7 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal: Cambiar contraseña -->
+  <!-- Modal Cambiar contraseña -->
   <ion-modal [isOpen]="mostrarModalPassword" (didDismiss)="mostrarModalPassword = false">
     <ng-template>
       <ion-header class="ion-no-border">
@@ -175,7 +175,7 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal: Permisos -->
+  <!-- Modal Permisos -->
   <ion-modal [isOpen]="mostrarModalPermisos" (didDismiss)="mostrarModalPermisos = false">
     <ng-template>
       <ion-header class="ion-no-border">
@@ -226,7 +226,7 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal: Acerca de CultureGo (info del proyecto) -->
+  <!-- Modal acerca de CultureGo-->
   <ion-modal [isOpen]="mostrarModalAcercaDe" (didDismiss)="mostrarModalAcercaDe = false">
     <ng-template>
       <ion-header class="ion-no-border">
@@ -267,7 +267,7 @@
     </ng-template>
   </ion-modal>
 
-  <!-- Modal: Términos y condiciones -->
+  <!-- Modal Términos y condiciones -->
   <ion-modal [isOpen]="mostrarModalTerminos" (didDismiss)="mostrarModalTerminos = false">
     <ng-template>
       <ion-header class="ion-no-border">

@@ -34,6 +34,7 @@ import {
   imagesOutline,
   moonOutline,
   starOutline,
+  personOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
@@ -125,6 +126,7 @@ export class PaginaPerfilComponent {
       filmOutline,
       imagesOutline,
       starOutline,
+      personOutline,
     });
 
     // Al guardar en Personalizar avatar, se actualiza el círculo al instante,
@@ -245,6 +247,14 @@ export class PaginaPerfilComponent {
     this.router.navigateByUrl('/perfil/configuracion');
   }
 
+  irALogin() {
+    this.router.navigateByUrl('/auth/login');
+  }
+
+  irARegistro() {
+    this.router.navigateByUrl('/auth/registro');
+  }
+
   irAPanelAdmin() {
     this.router.navigateByUrl('/admin/gestion-lugares');
   }
@@ -257,6 +267,7 @@ export class PaginaPerfilComponent {
     this.mostrarCalificacion = true;
   }
 
+  /** Pide confirmación; la sesión se cierra solo si la persona acepta. */
   async cerrarSesion() {
     const alerta = await this.alertController.create({
       header: 'Cerrar sesión',
@@ -265,6 +276,7 @@ export class PaginaPerfilComponent {
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Cerrar sesión',
+          // El handler corre fuera de la zona de Angular: se vuelve a entrar para que la pantalla se refresque.
           handler: () => {
             this.zone.run(() => this.aplicarCierreSesion());
           },

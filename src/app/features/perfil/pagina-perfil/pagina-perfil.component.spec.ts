@@ -111,4 +111,27 @@ describe('PaginaPerfilComponent', () => {
     expect(alerta.present).toHaveBeenCalled();
     expect(cerrar).not.toHaveBeenCalled();
   });
+
+  it('sin sesión muestra la vista de invitado y no carga estadísticas', async () => {
+    usuarioActual = null;
+    const estadisticas = spyOn(TestBed.inject(Gamificacion), 'contarLugaresVisitados').and.callThrough();
+
+    await component.ionViewWillEnter();
+    fixture.detectChanges();
+
+    expect(component.usuario).toBeNull();
+    expect(component.cargando).toBeFalse();
+    expect(estadisticas).not.toHaveBeenCalled();
+    expect(fixture.nativeElement.querySelector('.bloque-invitado')).not.toBeNull();
+  });
+
+  it('desde la vista de invitado se puede ir a iniciar sesión y a registrarse', () => {
+    const navegar = spyOn(TestBed.inject(Router), 'navigateByUrl').and.callThrough();
+
+    component.irALogin();
+    component.irARegistro();
+
+    expect(navegar).toHaveBeenCalledWith('/auth/login');
+    expect(navegar).toHaveBeenCalledWith('/auth/registro');
+  });
 });

@@ -49,7 +49,7 @@ export const routes: Routes = [
         path: 'perfil',
         loadComponent: () =>
           import('./features/perfil/pagina-perfil/pagina-perfil.component').then((m) => m.PaginaPerfilComponent),
-        canActivate: [authGuard],
+        // Sin guard: sin sesión muestra la vista de invitado (modo oscuro, configuración, iniciar sesión).
       },
     ],
   },
@@ -99,7 +99,7 @@ export const routes: Routes = [
       import('./features/perfil/configuracion/configuracion.component').then(
         (m) => m.ConfiguracionComponent
       ),
-    canActivate: [authGuard],
+    // Sin guard: sin sesión solo se muestran Permisos, Acerca de y Términos.
   },
   // Admin
   {

@@ -12,6 +12,37 @@
     <ion-skeleton-text [animated]="true" class="skeleton-linea"></ion-skeleton-text>
   </div>
 
+  <!-- Sin sesión: vista de invitado -->
+  <ng-container *ngIf="!cargando && !usuario">
+    <div class="bloque-invitado">
+      <div class="avatar-invitado">
+        <ion-icon name="person-outline"></ion-icon>
+      </div>
+      <h1 class="nombre-usuario">Explorador anónimo</h1>
+      <p class="texto-invitado">Inicia sesión para guardar tus visitas y medallas.</p>
+      <button class="boton-iniciar-sesion" (click)="irALogin()">Iniciar sesión</button>
+      <button class="enlace-registro" (click)="irARegistro()">¿No tienes cuenta? Regístrate</button>
+    </div>
+
+    <div class="lista-opciones">
+      <div class="opcion">
+        <ion-icon name="moon-outline"></ion-icon>
+        <span>Modo oscuro</span>
+        <ion-toggle
+          color="primary"
+          aria-label="Modo oscuro"
+          [checked]="modoOscuro"
+          (ionChange)="alternarModoOscuro($event)"
+        ></ion-toggle>
+      </div>
+      <button class="opcion" (click)="irAConfiguracion()">
+        <ion-icon name="settings-outline"></ion-icon>
+        <span>Configuración</span>
+        <ion-icon name="chevron-forward-outline" class="flecha"></ion-icon>
+      </button>
+    </div>
+  </ng-container>
+
   <ng-container *ngIf="!cargando && usuario as usuarioActual">
 
     <!-- Avatar + personalizar -->
