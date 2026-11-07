@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, NgZone, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -98,7 +98,8 @@ export class ConfiguracionComponent implements OnInit {
   constructor(
     private authService: Auth,
     private router: Router,
-    private alertController: AlertController
+    private alertController: AlertController,
+    private zone: NgZone
   ) {
     addIcons({
       eyeOutline,
@@ -309,33 +310,67 @@ export class ConfiguracionComponent implements OnInit {
     }
   }
 
-  // Eliminar cuenta -- acción directa con alerta de confirmación, no necesita modal propio
+  // Eliminar cuenta - alerta con la contraseña 
 
   async confirmarEliminarCuenta() {
     const alerta = await this.alertController.create({
       header: 'Eliminar cuenta',
       message:
-        'Esta acción es permanente: se borran tus visitas, medallas, reseñas, reportes y sugerencias. No se puede deshacer. ¿Quieres continuar?',
+        'Esta acción es permanente: se borran tus visitas, medallas, reseñas, reportes y sugerencias. No se puede deshacer. Para confirmar, escribe tu contraseña.',
+      inputs: [
+        {
+          name: 'password',
+          type: 'password',
+          placeholder: 'Tu contraseña',
+          attributes: { autocomplete: 'current-password' },
+        },
+      ],
       buttons: [
         { text: 'Cancelar', role: 'cancel' },
         {
           text: 'Eliminar mi cuenta',
           role: 'destructive',
           cssClass: 'boton-alerta-eliminar',
-          handler: () => this.eliminarCuenta(),
+          handler: (datos: { password?: string }) => {
+            const password = datos?.password ?? '';
+            if (!password) {
+              this.zone.run(() => this.mostrarAviso('Escribe tu contraseña para continuar.', 'warning'));
+              return false; 
+            }
+            this.zone.run(() => this.eliminarConPassword(password));
+            return true;
+          },
         },
       ],
     });
     await alerta.present();
   }
 
-  private async eliminarCuenta() {
+  private async eliminarConPassword(password: string) {
+    if (this.eliminandoCuenta) return;
+
     this.eliminandoCuenta = true;
     try {
-      await this.authService.eliminarCuenta();
+      let correcta = false;
+      try {
+        correcta = await this.authService.verificarPasswordActual(password);
+      } catch (error) {
+        this.mostrarAviso(traducirErrorAuth(error), 'danger');
+        return;
+      }
+
+      if (!correcta) {
+        this.mostrarAviso('La contraseña no es correcta. No se eliminó la cuenta.', 'danger');
+        return;
+      }
+
+      try {
+        await this.authService.eliminarCuenta();
+      } catch {
+        this.mostrarAviso('No se pudo eliminar la cuenta. Intenta de nuevo.', 'danger');
+        return;
+      }
       this.router.navigateByUrl('/tabs/inicio');
-    } catch {
-      this.mostrarAviso('No se pudo eliminar la cuenta. Intenta de nuevo.', 'danger');
     } finally {
       this.eliminandoCuenta = false;
     }

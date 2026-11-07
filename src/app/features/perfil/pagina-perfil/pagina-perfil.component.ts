@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,6 +11,7 @@ import {
   IonToggle,
   IonSkeletonText,
   IonToast,
+  AlertController,
 } from '@ionic/angular/standalone';
 import type { ToggleCustomEvent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -93,6 +94,7 @@ export class PaginaPerfilComponent {
   mostrarCalificacion = false;
 
   private destroyRef = inject(DestroyRef);
+  private zone = inject(NgZone);
 
   constructor(
     private authService: Auth,
@@ -101,7 +103,8 @@ export class PaginaPerfilComponent {
     private avatarService: AvatarService,
     private avatarEventos: AvatarEventos,
     private themeService: Theme,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {
     addIcons({
       settingsOutline,
@@ -255,8 +258,29 @@ export class PaginaPerfilComponent {
   }
 
   async cerrarSesion() {
-    await this.authService.cerrarSesion();
-    this.router.navigateByUrl('/tabs/inicio');
+    const alerta = await this.alertController.create({
+      header: 'Cerrar sesión',
+      message: '¿Estás seguro de que quieres cerrar sesión?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Cerrar sesión',
+          handler: () => {
+            this.zone.run(() => this.aplicarCierreSesion());
+          },
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async aplicarCierreSesion() {
+    try {
+      await this.authService.cerrarSesion();
+      this.router.navigateByUrl('/tabs/inicio');
+    } catch {
+      this.mostrarAviso('No se pudo cerrar la sesión. Intenta de nuevo.');
+    }
   }
 
   private mostrarAviso(mensaje: string) {

@@ -61,4 +61,25 @@ describe('ConfiguracionComponent', () => {
     component.nombreEditado = 'Nicole N.';
     expect(component.nombreCambio).toBeTrue();
   });
+
+  it('no elimina la cuenta si la contraseña es incorrecta', async () => {
+    const auth = TestBed.inject(Auth);
+    spyOn(auth, 'verificarPasswordActual').and.resolveTo(false);
+    const eliminar = spyOn(auth, 'eliminarCuenta').and.callThrough();
+
+    await component['eliminarConPassword']('incorrecta');
+
+    expect(eliminar).not.toHaveBeenCalled();
+    expect(component.eliminandoCuenta).toBeFalse();
+  });
+
+  it('elimina la cuenta cuando la contraseña es correcta', async () => {
+    const auth = TestBed.inject(Auth);
+    spyOn(auth, 'verificarPasswordActual').and.resolveTo(true);
+    const eliminar = spyOn(auth, 'eliminarCuenta').and.callThrough();
+
+    await component['eliminarConPassword']('correcta');
+
+    expect(eliminar).toHaveBeenCalledTimes(1);
+  });
 });

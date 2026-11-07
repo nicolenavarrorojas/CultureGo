@@ -2,6 +2,7 @@
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
 import { Router } from '@angular/router';
+import { AlertController } from '@ionic/angular/standalone';
 
 import { Auth } from 'src/app/core/services/auth';
 import { Gamificacion } from 'src/app/core/services/gamificacion';
@@ -97,5 +98,17 @@ describe('PaginaPerfilComponent', () => {
     await recarga;
 
     expect(component.totalLugaresVisitados).toBe(4);
+  });
+
+  it('pide confirmación antes de cerrar sesión y no la cierra por sí solo', async () => {
+    const alerta = { present: jasmine.createSpy('present').and.resolveTo() };
+    const crear = spyOn(TestBed.inject(AlertController), 'create').and.resolveTo(alerta as never);
+    const cerrar = spyOn(TestBed.inject(Auth), 'cerrarSesion').and.callThrough();
+
+    await component.cerrarSesion();
+
+    expect(crear).toHaveBeenCalled();
+    expect(alerta.present).toHaveBeenCalled();
+    expect(cerrar).not.toHaveBeenCalled();
   });
 });

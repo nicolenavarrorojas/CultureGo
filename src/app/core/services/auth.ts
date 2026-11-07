@@ -3,6 +3,7 @@ import { Subject } from 'rxjs';
 import { Supabase } from './supabase';
 import { Usuario } from '../models';
 
+
 const INTENTOS_PERFIL = 3;
 const ESPERA_PERFIL_MS = 400;
 
@@ -21,6 +22,7 @@ export class Auth {
   // Aumenta con cada cambio de sesión; una consulta iniciada antes no se guarda en caché.
   private versionSesion = 0;
 
+  // Avisa a las pantallas que la sesión cambió 
   private cambioSesion = new Subject<void>();
   readonly cambioSesion$ = this.cambioSesion.asObservable();
 
@@ -107,7 +109,17 @@ export class Auth {
 
     // No se guarda en caché: la siguiente llamada vuelve a consultar.
     console.warn('No se pudo leer el perfil del usuario', ultimoError);
+    await this.cerrarSesionSiLaCuentaNoExiste();
     return null;
+  }
+
+
+  private async cerrarSesionSiLaCuentaNoExiste() {
+    const { data, error } = await this.supabase.auth.getUser();
+    const cuentaInexistente = !data.user && !!error && [401, 403, 404].includes(error.status ?? 0);
+    if (cuentaInexistente) {
+      await this.supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    }
   }
 
   private esperar(ms: number): Promise<void> {
@@ -178,8 +190,8 @@ export class Auth {
    * Devuelve false si la contraseña es incorrecta.
    */
   async verificarPasswordActual(password: string): Promise<boolean> {
-    const { data: sesion } = await this.supabase.auth.getUser();
-    const email = sesion.user?.email;
+    const { data: sesion } = await this.supabase.auth.getSession();
+    const email = sesion.session?.user.email;
     if (!email) throw new Error('No hay sesión activa.');
 
     const { error } = await this.supabase.auth.signInWithPassword({ email, password });
@@ -213,7 +225,10 @@ export class Auth {
   async eliminarCuenta(): Promise<void> {
     const { error } = await this.supabase.rpc('fn_eliminar_mi_cuenta');
     if (error) throw error;
-    this.usuarioCache = undefined;
+
+
+    await this.supabase.auth.signOut({ scope: 'local' }).catch(() => undefined);
+    this.reiniciarCache();
   }
 
 }
