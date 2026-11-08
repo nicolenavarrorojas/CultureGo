@@ -29,7 +29,7 @@ export const routes: Routes = [
       ),
   },
 
-  // Tabs principales (Inicio / Mapa / Perfil)
+  // Tabs principales (Inicio/Mapa/Perfil)
   {
     path: 'tabs',
     loadComponent: () => import('./shared/components/tabs/tabs.component').then((m) => m.TabsComponent),
@@ -66,7 +66,7 @@ export const routes: Routes = [
       import('./features/catalogo/detalle-lugar/detalle-lugar.component').then((m) => m.DetalleLugarComponent),
   },
 
-  //  Historial/medallas (accesible desde Perfil)
+  //  Historial/medallas
   {
     path: 'perfil/historial',
     loadComponent: () =>
@@ -74,7 +74,7 @@ export const routes: Routes = [
     canActivate: [authGuard],
   },
 
-  // Personalización de avatar (accesible desde Perfil)
+  // Personalización de avatar
   {
     path: 'perfil/personalizar-avatar',
     loadComponent: () =>
@@ -83,7 +83,7 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
-  // Mis tickets (accesible desde Perfil)
+  // Mis tickets
   {
     path: 'perfil/mis-tickets',
     loadComponent: () =>
@@ -92,14 +92,14 @@ export const routes: Routes = [
       ),
     canActivate: [authGuard],
   },
-  // Configuración de perfil (accesible desde Perfil)
+  // Configuración de perfil
   {
     path: 'perfil/configuracion',
     loadComponent: () =>
       import('./features/perfil/configuracion/configuracion.component').then(
         (m) => m.ConfiguracionComponent
       ),
-    // Sin guard: sin sesión solo se muestran Permisos, Acerca de y Términos.
+    // Sin guard
   },
   // Admin
   {
