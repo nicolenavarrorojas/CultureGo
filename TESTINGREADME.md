@@ -11,7 +11,7 @@ Guía para ejecutar las pruebas del proyecto. Los casos, criterios y resultados 
 ## Requisitos previos
 
 - Node.js y las dependencias instaladas: `npm install`.
-- El archivo `src/environments/environment.ts` (no se versiona; pídelo al equipo). Lo necesitan tanto `ng test` como `ionic serve`.
+- El archivo `src/environments/environment.ts`, que ya viene en el repositorio con la URL y la clave publicable de Supabase. Lo necesitan tanto `ng test` como `ionic serve`.
 
 ---
 
