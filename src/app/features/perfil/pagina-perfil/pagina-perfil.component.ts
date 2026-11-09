@@ -1,4 +1,4 @@
-import { Component, DestroyRef, inject } from '@angular/core';
+import { Component, DestroyRef, NgZone, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { Router } from '@angular/router';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
@@ -11,6 +11,7 @@ import {
   IonToggle,
   IonSkeletonText,
   IonToast,
+  AlertController,
 } from '@ionic/angular/standalone';
 import type { ToggleCustomEvent } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
@@ -33,6 +34,7 @@ import {
   imagesOutline,
   moonOutline,
   starOutline,
+  personOutline,
 } from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
@@ -93,6 +95,7 @@ export class PaginaPerfilComponent {
   mostrarCalificacion = false;
 
   private destroyRef = inject(DestroyRef);
+  private zone = inject(NgZone);
 
   constructor(
     private authService: Auth,
@@ -101,7 +104,8 @@ export class PaginaPerfilComponent {
     private avatarService: AvatarService,
     private avatarEventos: AvatarEventos,
     private themeService: Theme,
-    private router: Router
+    private router: Router,
+    private alertController: AlertController
   ) {
     addIcons({
       settingsOutline,
@@ -122,6 +126,7 @@ export class PaginaPerfilComponent {
       filmOutline,
       imagesOutline,
       starOutline,
+      personOutline,
     });
 
     // Al guardar en Personalizar avatar, se actualiza el círculo al instante,
@@ -242,6 +247,14 @@ export class PaginaPerfilComponent {
     this.router.navigateByUrl('/perfil/configuracion');
   }
 
+  irALogin() {
+    this.router.navigateByUrl('/auth/login');
+  }
+
+  irARegistro() {
+    this.router.navigateByUrl('/auth/registro');
+  }
+
   irAPanelAdmin() {
     this.router.navigateByUrl('/admin/gestion-lugares');
   }
@@ -254,9 +267,32 @@ export class PaginaPerfilComponent {
     this.mostrarCalificacion = true;
   }
 
+  /** Pide confirmación; la sesión se cierra solo si la persona acepta. */
   async cerrarSesion() {
-    await this.authService.cerrarSesion();
-    this.router.navigateByUrl('/tabs/inicio');
+    const alerta = await this.alertController.create({
+      header: 'Cerrar sesión',
+      message: '¿Estás seguro de que quieres cerrar sesión?',
+      buttons: [
+        { text: 'Cancelar', role: 'cancel' },
+        {
+          text: 'Cerrar sesión',
+          // El handler corre fuera de la zona de Angular: se vuelve a entrar para que la pantalla se refresque.
+          handler: () => {
+            this.zone.run(() => this.aplicarCierreSesion());
+          },
+        },
+      ],
+    });
+    await alerta.present();
+  }
+
+  private async aplicarCierreSesion() {
+    try {
+      await this.authService.cerrarSesion();
+      this.router.navigateByUrl('/tabs/inicio');
+    } catch {
+      this.mostrarAviso('No se pudo cerrar la sesión. Intenta de nuevo.');
+    }
   }
 
   private mostrarAviso(mensaje: string) {

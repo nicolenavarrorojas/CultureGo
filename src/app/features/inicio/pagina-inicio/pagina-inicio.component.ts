@@ -1,7 +1,8 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnDestroy, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
+import { Subscription } from 'rxjs';
 import {
   IonContent,
   IonSearchbar,
@@ -37,12 +38,13 @@ type FiltroRapido = 'todos' | 'gratis' | 'cerca';
   templateUrl: './pagina-inicio.component.html',
   styleUrls: ['./pagina-inicio.component.scss'],
 })
-export class PaginaInicioComponent implements OnInit {
+export class PaginaInicioComponent implements OnInit, OnDestroy {
   nombreUsuario = '';
   terminoBusqueda = '';
   filtroActivo: FiltroRapido = 'todos';
 
   lugaresDestacados: Lugar[] = [];
+  private suscripcionSesion?: Subscription;
   cargando = true;
 
   // LIMITE DE CUANTOS LUGARES MOSTRAR
@@ -57,7 +59,12 @@ export class PaginaInicioComponent implements OnInit {
   }
 
   async ngOnInit() {
+    this.suscripcionSesion = this.auth.cambioSesion$.subscribe(() => this.cargarUsuario());
     await this.cargarDestacados();
+  }
+
+  ngOnDestroy() {
+    this.suscripcionSesion?.unsubscribe();
   }
 
   private async cargarUsuario() {

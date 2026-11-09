@@ -1,0 +1,110 @@
+:host {
+  display: block;
+  font-family: 'Work Sans', sans-serif;
+}
+
+.encabezado {
+  margin-bottom: 32px;
+
+  h1 {
+    margin: 0 0 6px;
+    font-family: 'Fraunces', serif;
+    font-size: 1.6rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  p {
+    margin: 0;
+    font-size: 0.9rem;
+    line-height: 1.5;
+    color: var(--ion-color-medium);
+
+    strong {
+      color: var(--ion-color-dark);
+      word-break: break-all;
+    }
+  }
+}
+
+.formulario {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.campo-codigo {
+  display: block;
+  background: var(--ion-color-light);
+  border-radius: 14px;
+  padding: 14px 16px;
+
+  input {
+    width: 100%;
+    border: none;
+    background: transparent;
+    outline: none;
+    text-align: center;
+    font-family: inherit;
+    font-size: 1.8rem;
+    font-weight: 700;
+    letter-spacing: 0.5rem;
+    text-indent: 0.5rem;
+    color: var(--ion-color-dark);
+
+    &::placeholder {
+      color: var(--ion-color-medium);
+      font-weight: 400;
+    }
+  }
+}
+
+.boton-principal {
+  margin-top: 8px;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  border: none;
+  border-radius: 14px;
+  padding: 15px;
+  font-size: 0.95rem;
+  font-weight: 700;
+
+  &[disabled] {
+    opacity: 0.6;
+  }
+}
+
+.enlaces {
+  margin-top: 24px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+
+  .boton-enlace {
+    background: none;
+    border: none;
+    color: var(--ion-color-primary);
+    font-size: 0.88rem;
+    font-weight: 600;
+
+    &[disabled] {
+      color: var(--ion-color-medium);
+      font-weight: 500;
+    }
+  }
+
+  .boton-texto {
+    background: none;
+    border: none;
+    color: var(--ion-color-medium);
+    font-size: 0.85rem;
+    text-decoration: underline;
+  }
+
+  .ayuda {
+    margin: 0;
+    font-size: 0.78rem;
+    color: var(--ion-color-medium);
+  }
+}

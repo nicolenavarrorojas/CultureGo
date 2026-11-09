@@ -45,7 +45,11 @@ export class LoginComponent {
       await this.authService.iniciarSesion(this.email.trim(), this.password);
       this.router.navigateByUrl(this.obtenerRedirectTo() ?? '/tabs/inicio');
     } catch (error) {
-      this.mostrarAviso(traducirErrorAuth(error));
+      if (this.correoSinConfirmar(error)) {
+        this.router.navigate(['/auth/registro'], { queryParams: { confirmar: this.email.trim() } });
+      } else {
+        this.mostrarAviso(traducirErrorAuth(error));
+      }
     } finally {
       this.cargando = false;
     }
@@ -59,6 +63,12 @@ export class LoginComponent {
     this.mostrarPassword = !this.mostrarPassword;
   }
   
+  private correoSinConfirmar(error: unknown): boolean {
+    if (typeof error !== 'object' || error === null) return false;
+    const { code, message } = error as { code?: string; message?: string };
+    return code === 'email_not_confirmed' || /email not confirmed/i.test(message ?? '');
+  }
+
   private obtenerRedirectTo(): string | null {
     const destino = this.route.snapshot.queryParamMap.get('redirectTo');
     return destino && destino.startsWith('/') ? destino : null;

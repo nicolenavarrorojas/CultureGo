@@ -391,10 +391,7 @@
   overflow: hidden;
 }
 
-// Pin del mini-mapa de ubicación en el formulario de admin. Color primary
-// (jacarandá) a propósito, distinto del secondary/adobe que usa el pin de
-// "sugerir lugar" -- así se diferencian visualmente "punto que el admin ya
-// confirmó" de "punto propuesto por un usuario".
+// Pin del mini-mapa de ubicación en el formulario de admin
 ::ng-deep .pin-admin-lugar {
   .pin-punto {
     display: block;
