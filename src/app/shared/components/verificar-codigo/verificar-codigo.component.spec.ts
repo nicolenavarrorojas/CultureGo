@@ -31,13 +31,13 @@ describe('VerificarCodigoComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('deja solo dígitos y corta al largo del código', () => {
+  it('UT-COD-01 deja solo dígitos y corta al largo del código', () => {
     escribir('12a3-456789');
     expect(component.codigo).toBe('123456');
     expect(component.codigoValido).toBeTrue();
   });
 
-  it('solo emite el código cuando está completo', () => {
+  it('UT-COD-02 solo emite el código cuando está completo', () => {
     const emitir = spyOn(component.verificar, 'emit');
 
     escribir('123');
@@ -49,7 +49,7 @@ describe('VerificarCodigoComponent', () => {
     expect(emitir).toHaveBeenCalledOnceWith('123456');
   });
 
-  it('no deja reenviar mientras corre la espera', () => {
+  it('UT-COD-03 no deja reenviar mientras corre la espera', () => {
     const emitir = spyOn(component.reenviar, 'emit');
 
     component.pedirReenvio();

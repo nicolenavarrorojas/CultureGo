@@ -36,13 +36,13 @@ describe('RecuperarPasswordComponent', () => {
     expect(component).toBeTruthy();
   });
 
-  it('pasa al paso del código después de pedir el correo', async () => {
+  it('UT-REC-01 pasa al paso del código después de pedir el correo', async () => {
     component.email = 'nicole@example.com';
     await component.enviarCorreo();
     expect(component.paso).toBe('codigo');
   });
 
-  it('con el código correcto va a crear la nueva contraseña', async () => {
+  it('UT-REC-02 con el código correcto va a crear la nueva contraseña', async () => {
     component.email = 'nicole@example.com';
     await component.verificarCodigo('123456');
     expect(navegar).toHaveBeenCalledWith('/auth/restablecer');

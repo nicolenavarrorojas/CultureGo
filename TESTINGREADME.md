@@ -5,8 +5,8 @@ Guía para ejecutar las pruebas del proyecto. Los casos, criterios y resultados 
 | Tipo | Casos | Herramienta | Comando | Evidencia |
 |---|---|---|---|---|
 | Unitarias | UT-* | Karma + Jasmine | `npm test` | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/ut-ejecucion-AAAA-MM-DD.txt` |
-| E2E (QA automatizados) | QA-01 a QA-30 | Playwright Test | `npm run e2e` | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-AAAA-MM-DD/` |
-| Manuales | QA-01 a QA-30 | A mano, según el plan | — | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/manual-AAAA-MM-DD/` |
+| E2E (QA automatizados) | QA-01 a QA-31 | Playwright Test | `npm run e2e` | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-AAAA-MM-DD/` |
+| Manuales | QA-01 a QA-31 | A mano, según el plan | — | `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/manual-AAAA-MM-DD/` |
 
 ## Requisitos previos
 
@@ -39,7 +39,7 @@ npx ng test --watch=false --browsers=ChromeHeadless --code-coverage > "FASE 2/EV
 
 ## 2. Pruebas E2E con Playwright
 
-Automatizan los casos QA-01 a QA-30 de la sección 4 del plan (salvo QA-05). Corren sobre la versión web (`ionic serve`, http://localhost:8100) emulando un Pixel 7, y cada prueba lleva el ID del caso al inicio del título. QA-05 queda como manual porque necesita abrir el enlace de un correo real.
+Automatizan los casos QA-01 a QA-31 de la sección 4 del plan (salvo QA-05). Corren sobre la versión web (`ionic serve`, http://localhost:8100) emulando un Pixel 7, y cada prueba lleva el ID del caso al inicio del título. QA-05 queda como manual porque necesita el código de 6 dígitos que llega a un correo real; en QA-01 la prueba llega hasta el paso del código y el ingreso del código se verifica a mano. QA-31 simula Nominatim y la ubicación del dispositivo, así que no llama al servicio real.
 
 > **Importante: se ejecutan contra la base de datos REAL de Supabase.** Solo crean, modifican o borran datos de prueba: cuentas cuyo correo contiene `+e2e`, lugares cuyo nombre empieza con `E2E-` y la actividad de las cuentas de prueba U1, U2 y ADM. Todo borrado o actualización pasa por `GuardDatos` (`e2e/support/guard.ts`), que exige uno de esos filtros, cuenta las filas antes y se detiene si alguna no cumple la condición. Mientras haya datos de prueba cargados, los lugares `E2E-` se ven en el catálogo y en el mapa de la app.
 
@@ -104,7 +104,7 @@ npx playwright show-report "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACI
 
 ```
 e2e/
-├── *.e2e.ts             pruebas por módulo (auth, catalogo, visitas, resenas, avatar, tema, admin, seguridad, calificacion)
+├── *.e2e.ts             pruebas por módulo (auth, catalogo, visitas, resenas, avatar, tema, admin, seguridad, calificacion, sugerencias)
 ├── seed.ts              datos de prueba (--dry-run, --solo-limpiar)
 ├── global-setup.ts      seed + fixtures + sesiones de U1, U2 y ADM
 ├── global-teardown.ts   borra la cuenta de QA-01 si quedó viva
@@ -131,4 +131,4 @@ Las pruebas usan el sufijo `.e2e.ts` para que Karma, que toma `**/*.spec.ts`, no
 
 Se ejecutan siguiendo los pasos de la sección 4 del Plan de Pruebas, cada caso a partir de su precondición. Los resultados van al Registro de ejecución (`.xlsx`) y las capturas o videos a `FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/manual-AAAA-MM-DD/`. Para un Fail, registra una incidencia con lo esperado frente a lo obtenido.
 
-Los casos QA-01 a QA-30 también están automatizados (sección 2). Siguen siendo manuales QA-05 y las partes anotadas como `manual` en el reporte de Playwright.
+Los casos QA-01 a QA-31 también están automatizados (sección 2). Siguen siendo manuales QA-05, el ingreso del código de 6 dígitos en QA-01 y las partes anotadas como `manual` en el reporte de Playwright.
