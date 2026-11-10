@@ -8,6 +8,7 @@ export interface LugarSugerido {
   descripcion: string | null;
   latitud: number;
   longitud: number;
+  direccion?: string | null; // la escribe el usuario o se obtiene de su ubicación actual
   estado: 'pendiente' | 'aprobado' | 'rechazado';
   fecha_creacion: string;
   revisado_por: string | null;

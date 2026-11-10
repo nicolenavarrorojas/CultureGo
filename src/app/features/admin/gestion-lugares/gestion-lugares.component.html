@@ -94,6 +94,7 @@
         <div class="fila-sugerencia-info">
           <span class="fila-sugerencia-nombre">{{ sugerencia.nombre }}</span>
           <span class="fila-sugerencia-detalle">{{ sugerencia.categoria?.nombre }}</span>
+          <span class="fila-sugerencia-direccion" *ngIf="sugerencia.direccion">{{ sugerencia.direccion }}</span>
           <span class="fila-sugerencia-coords">
             📍 {{ sugerencia.latitud.toFixed(5) }}, {{ sugerencia.longitud.toFixed(5) }}
           </span>

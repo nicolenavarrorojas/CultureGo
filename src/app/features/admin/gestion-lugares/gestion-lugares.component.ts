@@ -231,6 +231,7 @@ export class GestionLugaresComponent implements OnInit {
       nombre: sugerencia.nombre,
       descripcion: sugerencia.descripcion ?? '',
       id_categoria: sugerencia.id_categoria,
+      direccion: sugerencia.direccion ?? '',
       latitud: sugerencia.latitud,
       longitud: sugerencia.longitud,
     };
