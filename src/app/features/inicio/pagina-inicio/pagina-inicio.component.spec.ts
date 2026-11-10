@@ -64,7 +64,7 @@ describe('PaginaInicioComponent', () => {
     expect(component.nombreUsuario).toBe('');
   });
 
-  it('actualiza el saludo cuando cambia la sesión, aunque no se vuelva a entrar a la pantalla', async () => {
+  it('UT-INI-02 actualiza el saludo cuando cambia la sesión, aunque no se vuelva a entrar a la pantalla', async () => {
     usuarioActual = { nombre: 'Nicole Navarro' };
     cambioSesion.next();
     await fixture.whenStable();

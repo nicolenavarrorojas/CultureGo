@@ -2,6 +2,7 @@ import { randomUUID } from 'node:crypto';
 import { expect, test } from './support/test';
 import { credenciales, esCorreoDePrueba, rutaEstado } from './support/entorno';
 import {
+  anotarManual,
   anotarTiempo,
   botonAlerta,
   escribirSecreto,
@@ -53,13 +54,17 @@ test.describe('Cuenta creada desde la interfaz', () => {
     await escribirSecreto(registro.getByPlaceholder('Confirmar contraseña'), password);
     await registro.locator('ion-checkbox').click();
 
-    const confirmacion = toast(page, 'Te enviamos un correo').or(page.locator('app-pagina-inicio h1'));
+    // Desde f978cc2 el registro termina en el paso «Confirma tu correo», donde se escribe
+    // el código de 6 dígitos que llega por correo.
+    const pasoCodigo = page.locator('app-verificar-codigo');
     const ms = await medir(async () => {
       await registro.getByRole('button', { name: 'Crear cuenta' }).click();
-      await expect(confirmacion.first()).toBeVisible();
+      await expect(pasoCodigo.getByText('Confirma tu correo')).toBeVisible();
     });
     anotarTiempo('Creación de cuenta', ms);
     expect.soft(ms, 'La confirmación del registro debe llegar en ≤ 2 s').toBeLessThanOrEqual(2000);
+    await expect(pasoCodigo).toContainText(email);
+    anotarManual('El ingreso del código de 6 dígitos recibido por correo se verifica manualmente (requiere leer el correo).');
 
     await expect
       .poll(async () => (await admin.from('usuario').select('id_usuario').eq('email', email).maybeSingle()).data, {
@@ -108,6 +113,8 @@ test.describe('Cuenta creada desde la interfaz', () => {
     await expect(page, 'La sesión debe seguir activa').toHaveURL(/\/perfil\/configuracion/);
 
     await page.locator('app-configuracion').getByRole('button', { name: 'Eliminar cuenta' }).click();
+    // Desde 111a60b, eliminar la cuenta exige escribir la contraseña en la confirmación.
+    await escribirSecreto(page.locator('ion-alert input').first(), password);
     const ms = await medir(async () => {
       await botonAlerta(page, 'Eliminar mi cuenta').click();
       await expect(page).toHaveURL(/\/tabs\/inicio/);
@@ -206,7 +213,7 @@ test('QA-03 login con contraseña incorrecta en español y luego correcta en ≤
 test.describe('Sesión de U1', () => {
   test.use({ storageState: rutaEstado('u1') });
 
-  test('QA-04 la sesión persiste al recargar y al cerrarla Perfil redirige a login', async ({ page }) => {
+  test('QA-04 la sesión persiste al recargar y al cerrarla Perfil muestra la vista de invitado', async ({ page }) => {
     try {
       await page.goto('/tabs/perfil');
       const perfil = page.locator('app-pagina-perfil');
@@ -217,9 +224,15 @@ test.describe('Sesión de U1', () => {
       await expect(page.locator('app-pagina-perfil h1.nombre-usuario')).toHaveText(nombre);
 
       await page.locator('app-pagina-perfil').getByRole('button', { name: 'Cerrar sesión' }).click();
+      // Desde 111a60b, cerrar sesión pide confirmación.
+      await botonAlerta(page, 'Cerrar sesión').click();
       await expect(page).toHaveURL(/\/tabs\/inicio/);
       await page.locator('ion-tab-button[tab="perfil"]').click();
-      await expect(page).toHaveURL(/\/auth\/login\?redirectTo=%2Ftabs%2Fperfil$/);
+      // Modo invitado (8a2bce6): Perfil ya no exige sesión; muestra la vista de invitado.
+      await expect(page).toHaveURL(/\/tabs\/perfil/);
+      const invitado = page.locator('app-pagina-perfil .bloque-invitado');
+      await expect(invitado).toContainText('Inicia sesión para guardar tus visitas y medallas.');
+      await expect(invitado.getByRole('button', { name: 'Iniciar sesión' })).toBeVisible();
       await expect(page.getByText(nombre).filter({ visible: true }), 'No deben mostrarse datos de U1').toHaveCount(0);
     } finally {
       await guardarEstado('u1');
@@ -271,7 +284,7 @@ test.describe('Sesión de U1', () => {
 
 test.skip(
   'QA-05 recuperación de contraseña por correo',
-  { annotation: { type: 'manual', description: 'Requiere abrir el enlace de un correo real.' } },
+  { annotation: { type: 'manual', description: 'Requiere el código de 6 dígitos que llega a un correo real.' } },
   async () => {}
 );
 

@@ -1,0 +1,265 @@
+{
+  "config": {
+    "argv": [
+      "C:\\Program Files\\nodejs\\node.exe",
+      "C:\\Users\\Central Gamer\\CultureGo\\node_modules\\@playwright\\test\\cli.js",
+      "test",
+      "-g",
+      "QA-04|QA-07"
+    ],
+    "configFile": "C:\\Users\\Central Gamer\\CultureGo\\playwright.config.ts",
+    "rootDir": "C:/Users/Central Gamer/CultureGo/e2e",
+    "failOnFlakyTests": false,
+    "forbidOnly": false,
+    "fullyParallel": false,
+    "globalSetup": "C:\\Users\\Central Gamer\\CultureGo\\e2e\\global-setup.ts",
+    "globalTeardown": "C:\\Users\\Central Gamer\\CultureGo\\e2e\\global-teardown.ts",
+    "globalTimeout": 0,
+    "grep": {},
+    "grepInvert": null,
+    "maxFailures": 0,
+    "metadata": {
+      "actualWorkers": 1
+    },
+    "preserveOutput": "always",
+    "projects": [
+      {
+        "outputDir": "C:/Users/Central Gamer/CultureGo/test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "id": "",
+        "name": "",
+        "testDir": "C:/Users/Central Gamer/CultureGo/e2e",
+        "testIgnore": [],
+        "testMatch": [
+          "**/*.e2e.ts"
+        ],
+        "timeout": 90000
+      }
+    ],
+    "filteredProjects": [
+      {
+        "grep": {},
+        "grepInvert": null,
+        "outputDir": "C:\\Users\\Central Gamer\\CultureGo\\test-results",
+        "repeatEach": 1,
+        "retries": 0,
+        "metadata": {
+          "actualWorkers": 1
+        },
+        "name": "",
+        "testDir": "C:\\Users\\Central Gamer\\CultureGo\\e2e",
+        "snapshotDir": "C:\\Users\\Central Gamer\\CultureGo\\e2e",
+        "testIgnore": [],
+        "testMatch": "**/*.e2e.ts",
+        "timeout": 90000,
+        "use": {
+          "userAgent": "Mozilla/5.0 (Linux; Android 14; Pixel 7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/156.0.8078.4 Mobile Safari/537.36",
+          "viewport": {
+            "width": 412,
+            "height": 839
+          },
+          "screen": {
+            "width": 412,
+            "height": 915
+          },
+          "deviceScaleFactor": 2.625,
+          "isMobile": true,
+          "hasTouch": true,
+          "defaultBrowserType": "chromium",
+          "baseURL": "http://localhost:8100",
+          "locale": "es-CL",
+          "screenshot": "on",
+          "video": "retain-on-failure",
+          "trace": "off"
+        },
+        "dependencies": [],
+        "ignoreSnapshots": false,
+        "__projectId": ""
+      }
+    ],
+    "quiet": false,
+    "reporter": [
+      [
+        "html",
+        {
+          "outputFolder": "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-report",
+          "open": "never"
+        }
+      ],
+      [
+        "json",
+        {
+          "outputFile": "FASE 2/EVIDENCIAS PROYECTO/EVIDENCIAS DE DOCUMENTACION/7- Pruebas y evidencias/evidencias/e2e-report/resultados.json"
+        }
+      ]
+    ],
+    "reportSlowTests": {
+      "max": 5,
+      "threshold": 300000
+    },
+    "shard": null,
+    "tags": [],
+    "updateSnapshots": "default",
+    "updateSourceMethod": "patch",
+    "version": "1.64.0",
+    "workers": 1,
+    "webServer": {
+      "command": "npx ionic serve --no-open",
+      "url": "http://localhost:8100",
+      "reuseExistingServer": true,
+      "timeout": 240000
+    }
+  },
+  "suites": [
+    {
+      "title": "auth.e2e.ts",
+      "file": "auth.e2e.ts",
+      "column": 0,
+      "line": 0,
+      "specs": [],
+      "suites": [
+        {
+          "title": "Cuenta creada desde la interfaz",
+          "file": "auth.e2e.ts",
+          "line": 44,
+          "column": 6,
+          "specs": [
+            {
+              "title": "QA-07 eliminar cuenta: cancelar no cambia nada y confirmar la elimina",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [
+                    {
+                      "type": "nota",
+                      "description": "QA-01 no se ejecutó: la cuenta se creó por la API."
+                    },
+                    {
+                      "type": "tiempo",
+                      "description": "Eliminación de cuenta: 1071 ms"
+                    }
+                  ],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 3612,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "steps": [
+                        {
+                          "title": "Escribir valor confidencial",
+                          "duration": 27
+                        },
+                        {
+                          "title": "Escribir valor confidencial",
+                          "duration": 17
+                        },
+                        {
+                          "title": "Escribir valor confidencial",
+                          "duration": 14
+                        }
+                      ],
+                      "startTime": "2026-11-10T01:17:43.739Z",
+                      "annotations": [
+                        {
+                          "type": "nota",
+                          "description": "QA-01 no se ejecutó: la cuenta se creó por la API."
+                        },
+                        {
+                          "type": "tiempo",
+                          "description": "Eliminación de cuenta: 1071 ms"
+                        }
+                      ],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Central Gamer\\CultureGo\\test-results\\auth.e2e.ts-Cuenta-creada--47139-nada-y-confirmar-la-elimina\\test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "65d9d70fa9f74045cfc5-1526752dc36ed18e5ee9",
+              "file": "auth.e2e.ts",
+              "line": 95,
+              "column": 7
+            }
+          ]
+        },
+        {
+          "title": "Sesión de U1",
+          "file": "auth.e2e.ts",
+          "line": 213,
+          "column": 6,
+          "specs": [
+            {
+              "title": "QA-04 la sesión persiste al recargar y al cerrarla Perfil muestra la vista de invitado",
+              "ok": true,
+              "tags": [],
+              "tests": [
+                {
+                  "timeout": 90000,
+                  "annotations": [],
+                  "expectedStatus": "passed",
+                  "projectId": "",
+                  "projectName": "",
+                  "results": [
+                    {
+                      "workerIndex": 0,
+                      "parallelIndex": 0,
+                      "status": "passed",
+                      "duration": 1722,
+                      "errors": [],
+                      "stdout": [],
+                      "stderr": [],
+                      "retry": 0,
+                      "startTime": "2026-11-10T01:17:47.426Z",
+                      "annotations": [],
+                      "attachments": [
+                        {
+                          "name": "screenshot",
+                          "contentType": "image/png",
+                          "path": "C:\\Users\\Central Gamer\\CultureGo\\test-results\\auth.e2e.ts-Sesión-de-U1-Q-98d03-uestra-la-vista-de-invitado\\test-finished-1.png"
+                        }
+                      ]
+                    }
+                  ],
+                  "status": "expected"
+                }
+              ],
+              "id": "65d9d70fa9f74045cfc5-8bf6ec98e5e7306221d2",
+              "file": "auth.e2e.ts",
+              "line": 216,
+              "column": 7
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "errors": [],
+  "stats": {
+    "startTime": "2026-11-10T01:17:37.147Z",
+    "duration": 12284.978,
+    "expected": 2,
+    "skipped": 0,
+    "unexpected": 0,
+    "flaky": 0
+  }
+}

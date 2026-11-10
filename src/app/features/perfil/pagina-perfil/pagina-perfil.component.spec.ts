@@ -100,7 +100,7 @@ describe('PaginaPerfilComponent', () => {
     expect(component.totalLugaresVisitados).toBe(4);
   });
 
-  it('pide confirmación antes de cerrar sesión y no la cierra por sí solo', async () => {
+  it('UT-PER-03 pide confirmación antes de cerrar sesión y no la cierra por sí solo', async () => {
     const alerta = { present: jasmine.createSpy('present').and.resolveTo() };
     const crear = spyOn(TestBed.inject(AlertController), 'create').and.resolveTo(alerta as never);
     const cerrar = spyOn(TestBed.inject(Auth), 'cerrarSesion').and.callThrough();
@@ -112,7 +112,7 @@ describe('PaginaPerfilComponent', () => {
     expect(cerrar).not.toHaveBeenCalled();
   });
 
-  it('sin sesión muestra la vista de invitado y no carga estadísticas', async () => {
+  it('UT-PER-04 sin sesión muestra la vista de invitado y no carga estadísticas', async () => {
     usuarioActual = null;
     const estadisticas = spyOn(TestBed.inject(Gamificacion), 'contarLugaresVisitados').and.callThrough();
 
@@ -125,7 +125,7 @@ describe('PaginaPerfilComponent', () => {
     expect(fixture.nativeElement.querySelector('.bloque-invitado')).not.toBeNull();
   });
 
-  it('desde la vista de invitado se puede ir a iniciar sesión y a registrarse', () => {
+  it('UT-PER-05 desde la vista de invitado se puede ir a iniciar sesión y a registrarse', () => {
     const navegar = spyOn(TestBed.inject(Router), 'navigateByUrl').and.callThrough();
 
     component.irALogin();

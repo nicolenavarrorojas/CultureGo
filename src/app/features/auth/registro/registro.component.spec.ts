@@ -58,13 +58,13 @@ describe('RegistroComponent', () => {
     component.aceptaTerminos = true;
   }
 
-  it('pasa al paso del código cuando el registro no trae sesión', async () => {
+  it('UT-REG-02 pasa al paso del código cuando el registro no trae sesión', async () => {
     llenarFormulario();
     await component.registrarse();
     expect(component.paso).toBe('codigo');
   });
 
-  it('vuelve al formulario desde el paso del código', async () => {
+  it('UT-REG-03 vuelve al formulario desde el paso del código', async () => {
     llenarFormulario();
     await component.registrarse();
     component.volverAlFormulario();

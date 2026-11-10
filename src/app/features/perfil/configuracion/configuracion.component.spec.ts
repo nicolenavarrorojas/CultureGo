@@ -62,7 +62,7 @@ describe('ConfiguracionComponent', () => {
     expect(component.nombreCambio).toBeTrue();
   });
 
-  it('no elimina la cuenta si la contraseña es incorrecta', async () => {
+  it('UT-CFG-03 no elimina la cuenta si la contraseña es incorrecta', async () => {
     const auth = TestBed.inject(Auth);
     spyOn(auth, 'verificarPasswordActual').and.resolveTo(false);
     const eliminar = spyOn(auth, 'eliminarCuenta').and.callThrough();
@@ -73,7 +73,7 @@ describe('ConfiguracionComponent', () => {
     expect(component.eliminandoCuenta).toBeFalse();
   });
 
-  it('elimina la cuenta cuando la contraseña es correcta', async () => {
+  it('UT-CFG-04 elimina la cuenta cuando la contraseña es correcta', async () => {
     const auth = TestBed.inject(Auth);
     spyOn(auth, 'verificarPasswordActual').and.resolveTo(true);
     const eliminar = spyOn(auth, 'eliminarCuenta').and.callThrough();
