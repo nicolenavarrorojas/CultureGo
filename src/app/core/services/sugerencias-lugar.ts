@@ -9,6 +9,7 @@ export interface NuevaSugerenciaLugar {
   descripcion?: string | null;
   latitud: number;
   longitud: number;
+  direccion?: string | null;
 }
 
 /**

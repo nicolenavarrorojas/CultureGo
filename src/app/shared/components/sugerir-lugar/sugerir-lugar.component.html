@@ -16,8 +16,74 @@
       </ion-toolbar>
     </ion-header>
 
-    <ion-content class="sugerir-contenido">
-      <p class="instruccion">Toca el mapa para marcar dónde está el lugar.</p>
+    <ion-content class="sugerir-contenido" (click)="alTocarContenido($event)">
+      <div class="campo-form campo-ubicacion" (keydown.escape)="alPresionarEscape($event)">
+        <span>Ubicación del lugar *</span>
+        <form class="buscador-direccion" (ngSubmit)="buscarDireccion()">
+          <input
+            type="search"
+            name="direccion"
+            [(ngModel)]="direccion"
+            (ngModelChange)="cerrarResultados()"
+            placeholder="Ej: Av. Providencia 1234"
+            autocomplete="street-address"
+            enterkeyhint="search"
+            [attr.aria-expanded]="resultadosDireccion.length > 0"
+            aria-controls="resultados-direccion"
+          />
+          <button
+            type="submit"
+            class="boton-buscar"
+            [disabled]="buscandoDireccion"
+            aria-label="Buscar dirección"
+          >
+            <ion-spinner name="crescent" *ngIf="buscandoDireccion"></ion-spinner>
+            <ion-icon name="search-outline" *ngIf="!buscandoDireccion"></ion-icon>
+          </button>
+        </form>
+
+        <!-- Menú flotante: se superpone al formulario en vez de empujarlo hacia abajo -->
+        <div
+          id="resultados-direccion"
+          class="resultados-direccion"
+          *ngIf="resultadosDireccion.length"
+          role="listbox"
+          aria-label="Direcciones encontradas"
+        >
+          <p class="resultados-titulo">Elige la dirección correcta:</p>
+          <button
+            type="button"
+            role="option"
+            class="resultado-direccion"
+            *ngFor="let resultado of resultadosDireccion"
+            (click)="elegirResultado(resultado)"
+          >
+            {{ resultado.etiqueta }}
+          </button>
+        </div>
+      </div>
+
+      <button
+        type="button"
+        class="boton-ubicacion"
+        [disabled]="obteniendoUbicacion"
+        (click)="usarUbicacionActual()"
+      >
+        <ion-spinner name="crescent" *ngIf="obteniendoUbicacion"></ion-spinner>
+        <ion-icon name="locate-outline" *ngIf="!obteniendoUbicacion"></ion-icon>
+        {{ obteniendoUbicacion ? 'Buscando tu ubicación...' : 'Usar mi ubicación actual' }}
+      </button>
+
+      <p
+        class="mensaje-ubicacion"
+        [class.mensaje-ubicacion-error]="mensajeUbicacionEsError"
+        *ngIf="mensajeUbicacion"
+        role="status"
+      >
+        {{ mensajeUbicacion }}
+      </p>
+
+      <p class="instruccion">También puedes tocar el mapa o arrastrar el pin para ajustar el punto.</p>
 
       <div #mapaContenedor class="mini-mapa"></div>
 
