@@ -11,6 +11,7 @@ describe('Auth', () => {
   let colaRespuestasPerfil: Array<{ data: any; error: any }>;
 
   let getUserSpy: jasmine.Spy;
+  let getSessionSpy: jasmine.Spy;
   let selectSpy: jasmine.Spy;
   let eqSpy: jasmine.Spy;
   let singleSpy: jasmine.Spy;
@@ -43,7 +44,11 @@ describe('Auth', () => {
     authStateCallback = undefined;
 
     getUserSpy = jasmine.createSpy('getUser').and.callFake(() =>
-      Promise.resolve({ data: { user: usuarioAuth } })
+      Promise.resolve({ data: { user: usuarioAuth }, error: null })
+    );
+    // Auth lee la sesión local con getSession (sin red) desde el commit f978cc2.
+    getSessionSpy = jasmine.createSpy('getSession').and.callFake(() =>
+      Promise.resolve({ data: { session: usuarioAuth ? { user: usuarioAuth } : null }, error: null })
     );
     selectSpy = jasmine.createSpy('select');
     eqSpy = jasmine.createSpy('eq');
@@ -65,6 +70,7 @@ describe('Auth', () => {
             client: {
               auth: {
                 getUser: getUserSpy,
+                getSession: getSessionSpy,
                 onAuthStateChange: (cb: any) => {
                   authStateCallback = cb;
                   return { data: { subscription: { unsubscribe: () => {} } } };
@@ -90,7 +96,7 @@ describe('Auth', () => {
 
   it('UT-AUTH-01 primera llamada con sesión consulta una vez y devuelve el perfil', async () => {
     const usuario = await service.obtenerUsuarioActual();
-    expect(getUserSpy).toHaveBeenCalledTimes(1);
+    expect(getSessionSpy).toHaveBeenCalledTimes(1);
     expect(selectSpy).toHaveBeenCalledTimes(1);
     expect(singleSpy).toHaveBeenCalledTimes(1);
     expect(usuario).toEqual(colaRespuestasPerfil[0].data);
@@ -101,7 +107,7 @@ describe('Auth', () => {
     const segundo = await service.obtenerUsuarioActual();
     const tercero = await service.obtenerUsuarioActual();
 
-    expect(getUserSpy).toHaveBeenCalledTimes(1);
+    expect(getSessionSpy).toHaveBeenCalledTimes(1);
     expect(selectSpy).toHaveBeenCalledTimes(1);
     expect(segundo).toEqual(primero);
     expect(tercero).toEqual(primero);
@@ -110,10 +116,10 @@ describe('Auth', () => {
   it('UT-AUTH-03 dos llamadas simultáneas deberían resultar en una sola consulta', async () => {
     const [a, b] = await Promise.all([service.obtenerUsuarioActual(), service.obtenerUsuarioActual()]);
     expect(a).toEqual(b);
-    expect(getUserSpy).toHaveBeenCalledTimes(1);
+    expect(getSessionSpy).toHaveBeenCalledTimes(1);
   });
 
-  it('UT-AUTH-04 getUser sin usuario devuelve null sin consultar la tabla usuario', async () => {
+  it('UT-AUTH-04 sin sesión devuelve null sin consultar la tabla usuario', async () => {
     usuarioAuth = null;
     const resultado = await service.obtenerUsuarioActual();
     expect(resultado).toBeNull();
@@ -121,22 +127,27 @@ describe('Auth', () => {
   });
 
   it('UT-AUTH-05 un error al leer el perfil no debería quedar en caché', async () => {
+    // El servicio reintenta 3 veces antes de rendirse: los 3 intentos fallan.
+    const errorPerfil = { data: null, error: { message: 'tabla usuario no disponible' } };
     colaRespuestasPerfil = [
-      { data: null, error: { message: 'tabla usuario no disponible' } },
+      errorPerfil,
+      errorPerfil,
+      errorPerfil,
       { data: { id_usuario: 'user-abc', nombre: 'Nicole', es_admin: false }, error: null },
     ];
+    spyOn(console, 'warn');
 
     const primero = await service.obtenerUsuarioActual();
     const segundo = await service.obtenerUsuarioActual();
 
     expect(primero).toBeNull();
     expect(segundo).not.toBeNull();
-    expect(selectSpy).toHaveBeenCalledTimes(2);
+    expect(selectSpy).toHaveBeenCalledTimes(4);
   });
 
   it('UT-AUTH-06 un cambio de sesión (onAuthStateChange) invalida la caché', async () => {
     await service.obtenerUsuarioActual();
-    expect(getUserSpy).toHaveBeenCalledTimes(1);
+    expect(getSessionSpy).toHaveBeenCalledTimes(1);
 
     usuarioAuth = { id: 'user-xyz' };
     colaRespuestasPerfil = [
@@ -145,7 +156,7 @@ describe('Auth', () => {
     authStateCallback?.('SIGNED_IN', null);
 
     const nuevo = await service.obtenerUsuarioActual();
-    expect(getUserSpy).toHaveBeenCalledTimes(2);
+    expect(getSessionSpy).toHaveBeenCalledTimes(2);
     expect(nuevo?.nombre).toBe('Benjamín');
   });
 
@@ -171,7 +182,7 @@ describe('Auth', () => {
 
     const resultado = await service.obtenerUsuarioActual();
     expect(resultado).toBeNull();
-    expect(getUserSpy).toHaveBeenCalledTimes(2);
+    expect(getSessionSpy).toHaveBeenCalledTimes(2);
   });
 
   it('UT-AUTH-09 actualizarPerfil guarda el nuevo nombre en caché sin volver a consultar', async () => {
@@ -182,12 +193,12 @@ describe('Auth', () => {
     expect(resultado.nombre).toBe('Nicole N.');
 
     selectSpy.calls.reset();
-    getUserSpy.calls.reset();
+    getSessionSpy.calls.reset();
 
     const cacheado = await service.obtenerUsuarioActual();
     expect(cacheado?.nombre).toBe('Nicole N.');
     expect(selectSpy).not.toHaveBeenCalled();
-    expect(getUserSpy).not.toHaveBeenCalled();
+    expect(getSessionSpy).not.toHaveBeenCalled();
   });
 
   it('UT-AUTH-10 actualizarPerfil con error no deja la caché con los valores fallidos', async () => {
@@ -197,7 +208,7 @@ describe('Auth', () => {
     await expectAsync(service.actualizarPerfil({ nombre: 'Nombre Hackeado' })).toBeRejected();
 
     selectSpy.calls.reset();
-    getUserSpy.calls.reset();
+    getSessionSpy.calls.reset();
     const cacheado = await service.obtenerUsuarioActual();
     expect(cacheado?.nombre).not.toBe('Nombre Hackeado');
     expect(cacheado?.nombre).toBe('Nicole');
@@ -209,9 +220,9 @@ describe('Auth', () => {
     await service.eliminarCuenta();
 
     usuarioAuth = null;
-    getUserSpy.calls.reset();
+    getSessionSpy.calls.reset();
     const resultado = await service.obtenerUsuarioActual();
-    expect(getUserSpy).toHaveBeenCalledTimes(1);
+    expect(getSessionSpy).toHaveBeenCalledTimes(1);
     expect(resultado).toBeNull();
   });
 

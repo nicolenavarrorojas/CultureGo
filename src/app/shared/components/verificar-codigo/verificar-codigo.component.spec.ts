@@ -1,6 +1,6 @@
 /// <reference types="jasmine" />
 
-import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
 
 import { VerificarCodigoComponent } from './verificar-codigo.component';
 
@@ -8,15 +8,17 @@ describe('VerificarCodigoComponent', () => {
   let component: VerificarCodigoComponent;
   let fixture: ComponentFixture<VerificarCodigoComponent>;
 
-  beforeEach(waitForAsync(() => {
-    TestBed.configureTestingModule({
+  // Sin waitForAsync: esperaría a que termine la cuenta regresiva de 60 s del
+  // reenvío y la prueba se cortaría a los 5 s.
+  beforeEach(async () => {
+    await TestBed.configureTestingModule({
       imports: [VerificarCodigoComponent],
     }).compileComponents();
 
     fixture = TestBed.createComponent(VerificarCodigoComponent);
     component = fixture.componentInstance;
     fixture.detectChanges();
-  }));
+  });
 
   // Detiene el temporizador del reenvío
   afterEach(() => fixture.destroy());
