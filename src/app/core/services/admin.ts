@@ -1,5 +1,6 @@
 import { Injectable, inject } from '@angular/core';
 import { Supabase } from './supabase';
+import { Lugares } from './lugares';
 import { Lugar, Reporte, LugarSugerido} from '../models';
 /**
  * Panel administrador: CRUD de lugares + gestión de reportes.
@@ -12,10 +13,12 @@ import { Lugar, Reporte, LugarSugerido} from '../models';
 })
 export class Admin {
   private supabase = inject(Supabase).client;
+  private lugares = inject(Lugares);
 
   async crearLugar(lugar: Partial<Lugar>): Promise<Lugar> {
     const { data, error } = await this.supabase.from('lugar').insert(lugar).select().single();
     if (error) throw error;
+    this.lugares.notificarCambio();
     return data as Lugar;
   }
 
@@ -27,12 +30,14 @@ export class Admin {
       .select()
       .single();
     if (error) throw error;
+    this.lugares.notificarCambio();
     return data as Lugar;
   }
 
   async eliminarLugar(idLugar: string): Promise<void> {
     const { error } = await this.supabase.from('lugar').delete().eq('id_lugar', idLugar);
     if (error) throw error;
+    this.lugares.notificarCambio();
   }
 
   async listarReportes(estados?: Array<Reporte['estado']>): Promise<Reporte[]> {

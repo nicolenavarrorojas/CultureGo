@@ -1,4 +1,5 @@
 import { Injectable, inject } from '@angular/core';
+import { Subject } from 'rxjs';
 import { Supabase } from './supabase';
 import { Lugar } from '../models';
 
@@ -22,6 +23,15 @@ export interface FiltrosLugar {
 })
 export class Lugares {
   private supabase = inject(Supabase).client;
+  private readonly cambios = new Subject<void>();
+
+  /** Avisa cuando el catálogo cambió (lugar creado, editado o eliminado),
+   * para que las vistas que lo guardan en memoria, como el mapa, lo recarguen. */
+  readonly cambios$ = this.cambios.asObservable();
+
+  notificarCambio() {
+    this.cambios.next();
+  }
 
   async listar(filtros: FiltrosLugar = {}): Promise<Lugar[]> {
     let query = this.supabase.from('lugar').select('*, categoria(*), comuna(*)');

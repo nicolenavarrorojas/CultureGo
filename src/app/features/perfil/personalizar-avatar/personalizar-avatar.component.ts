@@ -12,7 +12,14 @@ import {
   AlertController,
 } from '@ionic/angular/standalone';
 import { addIcons } from 'ionicons';
-import { chevronBackOutline, chevronForwardOutline, giftOutline, lockClosed } from 'ionicons/icons';
+import {
+  checkmarkCircle,
+  chevronBackOutline,
+  chevronForwardOutline,
+  giftOutline,
+  lockClosed,
+  medal,
+} from 'ionicons/icons';
 
 import { Auth } from 'src/app/core/services/auth';
 import { AvatarService } from 'src/app/core/services/avatar';
@@ -24,6 +31,7 @@ import {
   RECOMPENSAS_AVATAR,
   RecompensaAvatar,
   obtenerRecompensaBloqueada,
+  obtenerRecompensaDesbloqueada,
   quitarPiezasBloqueadas,
 } from 'src/app/core/utils/recompensas-avatar';
 
@@ -92,6 +100,8 @@ export class PersonalizarAvatarComponent implements OnInit {
   medallasObtenidas = new Set<string>();
 
   private idUsuario: string | null = null;
+  private vistasRecompensa = new Map<string, ConfiguracionAvatar>();
+  private avatarDeLasVistas = '';
 
   constructor(
     private authService: Auth,
@@ -101,7 +111,7 @@ export class PersonalizarAvatarComponent implements OnInit {
     private location: Location,
     private alertController: AlertController
   ) {
-    addIcons({ chevronBackOutline, chevronForwardOutline, giftOutline, lockClosed });
+    addIcons({ checkmarkCircle, chevronBackOutline, chevronForwardOutline, giftOutline, lockClosed, medal });
   }
 
   async ngOnInit() {
@@ -152,6 +162,51 @@ export class PersonalizarAvatarComponent implements OnInit {
       if (recompensa) return recompensa;
     }
     return null;
+  }
+
+  /** Pieza ganada con una medalla que se ve ahora en la vista previa, o null. */
+  get piezaRecompensa(): RecompensaAvatar | null {
+    for (const { clave } of PARTES) {
+      const recompensa = obtenerRecompensaDesbloqueada(clave, this.indices[clave], this.medallasObtenidas);
+      if (recompensa) return recompensa;
+    }
+    return null;
+  }
+
+  /** Todas las recompensas, con su estado, para la tarjeta de recompensas. */
+  get recompensas(): { recompensa: RecompensaAvatar; desbloqueada: boolean; puesta: boolean }[] {
+    return RECOMPENSAS_AVATAR.map((recompensa) => ({
+      recompensa,
+      desbloqueada: this.medallasObtenidas.has(recompensa.nombreMedalla),
+      puesta: this.indices[recompensa.parte] === recompensa.indice,
+    }));
+  }
+
+  /** Configuración del avatar actual con la pieza de la recompensa, para la miniatura.
+   * Se guarda en caché para entregar el mismo objeto mientras no cambie el avatar. */
+  vistaConRecompensa(recompensa: RecompensaAvatar): ConfiguracionAvatar {
+    const avatarActual = JSON.stringify(this.indices);
+    if (avatarActual !== this.avatarDeLasVistas) {
+      this.vistasRecompensa.clear();
+      this.avatarDeLasVistas = avatarActual;
+    }
+    const clave = `${recompensa.parte}-${recompensa.indice}`;
+    let vista = this.vistasRecompensa.get(clave);
+    if (!vista) {
+      vista = { ...this.indices, [recompensa.parte]: recompensa.indice };
+      this.vistasRecompensa.set(clave, vista);
+    }
+    return vista;
+  }
+
+  identificarRecompensa(_: number, item: { recompensa: RecompensaAvatar }): string {
+    return `${item.recompensa.parte}-${item.recompensa.indice}`;
+  }
+
+  /** Pone en la vista previa una pieza ya ganada (se guarda con «Guardar cambios»). */
+  usarRecompensa(recompensa: RecompensaAvatar) {
+    if (!this.medallasObtenidas.has(recompensa.nombreMedalla)) return;
+    this.indices = this.vistaConRecompensa(recompensa);
   }
 
   /** si ojos/boca quedaron en 0, los sube a la primera opción real (1) para que nadie se

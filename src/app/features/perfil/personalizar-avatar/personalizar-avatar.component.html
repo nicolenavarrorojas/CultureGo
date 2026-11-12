@@ -30,6 +30,10 @@
         <ion-icon name="lock-closed"></ion-icon>
         <span>Bloqueado</span>
       </div>
+      <div class="sello-recompensa" *ngIf="!piezaBloqueada && piezaRecompensa" role="status">
+        <ion-icon name="medal" aria-hidden="true"></ion-icon>
+        <span>Recompensa</span>
+      </div>
     </div>
 
     <div class="columna-flechas">
@@ -49,22 +53,39 @@
   <p class="aviso-bloqueo" *ngIf="piezaBloqueada as bloqueada">
     Esta pieza se desbloquea con la medalla «{{ bloqueada.nombreMedalla }}».
   </p>
+  <p class="aviso-recompensa" *ngIf="!piezaBloqueada && piezaRecompensa as recompensa">
+    {{ recompensa.nombrePieza }}: desbloqueada con la medalla «{{ recompensa.nombreMedalla }}».
+  </p>
 
   <!-- Piezas que se desbloquean con medallas (RF-27) -->
-  <div class="tarjeta-recompensas">
-    <div class="icono-recompensas">
-      <ion-icon name="gift-outline"></ion-icon>
+  <section class="tarjeta-recompensas" aria-labelledby="titulo-recompensas">
+    <h2 id="titulo-recompensas">
+      <ion-icon name="gift-outline" aria-hidden="true"></ion-icon>
+      Recompensas por medallas
+    </h2>
+    <div class="fila-recompensa" *ngFor="let item of recompensas; trackBy: identificarRecompensa">
+      <div class="miniatura-recompensa" [class.bloqueada]="!item.desbloqueada">
+        <app-avatar-preview [indices]="vistaConRecompensa(item.recompensa)" ajuste="contain"></app-avatar-preview>
+      </div>
+      <div class="texto-recompensa">
+        <span class="nombre-pieza">{{ item.recompensa.nombrePieza }}</span>
+        <span class="medalla-pieza">
+          <ion-icon [name]="item.desbloqueada ? 'medal' : 'lock-closed'" aria-hidden="true"></ion-icon>
+          Medalla «{{ item.recompensa.nombreMedalla }}»
+        </span>
+        <span class="estado-pieza" *ngIf="!item.desbloqueada">{{ item.recompensa.comoObtenerla }} para desbloquearla.</span>
+      </div>
+      <ng-container *ngIf="item.desbloqueada">
+        <span class="pieza-puesta" *ngIf="item.puesta">
+          <ion-icon name="checkmark-circle" aria-hidden="true"></ion-icon>
+          Puesta
+        </span>
+        <button class="boton-usar" *ngIf="!item.puesta" [disabled]="cargando" (click)="usarRecompensa(item.recompensa)">
+          Usar
+        </button>
+      </ng-container>
     </div>
-    <div class="texto-recompensas">
-      <h2>Desbloquea recompensas</h2>
-      <p *ngIf="recompensasDesbloqueadas.length && !recompensasPendientes.length">
-        ¡Desbloqueaste un cuerpo nuevo con la medalla «{{ recompensasDesbloqueadas[0].nombreMedalla }}»! Búscalo entre los cuerpos.
-      </p>
-      <p *ngIf="recompensasPendientes.length">
-        Consigue la medalla «{{ recompensasPendientes[0].nombreMedalla }}» registrando tu primera visita y desbloquea un cuerpo nuevo.
-      </p>
-    </div>
-  </div>
+  </section>
 
   <button class="boton-guardar" [disabled]="cargando || guardando || !!piezaBloqueada" (click)="guardar()">
     {{ guardando ? 'Guardando...' : 'Guardar cambios' }}
