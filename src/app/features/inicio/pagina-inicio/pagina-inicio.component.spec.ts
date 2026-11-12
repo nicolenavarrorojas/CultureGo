@@ -30,7 +30,7 @@ describe('PaginaInicioComponent', () => {
         },
         {
           provide: Lugares,
-          useValue: { listar: async () => [] },
+          useValue: { listar: async () => [], cambios$: new Subject<void>() },
         },
         {
           provide: Router,
