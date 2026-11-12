@@ -47,6 +47,33 @@
   }
 }
 
+.sello-recompensa {
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 4px 10px;
+  border-radius: 999px;
+  background: var(--ion-color-warning);
+  color: var(--ion-color-warning-contrast);
+  font-size: 0.75rem;
+  font-weight: 700;
+
+  ion-icon {
+    font-size: 0.9rem;
+  }
+}
+
+.aviso-recompensa {
+  margin: -12px 0 16px;
+  text-align: center;
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--ion-color-dark);
+}
+
 .aviso-bloqueo {
   margin: -12px 0 16px;
   text-align: center;
@@ -87,46 +114,100 @@
 }
 
 .tarjeta-recompensas {
-  display: flex;
-  align-items: center;
-  gap: 14px;
   padding: 14px;
   border-radius: 14px;
   background: var(--ion-color-light);
   margin-bottom: 20px;
 
-  .icono-recompensas {
-    flex-shrink: 0;
-    width: 56px;
-    height: 56px;
-    border-radius: 12px;
-    background: var(--app-superficie-tenue);
+  h2 {
     display: flex;
     align-items: center;
-    justify-content: center;
+    gap: 8px;
+    margin: 0 0 10px;
+    font-size: 0.92rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
 
     ion-icon {
-      font-size: 1.6rem;
+      font-size: 1.2rem;
       color: var(--ion-color-primary);
     }
   }
+}
 
-  .texto-recompensas {
-    min-width: 0;
+.fila-recompensa {
+  display: flex;
+  align-items: center;
+  gap: 12px;
 
-    h2 {
-      margin: 0 0 4px;
-      font-size: 0.92rem;
-      font-weight: 600;
-      color: var(--ion-color-dark);
+  & + & {
+    margin-top: 10px;
+  }
+}
+
+.miniatura-recompensa {
+  flex-shrink: 0;
+  width: 48px;
+  aspect-ratio: 2013 / 2762;
+  border-radius: 10px;
+  background: var(--app-superficie-tenue);
+  overflow: hidden;
+
+  &.bloqueada app-avatar-preview {
+    filter: grayscale(1);
+    opacity: 0.55;
+  }
+}
+
+.texto-recompensa {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: 0.78rem;
+  line-height: 1.35;
+  color: var(--ion-color-medium);
+
+  .nombre-pieza {
+    font-size: 0.88rem;
+    font-weight: 600;
+    color: var(--ion-color-dark);
+  }
+
+  .medalla-pieza {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    ion-icon {
+      color: var(--ion-color-warning-shade);
     }
+  }
+}
 
-    p {
-      margin: 0;
-      font-size: 0.78rem;
-      color: var(--ion-color-medium);
-      line-height: 1.35;
-    }
+.pieza-puesta {
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--ion-color-success);
+}
+
+.boton-usar {
+  flex-shrink: 0;
+  border: none;
+  border-radius: 999px;
+  padding: 6px 14px;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  font-size: 0.8rem;
+  font-weight: 600;
+
+  &:disabled {
+    opacity: 0.5;
   }
 }
 

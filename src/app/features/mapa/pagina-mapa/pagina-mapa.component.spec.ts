@@ -1,6 +1,7 @@
 /// <reference types="jasmine" />
 
 import { ComponentFixture, TestBed, waitForAsync } from '@angular/core/testing';
+import { Subject } from 'rxjs';
 import { ActivatedRoute, Router, convertToParamMap } from '@angular/router';
 
 import { Lugares } from 'src/app/core/services/lugares';
@@ -23,6 +24,7 @@ describe('PaginaMapaComponent', () => {
           useValue: {
             listar: async () => [],
             listarCercanos: async () => [],
+            cambios$: new Subject<void>(),
           },
         },
         {
@@ -66,4 +68,5 @@ describe('PaginaMapaComponent', () => {
   it('should create', () => {
     expect(component).toBeTruthy();
   });
+
 });

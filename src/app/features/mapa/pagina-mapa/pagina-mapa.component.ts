@@ -3,6 +3,7 @@ import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
 import * as L from 'leaflet';
+import { Subscription } from 'rxjs';
 import {
   IonHeader,
   IonToolbar,
@@ -99,6 +100,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   private temporizadorAviso?: ReturnType<typeof setTimeout>;
   private encuadrePendiente?: L.LatLngBounds;
   private ultimaPosicion?: { lat: number; lng: number };
+  private suscripcionCambios?: Subscription;
 
   idCategoriaSeleccionada: string | null = null;
   idComunaSeleccionada: string | null = null;
@@ -120,6 +122,12 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   mostrarHintDeslizar = true;
   
   async ngOnInit() {
+    // La pestaña del mapa queda en memoria: si el administrador crea, edita o
+    // elimina un lugar (por ejemplo, al aprobar una sugerencia), se recarga
+    // para que el pin aparezca sin reiniciar la app.
+    this.suscripcionCambios = this.lugaresService.cambios$.subscribe(() => {
+      this.cargarLugares();
+    });
     await Promise.all([this.cargarCategorias(), this.cargarComunas()]);
     setTimeout(() => {
     this.mostrarHintDeslizar = false;
@@ -169,6 +177,7 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.suscripcionCambios?.unsubscribe();
     clearTimeout(this.temporizadorAviso);
     this.observadorTamano?.disconnect();
     this.mapa?.remove();
