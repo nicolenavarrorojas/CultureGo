@@ -415,7 +415,7 @@ export class GestionLugaresComponent implements OnInit {
         this.mostrarAviso('Lugar actualizado.');
       } else {
         await this.adminService.crearLugar(datos);
-        this.mostrarAviso('Lugar creado.');
+        if (!this.sugerenciaAprobandoId) this.mostrarAviso('Lugar creado.');
       }
 
       // Si este lugar vino de una sugerencia, la marcamos aprobada recién
@@ -538,28 +538,23 @@ export class GestionLugaresComponent implements OnInit {
           text: 'Rechazar',
           role: 'destructive',
           cssClass: 'boton-alerta-eliminar',
-          handler: () => this.marcarSugerenciaComo(sugerencia.id_lugar_sugerido, 'rechazado', true),
+          handler: () => this.marcarSugerenciaComo(sugerencia.id_lugar_sugerido, 'rechazado'),
         },
       ],
     });
     await alerta.present();
   }
 
-  private async marcarSugerenciaComo(
-    idSugerencia: string,
-    estado: 'aprobado' | 'rechazado',
-    quitarDeLaLista = false
-  ) {
+  private async marcarSugerenciaComo(idSugerencia: string, estado: 'aprobado' | 'rechazado') {
     try {
       const admin = await this.authService.obtenerUsuarioActual();
       if (!admin) return;
 
       await this.adminService.marcarSugerenciaRevisada(idSugerencia, admin.id_usuario, estado);
 
-      if (quitarDeLaLista) {
-        this.sugerencias = this.sugerencias.filter((s) => s.id_lugar_sugerido !== idSugerencia);
-        this.mostrarAviso('Sugerencia rechazada.');
-      }
+      // La lista muestra solo pendientes: una sugerencia revisada sale de inmediato.
+      this.sugerencias = this.sugerencias.filter((s) => s.id_lugar_sugerido !== idSugerencia);
+      this.mostrarAviso(estado === 'aprobado' ? 'Lugar creado y sugerencia aprobada.' : 'Sugerencia rechazada.');
     } catch {
       this.mostrarAviso('No se pudo actualizar la sugerencia.');
     }

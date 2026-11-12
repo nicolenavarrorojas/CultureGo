@@ -45,6 +45,7 @@ export class PaginaInicioComponent implements OnInit, OnDestroy {
 
   lugaresDestacados: Lugar[] = [];
   private suscripcionSesion?: Subscription;
+  private suscripcionCambios?: Subscription;
   cargando = true;
 
   // LIMITE DE CUANTOS LUGARES MOSTRAR
@@ -60,11 +61,14 @@ export class PaginaInicioComponent implements OnInit, OnDestroy {
 
   async ngOnInit() {
     this.suscripcionSesion = this.auth.cambioSesion$.subscribe(() => this.cargarUsuario());
+    // La pestaña queda en memoria: si el administrador cambia el catálogo, se recargan los destacados.
+    this.suscripcionCambios = this.lugares.cambios$.subscribe(() => this.cargarDestacados());
     await this.cargarDestacados();
   }
 
   ngOnDestroy() {
     this.suscripcionSesion?.unsubscribe();
+    this.suscripcionCambios?.unsubscribe();
   }
 
   private async cargarUsuario() {
