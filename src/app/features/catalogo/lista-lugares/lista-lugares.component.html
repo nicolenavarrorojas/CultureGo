@@ -7,7 +7,7 @@
   </ion-toolbar>
 </ion-header>
 
-<ion-content [fullscreen]="true" class="lugares-content">
+<ion-content [fullscreen]="true" class="lugares-content" [scrollEvents]="true" (ionScroll)="onScroll()">
 
   <!-- Buscador -->
   <ion-searchbar
@@ -29,7 +29,7 @@
     </ion-chip>
   </div>
 
-  <!-- filtros: comuna y gratuidad -->
+  <!-- filtros comuna y gratuidad -->
   <div class="fila-filtros">
     <ion-select
       class="select-comuna"
@@ -73,24 +73,33 @@
     </div>
   </div>
 
-  <!-- Lista -->
-  <div class="lista-lugares" *ngIf="!cargando && lugares.length">
-    <button
-      class="tarjeta-lugar"
-      *ngFor="let lugar of lugares; trackBy: trackPorId"
-      (click)="irADetalle(lugar)"
+  <!-- Lista agrupada por letra -->
+  <ng-container *ngIf="!cargando && grupos.length">
+    <section
+      class="grupo-letra"
+      *ngFor="let grupo of grupos; trackBy: trackPorLetra"
+      [attr.data-letra]="grupo.letra"
     >
-      <div
-        class="tarjeta-imagen"
-        [style.backgroundImage]="lugar.url_imagen_principal ? 'url(' + lugar.url_imagen_principal + ')' : null"
-      ></div>
-      <div class="tarjeta-info">
-        <span class="tarjeta-nombre">{{ lugar.nombre }}</span>
-        <span class="tarjeta-comuna">{{ lugar.comuna?.nombre }}</span>
-        <span class="tarjeta-badge" *ngIf="lugar.es_gratuito">Gratis</span>
+      <h3 class="letra-encabezado">{{ grupo.letra }}</h3>
+      <div class="lista-lugares">
+        <button
+          class="tarjeta-lugar"
+          *ngFor="let lugar of grupo.lugares; trackBy: trackPorId"
+          (click)="irADetalle(lugar)"
+        >
+          <div
+            class="tarjeta-imagen"
+            [style.backgroundImage]="lugar.url_imagen_principal ? 'url(' + lugar.url_imagen_principal + ')' : null"
+          ></div>
+          <div class="tarjeta-info">
+            <span class="tarjeta-nombre">{{ lugar.nombre }}</span>
+            <span class="tarjeta-comuna">{{ lugar.comuna?.nombre }}</span>
+            <span class="tarjeta-badge" *ngIf="lugar.es_gratuito">Gratis</span>
+          </div>
+        </button>
       </div>
-    </button>
-  </div>
+    </section>
+  </ng-container>
 
   <!-- Estado vacío -->
   <div class="estado-vacio" *ngIf="!cargando && !lugares.length">
@@ -99,5 +108,23 @@
       Limpiar filtros
     </button>
   </div>
+
+  <!-- Índice alfabético -->
+  <div
+    #indice
+    slot="fixed"
+    class="indice-alfabetico"
+    *ngIf="!cargando && letras.length > 1"
+    aria-label="Índice alfabético"
+    (pointerdown)="onIndicePuntero($event)"
+    (pointermove)="onIndicePuntero($event)"
+    (pointerup)="finIndice()"
+    (pointercancel)="finIndice()"
+  >
+    <span *ngFor="let letra of letras" [class.activa]="letra === letraActiva">{{ letra }}</span>
+  </div>
+
+  <!-- Letra grande mientras se arrastra el dedo por el índice -->
+  <div slot="fixed" class="burbuja-letra" *ngIf="letraFlotante">{{ letraFlotante }}</div>
 
 </ion-content>

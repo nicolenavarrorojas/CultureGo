@@ -1,6 +1,3 @@
-// Reutiliza la paleta "Jacarandá + Adobe patrimonial" de src/theme/variables.scss
-// y el mismo estilo de tarjeta validado en pagina-inicio (fondo lavanda pastel).
-
 .lugares-content {
   --padding-start: 20px;
   --padding-end: 20px;
@@ -86,7 +83,18 @@
   display: flex;
   flex-direction: column;
   gap: 12px;
-  margin-bottom: 24px;
+  margin-bottom: 14px;
+}
+
+.grupo-letra {
+  scroll-margin-top: 4px;
+}
+
+.letra-encabezado {
+  margin: 6px 0 8px;
+  font-size: 0.95rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
 }
 
 .tarjeta-lugar {
@@ -177,4 +185,58 @@
     font-size: 0.85rem;
     font-weight: 600;
   }
+}
+
+// Índice A-Z
+.indice-alfabetico {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 22px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: 4px 0;
+  border-radius: 11px;
+  background: color-mix(in srgb, var(--ion-background-color) 80%, transparent);
+  touch-action: none; // el dedo arrastra el índice, no la lista
+  user-select: none;
+  z-index: 10;
+
+  span {
+    width: 100%;
+    height: 17px;
+    line-height: 17px;
+    text-align: center;
+    font-size: 0.68rem;
+    font-weight: 600;
+    color: var(--ion-color-medium);
+
+    &.activa {
+      color: var(--ion-color-primary);
+      font-weight: 800;
+      transform: scale(1.25);
+    }
+  }
+}
+
+.burbuja-letra {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  width: 76px;
+  height: 76px;
+  border-radius: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 2.4rem;
+  font-weight: 700;
+  background: var(--ion-color-primary);
+  color: var(--ion-color-primary-contrast);
+  opacity: 0.92;
+  pointer-events: none;
+  z-index: 11;
 }

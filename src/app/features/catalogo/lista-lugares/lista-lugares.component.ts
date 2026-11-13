@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { CommonModule, Location } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -24,6 +24,11 @@ import { Lugares, FiltrosLugar } from 'src/app/core/services/lugares';
 import { Categorias } from 'src/app/core/services/categorias';
 import { Comunas } from 'src/app/core/services/comunas';
 import { Lugar } from 'src/app/core/models';
+
+interface GrupoLetra {
+  letra: string;
+  lugares: Lugar[];
+}
 
 @Component({
   selector: 'app-lista-lugares',
@@ -60,6 +65,18 @@ export class ListaLugaresComponent implements OnInit {
 
   lugares: Lugar[] = [];
   cargando = true;
+
+  // Índice alfabético lateral: los lugares agrupados por la inicial de su nombre.
+  grupos: GrupoLetra[] = [];
+  letras: string[] = [];
+  letraActiva = '';
+  letraFlotante = '';
+
+  @ViewChild(IonContent, { read: ElementRef }) private contenido?: ElementRef<HTMLElement>;
+  @ViewChild('indice') private indice?: ElementRef<HTMLElement>;
+
+  private arrastrandoIndice = false;
+  private scrollPendiente = false;
 
   private debounceBusqueda?: ReturnType<typeof setTimeout>;
 
@@ -104,10 +121,101 @@ export class ListaLugaresComponent implements OnInit {
         id_comuna: this.idComunaSeleccionada ?? undefined,
         soloGratuitos: this.soloGratuitos || undefined,
       };
-      this.lugares = await this.lugaresService.listar(filtros);
+      const resultado = await this.lugaresService.listar(filtros);
+      // Orden alfabético en español (ignora mayúsculas y tildes: "Ñuñoa" va después de "N").
+      this.lugares = [...resultado].sort((a, b) =>
+        a.nombre.localeCompare(b.nombre, 'es', { sensitivity: 'base' })
+      );
+      this.grupos = this.agruparPorLetra(this.lugares);
+      this.letras = this.grupos.map((grupo) => grupo.letra);
+      this.letraActiva = this.letras[0] ?? '';
     } finally {
       this.cargando = false;
     }
+  }
+
+  /** Inicial del nombre para el índice: sin tilde ("Álamos" -> "A"), la Ñ se mantiene y lo que no es letra va en "#". */
+  private inicial(nombre: string): string {
+    const primera = nombre.trim().charAt(0).toUpperCase();
+    if (primera === 'Ñ') return 'Ñ';
+    const sinTilde = primera.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+    return /^[A-Z]$/.test(sinTilde) ? sinTilde : '#';
+  }
+
+  /** Agrupa la lista (ya ordenada) en bloques consecutivos por inicial. */
+  private agruparPorLetra(lugares: Lugar[]): GrupoLetra[] {
+    const grupos: GrupoLetra[] = [];
+    for (const lugar of lugares) {
+      const letra = this.inicial(lugar.nombre);
+      const ultimo = grupos[grupos.length - 1];
+      if (ultimo && ultimo.letra === letra) {
+        ultimo.lugares.push(lugar);
+      } else {
+        grupos.push({ letra, lugares: [lugar] });
+      }
+    }
+    return grupos;
+  }
+
+  trackPorLetra(_indice: number, grupo: GrupoLetra): string {
+    return grupo.letra;
+  }
+
+  //Índice lateral 
+
+  /** Salta al bloque de la letra indicada. */
+  irALetra(letra: string) {
+    const seccion = this.contenido?.nativeElement.querySelector(`[data-letra="${letra}"]`);
+    seccion?.scrollIntoView({ block: 'start' });
+    this.letraActiva = letra;
+  }
+
+  /** Tocar o arrastrar el dedo por el índice: la letra se calcula por la posición vertical. */
+  onIndicePuntero(evento: PointerEvent) {
+    const indice = this.indice?.nativeElement;
+    if (!indice || !this.letras.length) return;
+
+    if (evento.type === 'pointerdown') {
+      this.arrastrandoIndice = true;
+      indice.setPointerCapture(evento.pointerId);
+    }
+    if (!this.arrastrandoIndice) return;
+
+    const caja = indice.getBoundingClientRect();
+    const posicion = Math.floor(((evento.clientY - caja.top) / caja.height) * this.letras.length);
+    const letra = this.letras[Math.min(this.letras.length - 1, Math.max(0, posicion))];
+    if (letra !== this.letraFlotante) {
+      this.letraFlotante = letra;
+      this.irALetra(letra);
+    }
+  }
+
+  finIndice() {
+    this.arrastrandoIndice = false;
+    this.letraFlotante = '';
+  }
+
+  /** Al hacer scroll, resalta en el índice la letra del bloque que va arriba. */
+  onScroll() {
+    if (this.arrastrandoIndice || this.scrollPendiente) return;
+    this.scrollPendiente = true;
+    requestAnimationFrame(() => {
+      this.scrollPendiente = false;
+      this.actualizarLetraActiva();
+    });
+  }
+
+  private actualizarLetraActiva() {
+    const contenido = this.contenido?.nativeElement;
+    if (!contenido) return;
+    const limite = contenido.getBoundingClientRect().top + 60;
+    let activa = this.letras[0] ?? '';
+    contenido.querySelectorAll<HTMLElement>('.grupo-letra').forEach((seccion) => {
+      if (seccion.getBoundingClientRect().top <= limite) {
+        activa = seccion.dataset['letra'] ?? activa;
+      }
+    });
+    this.letraActiva = activa;
   }
 
   onBusquedaCambiada() {
@@ -152,7 +260,7 @@ export class ListaLugaresComponent implements OnInit {
     this.router.navigate(['/lugares', lugar.id_lugar]);
   }
 
-  /** Evita recrear las tarjetas (y volver a pedir sus imágenes) en cada búsqueda/filtro. */
+  /** Evita recrear las tarjetas en cada búsqueda/filtro. */
   trackPorId(_indice: number, lugar: Lugar): string {
     return lugar.id_lugar;
   }
