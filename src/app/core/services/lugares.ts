@@ -9,6 +9,7 @@ export interface FiltrosLugar {
   soloGratuitos?: boolean;
   cercaDeMi?: { lat: number; lng: number; radioMetros: number };
   texto?: string;
+  destacadosPrimero?: boolean;
 }
 
 /**
@@ -41,6 +42,10 @@ export class Lugares {
     if (filtros.soloGratuitos) query = query.eq('es_gratuito', true);
     const texto = filtros.texto?.trim();
     if (texto) query = query.ilike('nombre', `%${texto}%`);
+
+    if (filtros.destacadosPrimero) {
+      query = query.order('destacado', { ascending: false }).order('nombre');
+    }
 
     const { data, error } = await query;
     if (error) throw error;

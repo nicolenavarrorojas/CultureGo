@@ -20,6 +20,7 @@ import { Lugares } from 'src/app/core/services/lugares';
 import { Lugar } from 'src/app/core/models';
 
 type FiltroRapido = 'todos' | 'gratis' | 'cerca';
+type LugarConDestacado = Lugar & { destacado?: boolean };
 
 @Component({
   selector: 'app-pagina-inicio',
@@ -44,6 +45,8 @@ export class PaginaInicioComponent implements OnInit, OnDestroy {
   filtroActivo: FiltroRapido = 'todos';
 
   lugaresDestacados: Lugar[] = [];
+  // Resultado completo de la última carga: de aquí se vuelven a sortear los 4 que se muestran.
+  private catalogoCargado: LugarConDestacado[] = [];
   private suscripcionSesion?: Subscription;
   private suscripcionCambios?: Subscription;
   cargando = true;
@@ -80,11 +83,32 @@ export class PaginaInicioComponent implements OnInit, OnDestroy {
     this.cargando = true;
     try {
       const filtros = this.filtroActivo === 'gratis' ? { soloGratuitos: true } : {};
-      const resultado = await this.lugares.listar(filtros);
-      this.lugaresDestacados = resultado.slice(0, this.LIMITE_DESTACADOS);
+      this.catalogoCargado = (await this.lugares.listar(filtros)) as LugarConDestacado[];
+      this.elegirDestacados();
     } finally {
       this.cargando = false;
     }
+  }
+
+  private elegirDestacados() {
+    const marcados = this.catalogoCargado.filter((lugar) => lugar.destacado);
+    const resto = this.catalogoCargado.filter((lugar) => !lugar.destacado);
+
+    const elegidos = this.barajar(marcados).slice(0, this.LIMITE_DESTACADOS);
+    if (elegidos.length < this.LIMITE_DESTACADOS) {
+      elegidos.push(...resto.slice(0, this.LIMITE_DESTACADOS - elegidos.length));
+    }
+    this.lugaresDestacados = elegidos;
+  }
+
+  /** Copia mezclada al azar. */
+  private barajar<T>(lista: T[]): T[] {
+    const copia = [...lista];
+    for (let i = copia.length - 1; i > 0; i--) {
+      const j = Math.floor(Math.random() * (i + 1));
+      [copia[i], copia[j]] = [copia[j], copia[i]];
+    }
+    return copia;
   }
 
   async onFiltroSeleccionado(filtro: FiltroRapido) {
@@ -159,6 +183,8 @@ export class PaginaInicioComponent implements OnInit, OnDestroy {
 
   async ionViewWillEnter() {
     this.actualizarSaludo();
+    // Cada vez que se vuelve a Inicio se sortean de nuevo (sin volver a pedir datos a la base).
+    if (this.catalogoCargado.length) this.elegirDestacados();
     await this.cargarUsuario();
   }
 }
