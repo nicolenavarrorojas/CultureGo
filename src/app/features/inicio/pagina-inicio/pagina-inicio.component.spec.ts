@@ -13,10 +13,12 @@ describe('PaginaInicioComponent', () => {
   let fixture: ComponentFixture<PaginaInicioComponent>;
   let usuarioActual: { nombre: string } | null;
   let cambioSesion: Subject<void>;
+  let lugaresDisponibles: { id_lugar: string; nombre: string; destacado: boolean }[];
 
   beforeEach(waitForAsync(() => {
     usuarioActual = null;
     cambioSesion = new Subject<void>();
+    lugaresDisponibles = [];
 
     TestBed.configureTestingModule({
       imports: [PaginaInicioComponent],
@@ -30,7 +32,7 @@ describe('PaginaInicioComponent', () => {
         },
         {
           provide: Lugares,
-          useValue: { listar: async () => [], cambios$: new Subject<void>() },
+          useValue: { listar: async () => lugaresDisponibles, cambios$: new Subject<void>() },
         },
         {
           provide: Router,
@@ -69,5 +71,39 @@ describe('PaginaInicioComponent', () => {
     cambioSesion.next();
     await fixture.whenStable();
     expect(component.nombreUsuario).toBe('Nicole');
+  });
+
+  const crearLugares = (destacados: number, otros: number) => [
+    ...Array.from({ length: destacados }, (_, i) => ({ id_lugar: `d${i}`, nombre: `Destacado ${i}`, destacado: true })),
+    ...Array.from({ length: otros }, (_, i) => ({ id_lugar: `o${i}`, nombre: `Otro ${i}`, destacado: false })),
+  ];
+
+  it('con más de 4 destacados muestra solo 4 y todos son destacados', async () => {
+    lugaresDisponibles = crearLugares(7, 5);
+    await component['cargarDestacados']();
+
+    expect(component.lugaresDestacados.length).toBe(4);
+    expect(component.lugaresDestacados.every((l) => l.id_lugar.startsWith('d'))).toBeTrue();
+  });
+
+  it('con menos de 4 destacados completa con otros lugares', async () => {
+    lugaresDisponibles = crearLugares(2, 5);
+    await component['cargarDestacados']();
+
+    const ids = component.lugaresDestacados.map((l) => l.id_lugar);
+    expect(ids.length).toBe(4);
+    expect(ids).toContain('d0');
+    expect(ids).toContain('d1');
+  });
+
+  it('al volver a Inicio vuelve a sortear entre los destacados', async () => {
+    lugaresDisponibles = crearLugares(8, 0);
+    await component['cargarDestacados']();
+    const aleatorio = spyOn(Math, 'random').and.returnValue(0);
+
+    await component.ionViewWillEnter();
+
+    expect(aleatorio).toHaveBeenCalled();
+    expect(component.lugaresDestacados.length).toBe(4);
   });
 });

@@ -15,6 +15,7 @@ import {
   IonSegment,
   IonSegmentButton,
   IonLabel,
+  IonSearchbar,
   IonSelect,
   IonSelectOption,
   IonCheckbox,
@@ -102,6 +103,7 @@ const CENTRO_SANTIAGO: L.LatLngTuple = [-33.4489, -70.6693];
     IonSegment,
     IonSegmentButton,
     IonLabel,
+    IonSearchbar,
     IonSelect,
     IonSelectOption,
     IonCheckbox,
@@ -124,6 +126,9 @@ export class GestionLugaresComponent implements OnInit {
   subiendoImagen = false;
 
   lugares: Lugar[] = [];
+  // Lista que se muestra: los lugares que coinciden con el buscador (referencia estable, no un getter).
+  lugaresFiltrados: Lugar[] = [];
+  terminoBusqueda = '';
   reportes: Reporte[] = [];
   sugerencias: LugarSugerido[] = [];
 
@@ -180,7 +185,7 @@ export class GestionLugaresComponent implements OnInit {
     this.cargando = true;
     try {
       if (segmento === 'lugares') {
-        this.lugares = await this.lugaresService.listar({});
+        this.actualizarLugares(await this.lugaresService.listar({}));
       } else if (segmento === 'reportes') {
         this.reportes = await this.adminService.listarReportes(['pendiente', 'en_revision']);
       } else {
@@ -189,6 +194,26 @@ export class GestionLugaresComponent implements OnInit {
     } finally {
       this.cargando = false;
     }
+  }
+
+  // Buscador de lugares (por nombre, sin distinguir mayúsculas ni tildes)
+
+  /** Guarda la lista completa y vuelve a aplicar el buscador. */
+  private actualizarLugares(lugares: Lugar[]) {
+    this.lugares = lugares;
+    this.filtrarLugares();
+  }
+
+  onBuscarLugar(evento: Event) {
+    this.terminoBusqueda = (evento as CustomEvent<{ value?: string | null }>).detail.value ?? '';
+    this.filtrarLugares();
+  }
+
+  private filtrarLugares() {
+    const termino = normalizarTexto(this.terminoBusqueda);
+    this.lugaresFiltrados = termino
+      ? this.lugares.filter((lugar) => normalizarTexto(lugar.nombre).includes(termino))
+      : this.lugares;
   }
 
   // CRUD de lugares
@@ -427,7 +452,7 @@ export class GestionLugaresComponent implements OnInit {
       }
 
       this.mostrarFormulario = false;
-      this.lugares = await this.lugaresService.listar({});
+      this.actualizarLugares(await this.lugaresService.listar({}));
     } catch {
       this.mostrarAviso('No se pudo guardar el lugar. Intenta de nuevo.');
     } finally {
@@ -458,7 +483,7 @@ export class GestionLugaresComponent implements OnInit {
       if (lugar.url_imagen_principal) {
         await this.eliminarImagenSiEsPropia(lugar.url_imagen_principal);
       }
-      this.lugares = this.lugares.filter((l) => l.id_lugar !== lugar.id_lugar);
+      this.actualizarLugares(this.lugares.filter((l) => l.id_lugar !== lugar.id_lugar));
       this.mostrarAviso('Lugar eliminado.');
     } catch {
       this.mostrarAviso('No se pudo eliminar el lugar.');
@@ -585,6 +610,14 @@ export class GestionLugaresComponent implements OnInit {
   trackPorIdSugerencia(_indice: number, sugerencia: LugarSugerido): string {
     return sugerencia.id_lugar_sugerido;
   }
+}
+
+function normalizarTexto(texto: string): string {
+  return texto
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '')
+    .toLowerCase()
+    .trim();
 }
 
 function fueraDeRango(valor: number | null, limite: number): boolean {

@@ -31,12 +31,24 @@
       Nuevo lugar
     </button>
 
+    <ion-searchbar
+      class="buscador-lugares"
+      placeholder="Buscar lugar por nombre"
+      [value]="terminoBusqueda"
+      (ionInput)="onBuscarLugar($event)"
+      inputmode="search"
+    ></ion-searchbar>
+
+    <p class="contador-busqueda" *ngIf="!cargando && terminoBusqueda.trim()">
+      {{ lugaresFiltrados.length }} de {{ lugares.length }} lugares
+    </p>
+
     <div class="lista-skeleton" *ngIf="cargando">
       <ion-skeleton-text [animated]="true" class="skeleton-fila" *ngFor="let i of [1,2,3]"></ion-skeleton-text>
     </div>
 
     <div class="lista-lugares-admin" *ngIf="!cargando">
-      <div class="fila-lugar-admin" *ngFor="let lugar of lugares; trackBy: trackPorIdLugar">
+      <div class="fila-lugar-admin" *ngFor="let lugar of lugaresFiltrados; trackBy: trackPorIdLugar">
         <div class="fila-lugar-info">
           <span class="fila-lugar-nombre">{{ lugar.nombre }}</span>
           <span class="fila-lugar-detalle">
@@ -55,6 +67,9 @@
       </div>
 
       <p class="estado-vacio" *ngIf="!lugares.length">No hay lugares cargados todavía.</p>
+      <p class="estado-vacio" *ngIf="lugares.length && !lugaresFiltrados.length">
+        No hay lugares que coincidan con "{{ terminoBusqueda.trim() }}".
+      </p>
     </div>
   </div>
 
