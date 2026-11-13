@@ -14,6 +14,7 @@ import { GestionLugaresComponent } from './gestion-lugares.component';
 describe('GestionLugaresComponent', () => {
   let component: GestionLugaresComponent;
   let fixture: ComponentFixture<GestionLugaresComponent>;
+  let lugaresBase: { id_lugar: string; nombre: string }[];
   let adminMock: {
     crearLugar: jasmine.Spy;
     editarLugar: jasmine.Spy;
@@ -27,6 +28,7 @@ describe('GestionLugaresComponent', () => {
   };
 
   beforeEach(waitForAsync(() => {
+    lugaresBase = [];
     adminMock = {
       crearLugar: jasmine.createSpy().and.resolveTo({}),
       editarLugar: jasmine.createSpy().and.resolveTo({}),
@@ -45,7 +47,7 @@ describe('GestionLugaresComponent', () => {
         { provide: Admin, useValue: adminMock },
         {
           provide: Lugares,
-          useValue: { listar: async () => [] },
+          useValue: { listar: async () => lugaresBase },
         },
         {
           provide: Categorias,
@@ -108,5 +110,35 @@ describe('GestionLugaresComponent', () => {
     await component.guardarLugar();
 
     expect(adminMock.crearLugar).not.toHaveBeenCalled();
+  });
+
+  it('el buscador filtra los lugares por nombre, sin distinguir mayúsculas ni tildes', async () => {
+    lugaresBase = [
+      { id_lugar: '1', nombre: 'Parque Bicentenario' },
+      { id_lugar: '2', nombre: 'Álamos Park' },
+      { id_lugar: '3', nombre: 'Museo de la Memoria' },
+    ];
+    await component.cambiarSegmento('lugares');
+    expect(component.lugaresFiltrados.length).toBe(3);
+
+    component.onBuscarLugar({ detail: { value: 'ALAMOS' } } as unknown as Event);
+    expect(component.lugaresFiltrados.map((l) => l.nombre)).toEqual(['Álamos Park']);
+
+    component.onBuscarLugar({ detail: { value: 'park' } } as unknown as Event);
+    expect(component.lugaresFiltrados.length).toBe(2);
+  });
+
+  it('al borrar el texto del buscador vuelven todos los lugares', async () => {
+    lugaresBase = [
+      { id_lugar: '1', nombre: 'Parque Bicentenario' },
+      { id_lugar: '2', nombre: 'Museo de la Memoria' },
+    ];
+    await component.cambiarSegmento('lugares');
+
+    component.onBuscarLugar({ detail: { value: 'museo' } } as unknown as Event);
+    expect(component.lugaresFiltrados.length).toBe(1);
+
+    component.onBuscarLugar({ detail: { value: '' } } as unknown as Event);
+    expect(component.lugaresFiltrados.length).toBe(2);
   });
 });
