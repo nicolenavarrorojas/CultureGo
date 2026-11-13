@@ -29,7 +29,7 @@
     </ion-chip>
   </div>
 
-  <!-- filtros comuna y gratuidad -->
+  <!-- filtros: comuna y gratuidad -->
   <div class="fila-filtros">
     <ion-select
       class="select-comuna"
@@ -116,6 +116,7 @@
     class="indice-alfabetico"
     *ngIf="!cargando && letras.length > 1"
     aria-label="Índice alfabético"
+    [style.--cantidad-letras]="letras.length"
     (pointerdown)="onIndicePuntero($event)"
     (pointermove)="onIndicePuntero($event)"
     (pointerup)="finIndice()"

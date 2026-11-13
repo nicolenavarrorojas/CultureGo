@@ -1,6 +1,6 @@
 .lugares-content {
   --padding-start: 20px;
-  --padding-end: 20px;
+  --padding-end: 34px; // deja sitio al índice alfabético
   --padding-top: 12px;
 }
 
@@ -187,36 +187,39 @@
   }
 }
 
-// Índice A-Z
+// Índice A-Z pegado al borde derecho.
 .indice-alfabetico {
   position: absolute;
-  right: 0;
+  right: 2px;
   top: 50%;
   transform: translateY(-50%);
-  width: 22px;
+  width: 30px;
+  height: min(calc(100% - 24px), calc(var(--cantidad-letras, 26) * 24px));
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 4px 0;
-  border-radius: 11px;
+  padding: 6px 0;
+  border-radius: 15px;
   background: color-mix(in srgb, var(--ion-background-color) 80%, transparent);
   touch-action: none; // el dedo arrastra el índice, no la lista
   user-select: none;
   z-index: 10;
 
   span {
+    flex: 1 1 0;
+    min-height: 0;
     width: 100%;
-    height: 17px;
-    line-height: 17px;
-    text-align: center;
-    font-size: 0.68rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.9rem;
     font-weight: 600;
     color: var(--ion-color-medium);
 
     &.activa {
       color: var(--ion-color-primary);
       font-weight: 800;
-      transform: scale(1.25);
+      transform: scale(1.3);
     }
   }
 }
