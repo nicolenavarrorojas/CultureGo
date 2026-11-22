@@ -43,7 +43,7 @@ const COLORES_POR_NOMBRE: Record<string, { solido: string; tenue: string; texto:
   'museo':                { solido: '#6B4FA0', tenue: '#E3DCF2', texto: '#4A3670' }, 
   'teatro':               { solido: '#C1622D', tenue: '#F3DDCB', texto: '#7A3A1B' },
   'parque':               { solido: '#3E9142', tenue: '#DCEADF', texto: '#2F4F3A' }, 
-  'cerro':                { solido: '#5A8A6E', tenue: '#DCEADF', texto: '#2F4F3A' },
+  'cerro':                { solido: '#435C4E', tenue: '#DCEADF', texto: '#2F4F3A' },
   'edificio patrimonial': { solido: '#9B5B3F', tenue: '#EEDDD3', texto: '#5F3421' },
   'iglesia':              { solido: '#8E5A9E', tenue: '#EBDCEF', texto: '#5A3866' },
   'biblioteca':           { solido: '#2E6E8E', tenue: '#D7E7EC', texto: '#1D4658' }, 
@@ -184,24 +184,28 @@ export class PaginaMapaComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private inicializarMapa() {
-    this.mapa = L.map(this.mapaContenedor.nativeElement, {
-      zoomControl: false,
-    }).setView(CENTRO_SANTIAGO, ZOOM_DEFECTO);
+  this.mapa = L.map(this.mapaContenedor.nativeElement, {
+    zoomControl: false,
+    fadeAnimation: false,   
+    minZoom: 11,            
+  }).setView(CENTRO_SANTIAGO, ZOOM_DEFECTO);
 
-    L.control.zoom({ position: 'bottomright' }).addTo(this.mapa);
+  L.control.zoom({ position: 'bottomright' }).addTo(this.mapa);
 
-    // Tile server público de OpenStreetMap (gratis, sin API key)
-    L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-      maxZoom: 19,
-    }).addTo(this.mapa);
+  L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
+    maxZoom: 21,
+    updateWhenZooming: true,
+    updateWhenIdle: true,
+    keepBuffer: 4,
+  }).addTo(this.mapa);
 
-    this.capaMarcadores = L.layerGroup().addTo(this.mapa);
+  this.capaMarcadores = L.layerGroup().addTo(this.mapa);
 
-    this.mapa.on('click', () => {
-      this.lugarSeleccionado = null;
-    });
-  }
+  this.mapa.on('click', () => {
+    this.lugarSeleccionado = null;
+  });
+}
 
   private colorPorCategoriaDesconocida = new Map<string, { solido: string; tenue: string; texto: string }>();
   private normalizarNombre(nombre: string): string {
