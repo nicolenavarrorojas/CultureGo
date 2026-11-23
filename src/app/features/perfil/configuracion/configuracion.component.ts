@@ -152,28 +152,58 @@ export class ConfiguracionComponent implements OnInit {
   // Permisos
 
   private async revisarPermisoUbicacion() {
-    if (!('permissions' in navigator)) {
+  if (!('permissions' in navigator)) {
+    // Sin Permissions API: mantenemos lo que ya sabemos
+    if (this.estadoPermisoUbicacion === 'prompt') {
       this.estadoPermisoUbicacion = 'no_disponible';
-      return;
     }
-    try {
-      const resultado = await navigator.permissions.query({
-        name: 'geolocation' as PermissionName,
-      });
-      this.estadoPermisoUbicacion = resultado.state as EstadoPermisoUbicacion;
-      resultado.onchange = () => {
-        this.estadoPermisoUbicacion = resultado.state as EstadoPermisoUbicacion;
-      };
-    } catch {
+    return;
+  }
+  try {
+    const resultado = await navigator.permissions.query({
+      name: 'geolocation' as PermissionName,
+    });
+    this.aplicarEstadoPermiso(resultado.state as EstadoPermisoUbicacion);
+    resultado.onchange = () =>
+      this.zone.run(() => this.aplicarEstadoPermiso(resultado.state as EstadoPermisoUbicacion));
+  } catch {
+    if (this.estadoPermisoUbicacion === 'prompt') {
       this.estadoPermisoUbicacion = 'no_disponible';
     }
   }
+  }
+
+  private aplicarEstadoPermiso(estado: EstadoPermisoUbicacion) {
+  // Algunos WebView reportan 'prompt' aunque ya se concedió: no degradar 'granted'
+  if (estado === 'prompt' && this.estadoPermisoUbicacion === 'granted') return;
+  this.estadoPermisoUbicacion = estado;
+  }
 
   solicitarPermisoUbicacion() {
-    navigator.geolocation.getCurrentPosition(
-      () => this.revisarPermisoUbicacion(),
-      () => this.revisarPermisoUbicacion()
-    );
+  if (!('geolocation' in navigator)) {
+    this.estadoPermisoUbicacion = 'no_disponible';
+    return;
+  }
+
+  navigator.geolocation.getCurrentPosition(
+    () => {
+      // Si devolvió posición, el permiso está concedido (no depender de permissions.query)
+      this.zone.run(() => {
+        this.estadoPermisoUbicacion = 'granted';
+      });
+    },
+    (error) => {
+      this.zone.run(() => {
+        if (error.code === error.PERMISSION_DENIED) {
+          this.estadoPermisoUbicacion = 'denied';
+        } else {
+          // Timeout o posición no disponible: el permiso pudo darse igual
+          this.revisarPermisoUbicacion();
+        }
+      });
+    },
+    { timeout: 10000 }
+  );
   }
 
   // Editar perfil
